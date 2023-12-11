@@ -10,8 +10,7 @@ function MainController() {
   const [preparedBy, setPreparedBy] = useState("Eos Lightmedia");
   const [jobName, setJobName] = useState("");
   const [jobCode, setJobCode] = useState("");
-  const [boxFolder, setBoxFolder] = useState("");
-  const [boxFolderNumber, setBoxFolderNumber] = useState("");
+  const [URLFolder, setURLFolder] = useState("");
   const [preparedFor, setPreparedFor] = useState("");
   const initialDate = {
     year: new Date().getFullYear(),
@@ -28,29 +27,14 @@ function MainController() {
   const [showConfirmPopUp, setShowConfirmPopUp] = useState(false);
 
   useEffect(() => {
-    const extractFolderNumber = () => {
-      const trimmedUrl = boxFolder.trim();
-      const match = trimmedUrl.match(/https:\/\/box\.com\/folder\/(\d+)/);
-      if (match) {
-        setBoxFolderNumber(String(match[1]));
-      } else {
-        setBoxFolderNumber(undefined);
-      }
-    };
-    if (boxFolder) {
-      extractFolderNumber();
-    } else {
-      setBoxFolderNumber(undefined);
-    }
-  }, [boxFolder]);
-
-  useEffect(() => {
-    const isValidBoxLink = boxFolder.match(/https:\/\/box\.com\/folder\/(\d+)/);
+    const urlRegex =
+      /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+    const isValidLink = urlRegex.test(URLFolder);
     const areRequiredFieldsFilled =
-      jobName && jobCode && preparedFor && jobPhase && isValidBoxLink;
+      jobName && jobCode && preparedFor && jobPhase && isValidLink;
 
     setCanSubmit(areRequiredFieldsFilled);
-  }, [jobName, jobCode, preparedFor, jobPhase, boxFolder]);
+  }, [jobName, jobCode, preparedFor, jobPhase, URLFolder]);
 
   const formatDateObj = (dateObj) => {
     if (!dateObj || !dateObj.year || !dateObj.month || !dateObj.day) {
@@ -119,10 +103,11 @@ function MainController() {
     }
 
     const formData = {
-      folderID: boxFolderNumber,
+      URL: URLFolder,
       projectName: jobName,
       projectNumber: jobCode,
       preparedBy: preparedByNumber,
+      preparedFor: preparedFor,
       date: formattedDate,
       dateFormat: dateFormatNumber,
       isRevision: isRevision,
@@ -157,7 +142,7 @@ function MainController() {
         <ConfirmPopUp
           jobName={jobName}
           jobCode={jobCode}
-          boxFolder={boxFolder}
+          URLFolder={URLFolder}
           preparedFor={preparedFor}
           preparedBy={preparedBy}
           date={date}
@@ -176,10 +161,8 @@ function MainController() {
           setJobName={setJobName}
           jobCode={jobCode}
           setJobCode={setJobCode}
-          boxFolder={boxFolder}
-          setBoxFolder={setBoxFolder}
-          boxFolderNumber={boxFolderNumber}
-          setBoxFolderNumber={setBoxFolderNumber}
+          URLFolder={URLFolder}
+          setURLFolder={setURLFolder}
           preparedFor={preparedFor}
           setPreparedFor={setPreparedFor}
           preparedBy={preparedBy}
@@ -200,8 +183,8 @@ function MainController() {
         <StampPreview
           jobName={jobName}
           jobCode={jobCode}
-          boxFolder={boxFolder}
-          boxFolderNumber={boxFolderNumber}
+          URLFolder={URLFolder}
+          setURLFolder={setURLFolder}
           preparedFor={preparedFor}
           preparedBy={preparedBy}
           date={date}
@@ -211,7 +194,7 @@ function MainController() {
           dateFormat={dateFormat}
           revisionNumber={revisionNumber}
         />
-        <StampSubmit onClick={handleSubmit} isActive={canSubmit} />
+        <StampSubmit onClick={handleSubmit} isActive={true} />
         <Footer />
       </div>
     </>

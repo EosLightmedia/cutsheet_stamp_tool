@@ -7,7 +7,7 @@ import RevisionSelector from "./RevisionSelector";
 import DateFormatSelector from "./DateFormatSelector";
 import GradientSelector from "./GradientSelector";
 import RevisionNumberSelector from "./RevisionNumberSelector";
-import BoxFolderSelector from "./BoxFolderSelector";
+import URLFolderSelector from "./BoxFolderSelector";
 import StampLogo from "../Assets/stamp-logo.png";
 
 function StampForm(props) {
@@ -16,8 +16,8 @@ function StampForm(props) {
     setJobName,
     jobCode,
     setJobCode,
-    boxFolder,
-    setBoxFolder,
+    URLFolder,
+    setURLFolder,
     preparedFor,
     setPreparedFor,
     preparedBy,
@@ -101,7 +101,7 @@ function StampForm(props) {
           setGradient={setGradientStyle}
         />
         <h2 className="form-section-title">Box Details</h2>
-        <BoxFolderSelector boxFolder={boxFolder} setBoxFolder={setBoxFolder} />
+        <URLFolderSelector URLFolder={URLFolder} setURLFolder={setURLFolder} />
       </div>
     </div>
   );

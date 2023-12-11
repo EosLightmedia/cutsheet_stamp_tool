@@ -72,13 +72,13 @@ function StampPreview(props) {
     <div className="content-div">
       <div className="stamp-preview-div" style={previewStyle}>
         <div className="first-column">
-          <p class="type-title">
+          <p className="type-title">
             Type
             <br />
             <span className="type-value">EG01</span>
           </p>
         </div>
-        <div class="second-column">
+        <div className="second-column">
           <div className="info-grid">
             <p>
               Project Name <span className="value">{jobName}</span>

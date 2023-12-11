@@ -28,6 +28,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 80%;
+  min-width: 900px;
 }
 
 .centered-logo {
@@ -54,6 +55,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 900px;
 }
 
 .form-content {
