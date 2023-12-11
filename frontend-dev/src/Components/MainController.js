@@ -1,46 +1,136 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Header from "./Header";
+import React, { useEffect, useState } from "react";
 import StampForm from "./StampForm";
 import StampPreview from "./StampPreview";
-import FileUploader from "./FileUploader";
-import StampButton from "./StampButton";
+import StampSubmit from "./StampSubmit";
 import Footer from "./Footer";
+import ConfirmPopUp from "./ConfirmPopUp";
+import axios from "axios";
 
 function MainController() {
-  const [project, setProject] = useState("");
-  const [projectNumber, setProjectNumber] = useState("");
+  const [preparedBy, setPreparedBy] = useState("Eos Lightmedia");
+  const [jobName, setJobName] = useState("");
+  const [jobCode, setJobCode] = useState("");
+  const [boxFolder, setBoxFolder] = useState("");
+  const [boxFolderNumber, setBoxFolderNumber] = useState("");
   const [preparedFor, setPreparedFor] = useState("");
-  const [preparedBy, setPreparedBy] = useState("");
-  const [revisionNumber, setRevisionNumber] = useState("");
-  const [jobPhase, setJobPhase] = useState("");
+  const initialDate = {
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    day: new Date().getDate(),
+  };
+  const [date, setDate] = useState(initialDate);
+  const [isRevision, setIsRevision] = useState(false);
   const [dateFormat, setDateFormat] = useState("YYYY/MM/DD");
-  const [showRevision, setShowRevision] = useState(false);
-  const [issueDate, setIssueDate] = useState({
-    year: new Date().getFullYear().toString(),
-    month: (new Date().getMonth() + 1).toString().padStart(2, "0"),
-    day: new Date().getDate().toString().padStart(2, "0"),
-  });
-  const [revisionDate, setRevisionDate] = useState({
-    year: new Date().getFullYear().toString(),
-    month: (new Date().getMonth() + 1).toString().padStart(2, "0"),
-    day: new Date().getDate().toString().padStart(2, "0"),
-  });
+  const [jobPhase, setJobPhase] = useState("");
+  const [gradientStyle, setGradientStyle] = useState("No Gradient");
+  const [revisionNumber, setRevisionNumber] = useState(0);
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [showConfirmPopUp, setShowConfirmPopUp] = useState(false);
 
-  const submitFormData = () => {
-    const formData = {
-      project,
-      projectNumber,
-      preparedFor,
-      preparedBy,
-      revisionNumber,
-      jobPhase,
-      dateFormat,
-      showRevision,
-      issueDate,
-      revisionDate,
+  useEffect(() => {
+    const extractFolderNumber = () => {
+      const trimmedUrl = boxFolder.trim();
+      const match = trimmedUrl.match(/https:\/\/box\.com\/folder\/(\d+)/);
+      if (match) {
+        setBoxFolderNumber(String(match[1]));
+      } else {
+        setBoxFolderNumber(undefined);
+      }
     };
-    console.log(formData);
+    if (boxFolder) {
+      extractFolderNumber();
+    } else {
+      setBoxFolderNumber(undefined);
+    }
+  }, [boxFolder]);
+
+  useEffect(() => {
+    const isValidBoxLink = boxFolder.match(/https:\/\/box\.com\/folder\/(\d+)/);
+    const areRequiredFieldsFilled =
+      jobName && jobCode && preparedFor && jobPhase && isValidBoxLink;
+
+    setCanSubmit(areRequiredFieldsFilled);
+  }, [jobName, jobCode, preparedFor, jobPhase, boxFolder]);
+
+  const formatDateObj = (dateObj) => {
+    if (!dateObj || !dateObj.year || !dateObj.month || !dateObj.day) {
+      return { year: "", month: "", day: "" };
+    }
+    return {
+      year: dateObj.year,
+      month: dateObj.month,
+      day: dateObj.day,
+    };
+  };
+
+  const handleSubmit = () => {
+    const formattedDate = formatDateObj(date);
+
+    let preparedByNumber;
+    if (preparedBy === "Eos Lightmedia") {
+      preparedByNumber = 0;
+    } else if (preparedBy === "Abernathy Lighting Design") {
+      preparedByNumber = 1;
+    }
+
+    let dateFormatNumber;
+    switch (dateFormat) {
+      case "YYYY/MM/DD":
+        dateFormatNumber = 0;
+        break;
+      case "MM/DD/YYYY":
+        dateFormatNumber = 1;
+        break;
+      case "DD/MM/YYYY":
+        dateFormatNumber = 2;
+        break;
+      default:
+        dateFormatNumber = -1;
+    }
+
+    let jobPhaseNumber;
+    switch (jobPhase) {
+      case "For Bid":
+        jobPhaseNumber = 0;
+        break;
+      case "For Review":
+        jobPhaseNumber = 1;
+        break;
+      case "Coordination":
+        jobPhaseNumber = 2;
+        break;
+      default:
+        jobPhaseNumber = -1;
+    }
+
+    let gradientNumber;
+    switch (gradientStyle) {
+      case "No Gradient":
+        gradientNumber = 0;
+        break;
+      case "Purple/Blue":
+        gradientNumber = 1;
+        break;
+      case "Orange":
+        gradientNumber = 2;
+        break;
+      default:
+        gradientNumber = 0;
+    }
+
+    const formData = {
+      folderID: boxFolderNumber,
+      projectName: jobName,
+      projectNumber: jobCode,
+      preparedBy: preparedByNumber,
+      date: formattedDate,
+      dateFormat: dateFormatNumber,
+      isRevision: isRevision,
+      revisionNumber: revisionNumber,
+      jobPhase: jobPhaseNumber,
+      gradient: gradientNumber,
+    };
+
     axios
       .post("/post-stamp", formData)
       .then((response) => {
@@ -49,59 +139,82 @@ function MainController() {
       .catch((error) => {
         console.error("There was an error submitting the form:", error);
       });
+
+    console.log(formData);
+  };
+
+  const showPopUp = () => {
+    setShowConfirmPopUp(true);
+  };
+
+  const hidePopUp = () => {
+    setShowConfirmPopUp(false);
   };
 
   return (
-    <div className="all-content-div">
-      <header>
-        <Header />
-      </header>
-      <div className="inner-content-div">
-        <div className="left-col-div">
-          <StampForm
-            project={project}
-            setProject={setProject}
-            projectNumber={projectNumber}
-            setProjectNumber={setProjectNumber}
-            preparedFor={preparedFor}
-            setPreparedFor={setPreparedFor}
-            preparedBy={preparedBy}
-            setPreparedBy={setPreparedBy}
-            issueDate={issueDate}
-            setIssueDate={setIssueDate}
-            revisionDate={revisionDate}
-            setRevisionDate={setRevisionDate}
-            revisionNumber={revisionNumber}
-            setRevisionNumber={setRevisionNumber}
-            jobPhase={jobPhase}
-            setJobPhase={setJobPhase}
-            dateFormat={dateFormat}
-            setDateFormat={setDateFormat}
-            showRevision={showRevision}
-            setShowRevision={setShowRevision}
-          />
-        </div>
-        <div className="right-col-div">
-          <StampPreview
-            project={project}
-            projectNumber={projectNumber}
-            preparedFor={preparedFor}
-            preparedBy={preparedBy}
-            issueDate={issueDate}
-            revisionDate={revisionDate}
-            revisionNumber={revisionNumber}
-            jobPhase={jobPhase}
-            dateFormat={dateFormat}
-            showRevision={showRevision}
-          />
-          <FileUploader />
-          <StampButton onClick={submitFormData} />
-        </div>
-      </div>
-      <footer>
+    <>
+      {showConfirmPopUp && (
+        <ConfirmPopUp
+          jobName={jobName}
+          jobCode={jobCode}
+          boxFolder={boxFolder}
+          preparedFor={preparedFor}
+          preparedBy={preparedBy}
+          date={date}
+          isRevision={isRevision}
+          jobPhase={jobPhase}
+          gradientStyle={gradientStyle}
+          dateFormat={dateFormat}
+          revisionNumber={revisionNumber}
+          hidePopUp={hidePopUp}
+          handleSubmit={handleSubmit}
+        />
+      )}
+      <div className="all-app-content">
+        <StampForm
+          jobName={jobName}
+          setJobName={setJobName}
+          jobCode={jobCode}
+          setJobCode={setJobCode}
+          boxFolder={boxFolder}
+          setBoxFolder={setBoxFolder}
+          boxFolderNumber={boxFolderNumber}
+          setBoxFolderNumber={setBoxFolderNumber}
+          preparedFor={preparedFor}
+          setPreparedFor={setPreparedFor}
+          preparedBy={preparedBy}
+          setPreparedBy={setPreparedBy}
+          date={date}
+          setDate={setDate}
+          isRevision={isRevision}
+          setIsRevision={setIsRevision}
+          jobPhase={jobPhase}
+          setJobPhase={setJobPhase}
+          gradientStyle={gradientStyle}
+          setGradientStyle={setGradientStyle}
+          dateFormat={dateFormat}
+          setDateFormat={setDateFormat}
+          revisionNumber={revisionNumber}
+          setRevisionNumber={setRevisionNumber}
+        />
+        <StampPreview
+          jobName={jobName}
+          jobCode={jobCode}
+          boxFolder={boxFolder}
+          boxFolderNumber={boxFolderNumber}
+          preparedFor={preparedFor}
+          preparedBy={preparedBy}
+          date={date}
+          isRevision={isRevision}
+          jobPhase={jobPhase}
+          gradientStyle={gradientStyle}
+          dateFormat={dateFormat}
+          revisionNumber={revisionNumber}
+        />
+        <StampSubmit onClick={handleSubmit} isActive={canSubmit} />
         <Footer />
-      </footer>
-    </div>
+      </div>
+    </>
   );
 }
 
