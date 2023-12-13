@@ -1,7 +1,7 @@
 import time
 
 from flask import Flask, send_from_directory, request
-import cutsheet_module as cs
+#import cutsheet_module as cs
 
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 
@@ -21,7 +21,7 @@ def serve(path):
 def post_stamp():
     data = request.get_json()
     print(data)
-    cs.run_stamp(data)
+    #cs.run_stamp(data)
     return 'Success!', 200
 
 
