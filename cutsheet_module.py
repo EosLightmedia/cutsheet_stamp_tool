@@ -4,13 +4,14 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from datetime import datetime
+from box_module import eosBox
 
 
 class Stamp:
     FORMATS = ["%Y/%m/%d", "%m/%d/%Y", "%d/%m/%Y"]
 
     def __init__(self, packet, stamp_data: dict):
-        self.box_url = stamp_data["URL"]
+        self.folder_id = stamp_data["folderId"]
         self.project_name = stamp_data["projectName"]
         self.project_number = stamp_data["projectNumber"]
         self.prepared_by = stamp_data["preparedBy"]
@@ -18,9 +19,8 @@ class Stamp:
         self.client = stamp_data["client"]
         self.is_revision = stamp_data["isRevision"]
         self.revision_number = stamp_data["revisionNumber"]
-        self.date_format = stamp_data["dateFormat"]
+        self.date = stamp_data["date"]
         self.job_phase = stamp_data["jobPhase"]
-        self.issued_date = self._date_to_string(stamp_data["issuedDate"])
 
         self.page_width, self.page_height = A4
         self.pdf_canvas = canvas.Canvas(packet)
@@ -67,35 +67,54 @@ class Stamp:
         self.pdf_canvas.drawString(300, 60, str(self.prepared_for).upper())
         self.pdf_canvas.drawString(300, 40, str(self.job_phase).upper())
 
+        # Type
+
+
         self.pdf_canvas.setFillColor('white')
         self.pdf_canvas.setFont('Karla-Medium', 10)
 
         self.pdf_canvas.drawString(
             15,
             15,
-            f"{['ISSUED DATE: ', 'REVISED DATE: '][int(self.is_revision)]}{self.issued_date}")
+            f"{['ISSUED DATE: ', 'REVISED DATE: '][int(self.is_revision)]}{self.date}")
 
         self.pdf_canvas.drawString(500, 15, f"PAGE {page_num:02} OF {page_total:02}")
 
 
 
 if __name__ == '__main__':
+
+    CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
+    CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+
+    box = eosBox(CLIENT_ID, CLIENT_SECRET, 'http://localhost:8000/api/auth')
+    print(f'url: {box.auth_url}')
+    code = input('authorization code: ')
+    box.authenticate_client(code)
+
     packet = "output.pdf"
     stamp_data = {
-        "URL": "https://example.com/box",
+        "folderId": "240776517305",
         "projectName": "Project X",
         "projectNumber": "12345",
         "preparedBy": "John Doe",
         "preparedFor": "Jane Smith",
         "client": "ACME Corp",
         "isRevision": True,
-        "revisionNumber": "2",
-        "dateFormat": 0,
+        "revisionNumber": 2,
+        "date": "DEC / 15 / 2023",
         "jobPhase": "Phase 1",
-        "issuedDate": {"year": 2022, "month": 1, "day": 15},
     }
+
+    # get items in folder
+    items = box.get_files_in_folder(stamp_data['folderId'])
+    pdfs = box.get_pdfs_in_folder(stamp_data['folderId'])
+    print(f'{len(items)} items')
+    print(f'{len(pdfs)} pdfs')
 
     stamp = Stamp(packet, stamp_data)
     img = "image.jpg"
     stamp.apply_stamp_to_img(img, 'EG01', 1, 2)
     stamp.pdf_canvas.save()
+
+
