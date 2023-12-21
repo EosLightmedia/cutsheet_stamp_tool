@@ -1,12 +1,12 @@
-import MainController from "./Components/MainController";
-import "./App.css";
+import MainController from "./Components/MainController"
+import "./App.css"
 
 function App() {
   return (
     <div className="center-container">
       <MainController />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

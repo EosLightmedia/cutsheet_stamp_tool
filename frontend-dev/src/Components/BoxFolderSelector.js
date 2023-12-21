@@ -1,37 +1,37 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 
 function URLFolderSelector({ URLFolder, setURLFolder }) {
   const defaultHelperText =
-    "Copy and paste the link (e.g., https://example.com/resource)";
-  const [helperText, setHelperText] = useState(defaultHelperText);
+    "Copy and paste the link (e.g. https://box.com/folder/20944892)"
+  const [helperText, setHelperText] = useState(defaultHelperText)
 
   const validateFolderLink = (inputUrl) => {
-    setURLFolder(inputUrl);
+    setURLFolder(inputUrl)
 
     if (inputUrl === "") {
-      setHelperText(defaultHelperText);
-      return;
+      setHelperText(defaultHelperText)
+      return
     }
     const isValidFormat =
       /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
         inputUrl
-      );
+      )
     if (isValidFormat) {
-      setHelperText("Link looks good! Nice work!");
+      setHelperText("Link looks good! Nice work!")
     } else {
-      setHelperText("Hmmm, something about that link doesn’t look right...");
+      setHelperText("Hmmm, something about that link doesn’t look right...")
     }
-  };
+  }
 
   const handleChange = (event) => {
-    const inputUrl = event.target.value;
-    validateFolderLink(inputUrl);
-  };
+    const inputUrl = event.target.value
+    validateFolderLink(inputUrl)
+  }
 
   return (
     <div className="box-folder-selector-container">
       <label htmlFor="box-folder-url" className="input-label">
-        URL:
+        Box Folder Link:
       </label>
       <input
         type="text"
@@ -39,11 +39,11 @@ function URLFolderSelector({ URLFolder, setURLFolder }) {
         className="text-input"
         value={URLFolder}
         onChange={handleChange}
-        placeholder="https://example.com/resource"
+        placeholder="https://box.com/folder/20944892"
       />
       <p className="helper-text">{helperText}</p>
     </div>
-  );
+  )
 }
 
-export default URLFolderSelector;
+export default URLFolderSelector

@@ -1,8 +1,9 @@
-import React from "react";
-import EosLogo from "../Assets/eos-logo.png";
-import AbernathyLogo from "../Assets/abernathy-logo.png";
-import PurpleGradient from "../Assets/purple-gradient.png";
-import OrangeGradient from "../Assets/orange-gradient.png";
+import React from "react"
+import EosLogo from "../Assets/eos-logo.png"
+import AbernathyLogo from "../Assets/abernathy-logo.png"
+import PurpleGradient from "../Assets/purple-gradient.png"
+import OrangeGradient from "../Assets/orange-gradient.png"
+import "../Styles/StampPreview.css"
 
 function StampPreview(props) {
   const {
@@ -14,36 +15,21 @@ function StampPreview(props) {
     isRevision,
     jobPhase,
     gradientStyle,
-    dateFormat,
     revisionNumber,
-  } = props;
+    disclaimer,
+    showPageNumbers,
+  } = props
 
-  const formatDisplayDate = (date, format) => {
-    if (!date || !date.year || !date.month || !date.day) {
-      return "No Date Selected";
-    }
-    const paddedMonth = String(date.month).padStart(2, "0");
-    const paddedDay = String(date.day).padStart(2, "0");
-    switch (format) {
-      case "YYYY/MM/DD":
-        return `${date.year}/${paddedMonth}/${paddedDay}`;
-      case "MM/DD/YYYY":
-        return `${paddedMonth}/${paddedDay}/${date.year}`;
-      case "DD/MM/YYYY":
-        return `${paddedDay}/${paddedMonth}/${date.year}`;
-      default:
-        return `${date.year}-${paddedMonth}-${paddedDay}`; // Default format
-    }
-  };
-
-  const displayDate = formatDisplayDate(date, dateFormat);
+  const formatRevisionNumber = (number) => {
+    return String(number).padStart(2, "0")
+  }
 
   const displayLogo =
     preparedBy === "Eos Lightmedia"
       ? EosLogo
       : preparedBy === "Abernathy Lighting Design"
       ? AbernathyLogo
-      : null;
+      : null
 
   const getGradientStyle = (gradient) => {
     switch (gradient) {
@@ -53,20 +39,37 @@ function StampPreview(props) {
           backgroundPosition: "bottom left",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
-        };
+        }
       case "Yellow/Green":
         return {
           backgroundImage: `url(${OrangeGradient})`,
           backgroundPosition: "bottom left",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
-        };
+        }
       default:
-        return {};
+        return {}
     }
-  };
+  }
 
-  const previewStyle = getGradientStyle(gradientStyle);
+  console.log(disclaimer)
+
+  const previewStyle = getGradientStyle(gradientStyle)
+
+  const getDisclaimerText = (disclaimerValue) => {
+    switch (disclaimerValue) {
+      case "1":
+        return "This document is for bid purposes only."
+      case "2":
+        return "This document is for review and not for construction."
+      case "3":
+        return "This is a generic disclaimer."
+      default:
+        return ""
+    }
+  }
+
+  const disclaimerText = getDisclaimerText(disclaimer)
 
   return (
     <div className="content-div">
@@ -81,43 +84,59 @@ function StampPreview(props) {
         <div className="second-column">
           <div className="info-grid">
             <p>
-              Project Name <span className="value">{jobName}</span>
+              <span className="label">Project Name</span>
+              <span className="value">{jobName}</span>
             </p>
             <p>
-              Job Code <span className="value">{jobCode}</span>
+              <span className="label">Job Code</span>
+              <span className="value">{jobCode}</span>
             </p>
             <p>
-              Prepared For <span className="value">{preparedFor}</span>
+              <span className="label">Prepared For</span>
+              <span className="value">{preparedFor}</span>
             </p>
-
             <p>
-              Project Phase <span className="value">{jobPhase}</span>
+              <span className="label">Project Phase</span>
+              <span className="value">{jobPhase}</span>
             </p>
           </div>
         </div>
         {displayLogo && (
           <img className="preview-logo" src={displayLogo} alt="Company Logo" />
         )}
+        <div className="disclaimer-div">
+          <div className="disclaimer-div-content">
+            <p>
+              <em>{disclaimerText}</em>{" "}
+            </p>
+          </div>
+        </div>
       </div>
+
       <div className="preview-footer">
         <div className="footer-content">
           <p>
             {isRevision ? "Revision Date" : "Issued Date"}:{" "}
-            <span className="footer-value">{displayDate}</span>
+            <span className="footer-value">{date}</span>
             {isRevision && (
               <>
                 {"  |  "}
-                Revision <span className="footer-value">{revisionNumber}</span>
+                Rev:{" "}
+                <span className="footer-value">
+                  {formatRevisionNumber(revisionNumber)}
+                </span>
               </>
             )}
           </p>
-          <p>
-            Page <strong>XX</strong> of <strong>XX</strong>
-          </p>
+          {showPageNumbers && (
+            <p>
+              Page <strong>XX</strong> of <strong>XX</strong>
+            </p>
+          )}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default StampPreview;
+export default StampPreview

@@ -1,19 +1,19 @@
-import React from "react";
+import React from "react"
 
 function RevisionNumberSelector({ revisionNumber, setRevisionNumber }) {
   const handleChange = (event) => {
-    const number = parseInt(event.target.value, 10);
+    const number = parseInt(event.target.value, 10)
     if (!isNaN(number)) {
-      setRevisionNumber(number);
+      setRevisionNumber(number)
     } else {
-      setRevisionNumber(1);
+      setRevisionNumber(1)
     }
-  };
+  }
 
   return (
     <div className="revision-number-container">
       <label htmlFor="revision-number" className="input-label">
-        Revision Number:
+        Revision #:
       </label>
       <input
         type="number"
@@ -24,7 +24,7 @@ function RevisionNumberSelector({ revisionNumber, setRevisionNumber }) {
         min="1"
       />
     </div>
-  );
+  )
 }
 
-export default RevisionNumberSelector;
+export default RevisionNumberSelector

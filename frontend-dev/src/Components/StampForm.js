@@ -1,14 +1,15 @@
-import React from "react";
-import PreparedBySelector from "./PreparedBySelector";
-import TextInput from "./TextInput";
-import Dropdown from "./Dropdown";
-import DateSelector from "./DateSelector";
-import RevisionSelector from "./RevisionSelector";
-import DateFormatSelector from "./DateFormatSelector";
-import GradientSelector from "./GradientSelector";
-import RevisionNumberSelector from "./RevisionNumberSelector";
-import URLFolderSelector from "./BoxFolderSelector";
-import StampLogo from "../Assets/stamp-logo.png";
+import React from "react"
+import PreparedBySelector from "./PreparedBySelector"
+import TextInput from "./TextInput"
+import Dropdown from "./Dropdown"
+import DateSelector from "./DateSelector"
+import RevisionSelector from "./RevisionSelector"
+import GradientSelector from "./GradientSelector"
+import RevisionNumberSelector from "./RevisionNumberSelector"
+import URLFolderSelector from "./BoxFolderSelector"
+import PackageSettings from "./PackageSettings"
+import PageNumberSelector from "./PageNumberSelector"
+import StampLogo from "../Assets/stamp-logo.png"
 
 function StampForm(props) {
   const {
@@ -26,22 +27,26 @@ function StampForm(props) {
     setDate,
     isRevision,
     setIsRevision,
-    jobPhase,
-    setJobPhase,
     gradientStyle,
     setGradientStyle,
-    dateFormat,
-    setDateFormat,
+    note,
+    setNote,
     revisionNumber,
     setRevisionNumber,
-  } = props;
+    isPackagePDFs,
+    setIsPackagePDFs,
+    disclaimer,
+    setDisclaimer,
+    showPageNumbers,
+    setShowPageNumbers,
+  } = props
 
-  const jobPhaseOptions = [
-    { label: "Select One", value: "" },
-    { label: "For Bid", value: "For Bid" },
-    { label: "For Review", value: "For Review" },
-    { label: "Coordination", value: "Coordination" },
-  ];
+  const disclaimerOptions = [
+    { label: "No Disclaimer", value: 0 },
+    { label: "Disclaimer 1", value: 1 },
+    { label: "Disclaimer 2", value: 2 },
+    { label: "Disclaimer 3", value: 3 },
+  ]
 
   return (
     <div className="content-div form-container">
@@ -68,18 +73,21 @@ function StampForm(props) {
           placeHolder={"Client"}
           onChange={(e) => setPreparedFor(e.target.value)}
         />
-        <Dropdown
+        <TextInput
           label="Job Phase"
-          value={jobPhase}
-          onChange={(e) => setJobPhase(e.target.value)}
-          options={jobPhaseOptions}
+          value={note}
+          placeHolder={"Job Phase"}
+          onChange={(e) => setNote(e.target.value)}
+        />
+        <Dropdown
+          label="Disclaimer"
+          value={disclaimer}
+          placeHolder={"Job Phase"}
+          onChange={(e) => setDisclaimer(e.target.value)}
+          options={disclaimerOptions}
         />
         <h2 className="form-section-title">Date</h2>
-        <DateSelector selectedDate={date} setSelectedDate={setDate} />
-        <DateFormatSelector
-          dateFormat={dateFormat}
-          setDateFormat={setDateFormat}
-        />
+        <DateSelector setSelectedDate={setDate} />
         <div className="revision-section">
           <h2 className="form-section-title">Revision</h2>
           <div className="revision-controls">
@@ -95,7 +103,16 @@ function StampForm(props) {
             )}
           </div>
         </div>
-        <h2 className="form-section-title">Style Settings</h2>
+        <h2 className="form-section-title">Package Settings</h2>
+        <PackageSettings
+          isPackagePDFs={isPackagePDFs}
+          setIsPackagePDFs={setIsPackagePDFs}
+        />
+        <PageNumberSelector
+          showPageNumbers={showPageNumbers}
+          isPackagePDFs={isPackagePDFs}
+          setShowPageNumbers={setShowPageNumbers}
+        />
         <GradientSelector
           gradient={gradientStyle}
           setGradient={setGradientStyle}
@@ -104,7 +121,7 @@ function StampForm(props) {
         <URLFolderSelector URLFolder={URLFolder} setURLFolder={setURLFolder} />
       </div>
     </div>
-  );
+  )
 }
 
-export default StampForm;
+export default StampForm
