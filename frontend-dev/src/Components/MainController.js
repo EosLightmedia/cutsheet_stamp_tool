@@ -34,7 +34,7 @@ function MainController() {
 
   const handleSubmit = () => {
     function extractFolderNumber(url) {
-      const regex = /https:\/\/box\.com\/folder\/(\d+)/
+      const regex = /https:\/\/eoslightmedia\.app\.box\.com\/folder\/(\d+)/
       const match = url.match(regex)
       return match ? match[1] : null
     }
