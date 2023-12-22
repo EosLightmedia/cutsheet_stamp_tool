@@ -79,7 +79,7 @@ function MainController() {
     }
 
     axios
-      .post("/post-stamp", formData)
+      .post("/api/stamp", formData)
       .then((response) => {
         console.log("Data submitted successfully:", response.data)
       })
