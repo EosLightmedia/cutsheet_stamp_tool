@@ -93,8 +93,9 @@
 .helper-text {
   grid-column: 2;
   margin-top: 0;
-  font-size: 0.8em;
+  font-size: 0.75em;
   color: #6c757d;
+  overflow: display;
 }
 
 h2.form-section-title {
