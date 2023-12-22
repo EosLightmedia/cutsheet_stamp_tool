@@ -25,7 +25,7 @@ def index():
     return send_from_directory(app.static_folder, 'index.html')
 
 
-@app.route('/api/folder_check', methods=["GET", "POST"])
+@app.route('/api/folder-info', methods=["POST"])
 def check_folder_contents():
     folder = request.args.get('folderId')
     files = box.get_files_in_folder(folder)
@@ -35,7 +35,11 @@ def check_folder_contents():
 @app.route('/api/stamp', methods=['POST'])
 def post_stamp():
     data = request.get_json()
-    Stamp.apply_stamp_to_img(data)
+    stamp = Stamp(data)
+    pdfs = box.get_pdfs_in_folder(stamp.folder_id)
+    print(f'pdfs: {pdfs}')
+    for pdf in pdfs:
+        stamp.apply_stamp_to_img(pdf['image'], pdf['name'], 0, 1)
     return 'Success!', HTTP_STATUS_SUCCESS
 
 

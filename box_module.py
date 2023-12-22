@@ -1,8 +1,9 @@
 from boxsdk import OAuth2, Client
 import logging
 import fitz
-logging.basicConfig(level=logging.DEBUG)
+from io import BytesIO
 
+logging.basicConfig(level=logging.DEBUG)
 
 
 class eosBox:
@@ -26,16 +27,17 @@ class eosBox:
 
     def _convert_pdf_to_png(self, pdf_file):
         # Create a fitz document object
-        doc = fitz.open(stream=pdf_file, filetype='pdf')
+        doc = fitz.Document(stream=pdf_file, filetype='pdf')
         images = []
 
         for i in range(len(doc)):
             # Render page to an image
-            pix = doc[i].get_pixmap()
+            page = doc.load_page(i)
+            render = page.render()
 
             # Save the image as a PNG
             output = BytesIO()
-            pix.writePNG(output)
+            render.writePNG(output)
             images.append(output)
 
         return images
@@ -59,11 +61,9 @@ class eosBox:
         for item in folder.get_items():
             if item.type == 'file' and item.name.endswith('.pdf'):
                 pdf_file = self.client.file(item.id).content()
-                png_files = self._convert_pdf_to_png(pdf_file)
+                png_file = self._convert_pdf_to_png(pdf_file)
                 pdfs.append({
                     'name': item.name,
-                    'data': pdf_file,
-                    'images': png_files
+                    'image': png_file
                 })
         return pdfs
-

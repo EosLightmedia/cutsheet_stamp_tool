@@ -5,25 +5,30 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from datetime import datetime
 from box_module import eosBox
+from io import BytesIO
 
 
 class Stamp:
     FORMATS = ["%Y/%m/%d", "%m/%d/%Y", "%d/%m/%Y"]
 
-    def __init__(self, packet, stamp_data: dict):
-        self.folder_id = stamp_data["folderId"]
+    def __init__(self, stamp_data: dict):
+
+        print(f'stamp_data: {stamp_data}')
+
+        self.buffer = BytesIO()
+        self.folder_id = stamp_data["folderID"]
         self.project_name = stamp_data["projectName"]
         self.project_number = stamp_data["projectNumber"]
         self.prepared_by = stamp_data["preparedBy"]
         self.prepared_for = stamp_data["preparedFor"]
-        self.client = stamp_data["client"]
         self.is_revision = stamp_data["isRevision"]
         self.revision_number = stamp_data["revisionNumber"]
         self.date = stamp_data["date"]
-        self.job_phase = stamp_data["jobPhase"]
+        self.note = stamp_data["note"]
 
         self.page_width, self.page_height = A4
-        self.pdf_canvas = canvas.Canvas(packet)
+        self.pdf_canvas = canvas.Canvas(self.buffer)
+
         pdfmetrics.registerFont(TTFont('Karla-Medium', 'static/karla-medium.ttf'))
         self.pdf_canvas.setFont('Karla-Medium', 12)
 
@@ -94,7 +99,7 @@ if __name__ == '__main__':
 
     packet = "output.pdf"
     stamp_data = {
-        "folderId": "240776517305",
+        "folderID": "240776517305",
         "projectName": "Project X",
         "projectNumber": "12345",
         "preparedBy": "John Doe",
@@ -112,7 +117,7 @@ if __name__ == '__main__':
     print(f'{len(items)} items')
     print(f'{len(pdfs)} pdfs')
 
-    stamp = Stamp(packet, stamp_data)
+    stamp = Stamp(stamp_data)
     img = "image.jpg"
     stamp.apply_stamp_to_img(img, 'EG01', 1, 2)
     stamp.pdf_canvas.save()
