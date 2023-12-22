@@ -59,7 +59,7 @@ class eosBox:
         for item in folder.get_items():
             if item.type == 'file' and item.name.endswith('.pdf'):
                 pdf_file = self.client.file(item.id).content()
-                png_files = self.convert_pdf_to_png(pdf_file)
+                png_files = self._convert_pdf_to_png(pdf_file)
                 pdfs.append({
                     'name': item.name,
                     'data': pdf_file,

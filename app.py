@@ -1,25 +1,21 @@
-import time
-
-from flask import Flask, send_from_directory, request, session, redirect, url_for
+from flask import Flask, send_from_directory, request, redirect
 from box_module import eosBox
 from cutsheet_module import Stamp
 
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
-
 CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
 CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+CALLBACK_URL = 'http://localhost:8000/'
 
-box = eosBox(CLIENT_ID, CLIENT_SECRET, 'http://localhost:8000/')
-print(f'url: {box.auth_url}')
+box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
     code = request.args.get('code')
-    # If 'code' is None, redirect client to the Box authentication URL
-    if code is None:
+    if not code:
         return redirect(box.auth_url)
-    # Once 'code' is provided, authenticate the client
+
     try:
         box.authenticate_client(code)
     except Exception as e:
@@ -30,25 +26,19 @@ def index():
 
 
 @app.route('/api/folder_check', methods=["GET", "POST"])
-def folder_check():
+def check_folder_contents():
     folder = request.args.get('folderId')
     files = box.get_files_in_folder(folder)
-    return files, 200
+    return files, HTTP_STATUS_SUCCESS
 
 
 @app.route('/api/stamp', methods=['POST'])
 def post_stamp():
     data = request.get_json()
-    print(data)
     Stamp.apply_stamp_to_img(data)
-    return 'Success!', 200
-
-
-# This route is needed for the default path for all other routes not defined above
-# @app.route('/<path:path>')
-# def serve(path):
-#     return send_from_directory(app.static_folder, 'index.html')
+    return 'Success!', HTTP_STATUS_SUCCESS
 
 
 if __name__ == "__main__":
+    HTTP_STATUS_SUCCESS = 200
     app.run(port=8000, debug=False)
