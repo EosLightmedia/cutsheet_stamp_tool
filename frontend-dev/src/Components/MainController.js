@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import StampForm from "./StampForm"
 import StampPreview from "./StampPreview"
 import StampSubmit from "./StampSubmit"
+import ProcessingPage from "./ProcessingPage"
 import Footer from "./Footer"
 import axios from "axios"
 
@@ -20,6 +21,7 @@ function MainController() {
   const [showPageNumbers, setShowPageNumbers] = useState(false)
   const [isPackagePDFs, setIsPackagePDFs] = useState(false)
   const [disclaimer, setDisclaimer] = useState(0)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [canSubmit, setCanSubmit] = useState(false)
 
   useEffect(() => {
@@ -33,8 +35,9 @@ function MainController() {
   }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
 
   const handleSubmit = () => {
+    setIsProcessing(true)
     function extractFolderNumber(url) {
-      const regex = /https:\/\/box\.com\/folder\/(\d+)/
+      const regex = /https:\/\/eoslightmedia\.app\.box\.com\/folder\/(\d+)/
       const match = url.match(regex)
       return match ? match[1] : null
     }
@@ -79,7 +82,7 @@ function MainController() {
     }
 
     axios
-      .post("/post-stamp", formData)
+      .post("/api/stamp", formData)
       .then((response) => {
         console.log("Data submitted successfully:", response.data)
       })
@@ -92,6 +95,7 @@ function MainController() {
 
   return (
     <>
+      {isProcessing && <ProcessingPage setIsProcessing={setIsProcessing} />}
       <div className="all-app-content">
         <StampForm
           jobName={jobName}
