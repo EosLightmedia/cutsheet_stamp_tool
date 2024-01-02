@@ -1,6 +1,7 @@
 from boxsdk import OAuth2, Client
 import logging
 import fitz
+import datetime
 from io import BytesIO
 from PIL import Image
 
@@ -78,3 +79,15 @@ class eosBox:
                 })
 
         return pdfs, page_count
+
+    def save_file_to_box(self, file: bytes, file_name: str, folder_id: str):
+        # Create new folder with current time stamp
+        current_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')  # Format: YYYYMMDDHHMMSS
+        new_folder_name = f'Exported PDFs_{current_time}'
+        exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(new_folder_name)
+
+        # Create a file-like object from the bytes
+        file_object = BytesIO(file)
+
+        # Upload file object to new folder
+        exported_pdfs_folder.upload_stream(file_object, file_name)

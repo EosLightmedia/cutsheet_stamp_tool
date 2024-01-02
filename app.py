@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, redirect, make_response
+from flask import Flask, send_from_directory, request, redirect, Response
 from box_module import eosBox
 from cutsheet_module import Stamp
 import logging
@@ -53,10 +53,10 @@ def post_stamp():
             stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)
 
     pdf_data = stamp.save_pdf()
-    response = make_response(pdf_data)
-    response.headers.set('Content-Type', 'application/pdf')
-    response.headers.set('Content-Disposition', 'attachment', filename='output.pdf')
-    return response
+    box.save_file_to_box(pdf_data, "exported.pdf", stamp.folder_id)
+    return Response("Success", status=HTTP_STATUS_SUCCESS)
+
+
 
 if __name__ == "__main__":
     HTTP_STATUS_SUCCESS = 200
