@@ -1,6 +1,8 @@
-from flask import Flask, send_from_directory, request, redirect
+from flask import Flask, send_from_directory, request, redirect, make_response
 from box_module import eosBox
 from cutsheet_module import Stamp
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
@@ -34,14 +36,27 @@ def check_folder_contents():
 
 @app.route('/api/stamp', methods=['POST'])
 def post_stamp():
+    logging.info('Stamping...')
     data = request.get_json()
+    logging.debug(f'json data: {data}')
     stamp = Stamp(data)
-    pdfs = box.get_pdfs_in_folder(stamp.folder_id)
-    print(f'pdfs: {pdfs}')
-    for pdf in pdfs:
-        stamp.apply_stamp_to_img(pdf['image'], pdf['name'], 0, 1)
-    return 'Success!', HTTP_STATUS_SUCCESS
+    pdfs, page_count = box.get_pdfs_in_folder(stamp.folder_id)
+    logging.info(f'{len(pdfs)} PDFs, and {page_count} pages')
+    page_number = 0
 
+    for i in range(len(pdfs)):
+        pdf = pdfs[i]
+        for j in range(len(pdf['images'])):
+            page_number += 1
+            image = pdf['images'][j]
+            logging.debug(f"Applying page {page_number}, with {pdf['name']}")
+            stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)
+
+    pdf_data = stamp.save_pdf()
+    response = make_response(pdf_data)
+    response.headers.set('Content-Type', 'application/pdf')
+    response.headers.set('Content-Disposition', 'attachment', filename='output.pdf')
+    return response
 
 if __name__ == "__main__":
     HTTP_STATUS_SUCCESS = 200

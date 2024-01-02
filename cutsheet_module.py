@@ -32,20 +32,14 @@ class Stamp:
         pdfmetrics.registerFont(TTFont('Karla-Medium', 'static/karla-medium.ttf'))
         self.pdf_canvas.setFont('Karla-Medium', 12)
 
-    def _date_to_string(self, date_dict: dict):
-        year = int(date_dict['year'])
-        month = int(date_dict['month'])
-        day = int(date_dict['day'])
-        date = datetime(year, month, day)
-        return date.strftime(self.FORMATS[self.date_format])
-
     def _draw_box(self, origin: tuple, size: tuple, color):
         self.pdf_canvas.setFillColor(color)
         self.pdf_canvas.rect(origin[0], origin[1], size[0], size[1], fill=True)
+
     def _get_logo(self):
-        if self.client == 0:
+        if self.prepared_by == 0:
             return "eos-logo.png"
-        elif self.client == 1:
+        elif self.prepared_by == 1:
             return "abn-logo.png"
 
     def _place_logo(self):
@@ -70,10 +64,9 @@ class Stamp:
         self.pdf_canvas.drawString(300, 100, str(self.project_name).upper())
         self.pdf_canvas.drawString(300, 80, str(self.project_number).upper())
         self.pdf_canvas.drawString(300, 60, str(self.prepared_for).upper())
-        self.pdf_canvas.drawString(300, 40, str(self.job_phase).upper())
+        self.pdf_canvas.drawString(300, 40, str(self.note).upper())
 
         # Type
-
 
         self.pdf_canvas.setFillColor('white')
         self.pdf_canvas.setFont('Karla-Medium', 10)
@@ -85,10 +78,16 @@ class Stamp:
 
         self.pdf_canvas.drawString(500, 15, f"PAGE {page_num:02} OF {page_total:02}")
 
+        self.pdf_canvas.showPage()
+
+    def save_pdf(self):
+        self.pdf_canvas.save()
+        pdf_bytes = self.buffer.getvalue()
+        self.buffer.close()
+        return pdf_bytes
 
 
 if __name__ == '__main__':
-
     CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
     CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
 
@@ -121,5 +120,3 @@ if __name__ == '__main__':
     img = "image.jpg"
     stamp.apply_stamp_to_img(img, 'EG01', 1, 2)
     stamp.pdf_canvas.save()
-
-
