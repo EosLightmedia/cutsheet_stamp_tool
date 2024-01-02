@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 function URLFolderSelector({ URLFolder, setURLFolder }) {
   const defaultHelperText =
-    "Copy and paste the link (e.g. https://box.com/folder/20944892)"
+    "Paste Box link here (e.g. https://eoslightmedia.app.box.com/folder/240776517305)"
   const [helperText, setHelperText] = useState(defaultHelperText)
 
   const validateFolderLink = (inputUrl) => {
@@ -39,7 +39,7 @@ function URLFolderSelector({ URLFolder, setURLFolder }) {
         className="text-input"
         value={URLFolder}
         onChange={handleChange}
-        placeholder="https://box.com/folder/20944892"
+        placeholder="https://eoslightmedia.app.box.com/folder/240776517305"
       />
       <p className="helper-text">{helperText}</p>
     </div>
