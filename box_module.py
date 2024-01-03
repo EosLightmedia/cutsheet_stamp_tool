@@ -63,6 +63,9 @@ class eosBox:
         return items
 
     def get_pdfs_in_folder(self, folder_id):
+        if self.client is None:
+            logging.warning('Client not authenticated yet')
+            return None
         folder = self.client.folder(folder_id).get()
         pdfs = []
         page_count = 0
