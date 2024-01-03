@@ -15,7 +15,12 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
 
     for i in range(len(doc)):
         page = doc.load_page(i)
-        render = page.get_pixmap()
+        # zoom factor is 2.0 here
+        zoom_factor = 2.0
+        # create a matrix for transformation
+        mat = fitz.Matrix(zoom_factor, zoom_factor)
+        # get pixmap with the transformation matrix
+        render = page.get_pixmap(matrix=mat)
 
         # convert fitz.Pixmap/render to a PIL.Image object
         pil_img = Image.frombytes("RGB", (render.width, render.height), render.samples)

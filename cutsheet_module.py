@@ -47,13 +47,21 @@ class Stamp:
         logo_img = ImageReader(logo)
         self.pdf_canvas.drawImage(logo_img, self.page_width - 100, 10, 80, 80)
 
-    def apply_stamp_to_img(self, device_img, device_type: str, page_num: int, page_total: int):
+    def apply_stamp_to_img(self, page_image_bytes, pdf_name: str, page_num: int, page_total: int):
+        # Place image
+        scale = 0.85
+        pdf_image = ImageReader(page_image_bytes)
+        self.pdf_canvas.drawImage(pdf_image, self.page_width * 0.075, self.page_height * 0.15, self.page_width * scale, self.page_height * scale)
+
+
+
+        # Draw footer
         self._draw_box((0, 0), (self.page_width, self.page_height * 0.15), 'black')
         self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
 
         self.pdf_canvas.setFillColor('grey')
 
-        self.pdf_canvas.drawString(15, 110, 'TYPE')
+        self.pdf_canvas.drawString(10, 105, 'TYPE')
         self.pdf_canvas.drawString(200, 100, 'PROJECT NAME')
         self.pdf_canvas.drawString(200, 80, 'JOB CODE')
         self.pdf_canvas.drawString(200, 60, 'PREPARED FOR')
@@ -61,12 +69,15 @@ class Stamp:
 
         self.pdf_canvas.setFillColor('black')
 
-        self.pdf_canvas.drawString(300, 100, str(self.project_name).upper())
-        self.pdf_canvas.drawString(300, 80, str(self.project_number).upper())
-        self.pdf_canvas.drawString(300, 60, str(self.prepared_for).upper())
-        self.pdf_canvas.drawString(300, 40, str(self.note).upper())
+        self.pdf_canvas.drawString(350, 100, str(self.project_name).upper())
+        self.pdf_canvas.drawString(350, 80, str(self.project_number).upper())
+        self.pdf_canvas.drawString(350, 60, str(self.prepared_for).upper())
+        self.pdf_canvas.drawString(350, 40, str(self.note).upper())
 
         # Type
+        type_label = pdf_name.split('-')[0]
+        self.pdf_canvas.setFont('Karla-Medium', 60)
+        self.pdf_canvas.drawString(10, 50, str(type_label).upper())
 
         self.pdf_canvas.setFillColor('white')
         self.pdf_canvas.setFont('Karla-Medium', 10)
