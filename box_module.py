@@ -8,7 +8,6 @@ from PIL import Image
 logging.basicConfig(level=logging.DEBUG, )
 
 
-
 def _convert_pdf_to_png(pdf_file: object) -> list:
     doc = fitz.Document(stream=pdf_file, filetype='pdf')
     logging.debug(f'\tFound {len(doc)} pages')
@@ -19,11 +18,11 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
         render = page.get_pixmap()
 
         # convert fitz.Pixmap/render to a PIL.Image object
-        pil_img = Image.frombytes("RGB", [render.width, render.height], render.samples)
+        pil_img = Image.frombytes("RGB", (render.width, render.height), render.samples)
         output = BytesIO()
         pil_img.save(output, 'png')
         images.append(output)
-
+        print(images)
     return images
 
 
