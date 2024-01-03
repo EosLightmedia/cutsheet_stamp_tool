@@ -1,0 +1,17 @@
+POST http://localhost:8000/api/stamp
+Content-Type: application/json
+
+{
+    "folderID": "240776517305",
+    "projectName": "Project X",
+    "projectNumber": "Code",
+    "preparedBy": 0,
+    "preparedFor": "Jane Smith",
+    "note": "Phase",
+    "isRevision": true,
+    "revisionNumber": 2,
+    "date": "DEC / 15 / 2023",
+    "gradient": 1,
+    "disclaimer": 1,
+    "packageSet": true
+}
