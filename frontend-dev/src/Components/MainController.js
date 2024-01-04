@@ -143,6 +143,7 @@ function MainController() {
           showPageNumbers={showPageNumbers}
         />
         <StampSubmit onClick={handleSubmit} isActive={true} />
+
         <Footer />
       </div>
     </>
