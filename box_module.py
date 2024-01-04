@@ -88,10 +88,22 @@ class eosBox:
         return pdfs, page_count
 
     def save_file_to_box(self, file: bytes, file_name: str, folder_id: str):
-        # Create new folder with current time stamp
-        current_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')  # Format: YYYYMMDDHHMMSS
-        new_folder_name = f'Exported PDFs_{current_time}'
-        exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(new_folder_name)
+        # Set folder name to be used
+        folder_name = 'Stamp Exports'
+
+        # Get the list of items (folders and files) in the parent folder
+        items = self.client.folder(folder_id).get_items()
+
+        # Try to find the folder with matching name
+        exported_pdfs_folder = None
+        for item in items:
+            if item.type == 'folder' and item.name == folder_name:
+                exported_pdfs_folder = self.client.folder(item.object_id)
+                break
+
+        # If the folder was not found, create it
+        if exported_pdfs_folder is None:
+            exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(folder_name)
 
         # Create a file-like object from the bytes
         file_object = BytesIO(file)

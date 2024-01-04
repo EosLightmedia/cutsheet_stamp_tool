@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory, request, redirect, Response
 from box_module import eosBox
 from cutsheet_module import Stamp
+from datetime import datetime
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -52,8 +53,9 @@ def post_stamp():
             logging.debug(f"Applying page {page_number}, with {pdf['name']}")
             stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)
 
+    current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
     pdf_data = stamp.save_pdf()
-    box.save_file_to_box(pdf_data, "exported.pdf", stamp.folder_id)
+    box.save_file_to_box(pdf_data, f"cutsheet_{current_time}.pdf", stamp.folder_id)
     return Response("Success", status=HTTP_STATUS_SUCCESS)
 
 
