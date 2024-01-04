@@ -131,3 +131,4 @@ class eosBox:
 
         # Upload file object to new folder
         exported_pdfs_folder.upload_stream(file_object, file_name)
+        return exported_pdfs_folder.id

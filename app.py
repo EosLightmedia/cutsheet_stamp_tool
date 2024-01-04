@@ -28,7 +28,7 @@ def index():
     return send_from_directory(app.static_folder, 'index.html')
 
 
-@app.route('/api/folder-info/<folderID>', methods=["GET"])
+@app.route('/api/folder/<folderID>', methods=["GET"])
 def check_folder_contents(folderID):
     files = box.get_files_in_folder(folderID)
 
@@ -56,11 +56,11 @@ def post_stamp():
 
         current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
         pdf_data = stamp.save_pdf()
-        box.save_file_to_box(pdf_data, f"cutsheet_{current_time}.pdf", stamp.folder_id)
+        saved_folder_id = box.save_file_to_box(pdf_data, f"cutsheet_{current_time}.pdf", stamp.folder_id)
     except Exception as e:
-        return Response("Error", status=HTTP_STATUS_SUCCESS)
+        return Response(f"\nPython Error: {e}", status=HTTP_STATUS_SUCCESS)
 
-    return Response("Success", status=HTTP_STATUS_SUCCESS)
+    return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)
 
 
 
