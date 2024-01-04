@@ -52,8 +52,6 @@ function StampPreview(props) {
     }
   }
 
-  console.log(disclaimer)
-
   const previewStyle = getGradientStyle(gradientStyle)
 
   const getDisclaimerText = (disclaimerValue) => {

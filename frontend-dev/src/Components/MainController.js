@@ -22,6 +22,7 @@ function MainController() {
   const [isPackagePDFs, setIsPackagePDFs] = useState(false)
   const [disclaimer, setDisclaimer] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [foundPDFs, setFoundPDFs] = useState([])
   const [canSubmit, setCanSubmit] = useState(false)
 
   useEffect(() => {
@@ -30,9 +31,13 @@ function MainController() {
     const isValidLink = urlRegex.test(URLFolder)
     const areRequiredFieldsFilled =
       jobName && jobCode && preparedFor && jobPhase && isValidLink
-
     setCanSubmit(areRequiredFieldsFilled)
   }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
+
+  useEffect(() => {
+    console.log(foundPDFs)
+    console.log(URLFolder)
+  }, [foundPDFs, URLFolder])
 
   const handleSubmit = () => {
     setIsProcessing(true)
@@ -126,6 +131,8 @@ function MainController() {
           setShowPageNumbers={setShowPageNumbers}
           disclaimer={disclaimer}
           setDisclaimer={setDisclaimer}
+          foundPDFs={foundPDFs}
+          setFoundPDFs={setFoundPDFs}
         />
         <StampPreview
           jobName={jobName}
@@ -143,6 +150,7 @@ function MainController() {
           showPageNumbers={showPageNumbers}
         />
         <StampSubmit onClick={handleSubmit} isActive={true} />
+
         <Footer />
       </div>
     </>
