@@ -3,6 +3,7 @@ import StampForm from "./StampForm"
 import StampPreview from "./StampPreview"
 import StampSubmit from "./StampSubmit"
 import ProcessingPage from "./ProcessingPage"
+import Banner from "./Banner"
 import Footer from "./Footer"
 import axios from "axios"
 
@@ -21,8 +22,10 @@ function MainController() {
   const [showPageNumbers, setShowPageNumbers] = useState(false)
   const [isPackagePDFs, setIsPackagePDFs] = useState(false)
   const [disclaimer, setDisclaimer] = useState(0)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [createdFolderNumber, setCreatedFolderNumber] = useState()
   const [foundPDFs, setFoundPDFs] = useState([])
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [bannerIsVisible, setBannerIsVisible] = useState(false)
   const [canSubmit, setCanSubmit] = useState(false)
 
   useEffect(() => {
@@ -89,18 +92,29 @@ function MainController() {
     axios
       .post("/api/stamp", formData)
       .then((response) => {
-        console.log("Data submitted successfully:", response.data)
+        console.log("Newly Created Folder:", response.data)
+        setCreatedFolderNumber(response.data) // Update the created folder number
+        setIsProcessing(false) // Hide the processing page
+        setBannerIsVisible(true) // Show the banner with the success message
       })
       .catch((error) => {
         console.error("There was an error submitting the form:", error)
+        setIsProcessing(false) // Hide the processing page on error
+        setBannerIsVisible(true) // Optionally show the banner with the error message
+        // You might want to set a state indicating an error occurred
+        // and use that state in the Banner component to show the appropriate message
       })
-
-    console.log(formData)
   }
 
   return (
     <>
       {isProcessing && <ProcessingPage setIsProcessing={setIsProcessing} />}
+      {bannerIsVisible && (
+        <Banner
+          createdFolderNumber={createdFolderNumber}
+          setBannerIsVisible={setBannerIsVisible}
+        />
+      )}
       <div className="all-app-content">
         <StampForm
           jobName={jobName}
