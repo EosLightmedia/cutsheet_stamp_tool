@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "name": "archive",
+      "type": "folder"
+    },
+    {
+      "name": "Gobos",
+      "type": "folder"
+    },
+    {
+      "name": "Stamp Exports",
+      "type": "folder"
+    },
+    {
+      "name": "zzCUT",
+      "type": "folder"
+    },
+    {
+      "name": "L01 - LiteLab a01.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L02 - LiteLab a04.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L04 - Gantom DMX Spot.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L05 - DLC LumiSheet.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L06 - Altman Micro Par.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L06a - Soraa Par 20 lamp.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "T01 - LiteLab bus- 08h.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "T02 - LiteLab bus-13.pdf",
+      "type": "pdf"
+    }
+  ],
+  "path": "02-Projects/PMV - Port Metro Vancouver Upgrades/01-Design/05-Cutsheets/LX/New Spec"
+}

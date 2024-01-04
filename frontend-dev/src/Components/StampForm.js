@@ -39,6 +39,8 @@ function StampForm(props) {
     setDisclaimer,
     showPageNumbers,
     setShowPageNumbers,
+    foundPDFs,
+    setFoundPDFs,
   } = props
 
   const disclaimerOptions = [
@@ -118,7 +120,12 @@ function StampForm(props) {
           setGradient={setGradientStyle}
         />
         <h2 className="form-section-title">Box Details</h2>
-        <URLFolderSelector URLFolder={URLFolder} setURLFolder={setURLFolder} />
+        <URLFolderSelector
+          URLFolder={URLFolder}
+          setURLFolder={setURLFolder}
+          foundPDFs={foundPDFs}
+          setFoundPDFs={setFoundPDFs}
+        />
       </div>
     </div>
   )
