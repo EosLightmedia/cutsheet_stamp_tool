@@ -64,72 +64,102 @@
 
 .processing-page-content {
   background-color: white;
-  padding: 40px 80px;
+  padding: 40px 60px;
   padding-bottom: 50px;
   text-align: center;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.1);
 }
 
-.processing-page-content h3 {
-  z-index: 1000;
-  font-size: 1.8em !important;
-  font-weight: 700;
-  margin-bottom: 20px;
+.loading-spinner {
+  margin-top: 10px;
+  width: 40px;
 }
 
-.processing-page-content p {
-  z-index: 1000;
-  font-size: 1.2em;
+.large-pop-up-text {
+  font-size: 1.5em;
+  font-weight: 500;
   margin-bottom: 10px;
 }
 
-.countdown-timer {
-  font-size: 2em !important;
-  line-height: 0;
-  margin-bottom: 10px;
+.small-pop-up-text {
+  font-size: 0.85em;
+  color: #6c757d;
+  margin-top: 10px;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ellipsis > span {
+  opacity: 0;
+  animation: flash 1.5s infinite;
 }
 
-@-webkit-keyframes rotate {
-  from {
-    -webkit-transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(360deg);
-  }
+.ellipsis > span:nth-child(1) {
+  animation-delay: 0s;
 }
 
-.load {
-  width: 20px;
-  height: 20px;
-  margin: 10px auto 0;
-  border: solid 3px #4b4b4b;
-  border-radius: 50%;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  -webkit-transition: all 0.5s ease-in;
-  -webkit-animation-name: rotate;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
+.ellipsis > span:nth-child(2) {
+  animation-delay: 0.5s;
+}
 
-  transition: all 0.5s ease-in;
-  animation-name: rotate;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+.ellipsis > span:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /**************************************************************************/
+/**********************   BANNER **********************************/
+/**************************************************************************/
+.banner-main-div {
+  width: 100%;
+  position: fixed;
+  top: -100px; /* Start above the viewport */
+  left: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  text-align: center;
+  animation: slideDownFadeIn 0.5s forwards; /* Animation to slide down and fade in */
+  opacity: 0; /* Start with the banner invisible */
+}
+
+.banner-inner-div {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+@keyframes slideDownFadeIn {
+  0% {
+    top: -100px;
+    opacity: 0;
+  }
+  100% {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+p {
+  margin: 0;
+  color: inherit; /* Make sure the paragraph text color is the same as the banner */
+}
+
+.banner-main-div a {
+  font-weight: bold; /* Make the link text bold */
+  text-decoration: none; /* Remove underline from the link */
+  color: inherit; /* Keep the link color the same as the text */
+}
+
 /**********************   FORM STYLING   **********************************/
 /**************************************************************************/
 

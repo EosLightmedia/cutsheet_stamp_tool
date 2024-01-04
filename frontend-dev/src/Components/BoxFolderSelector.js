@@ -7,8 +7,6 @@ function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
     "Paste Box link here (e.g. https://eoslightmedia.app.box.com/folder/240776517305)"
   const [helperText, setHelperText] = useState(defaultHelperText)
 
-  console.log(mockData)
-
   const fetchFolderData = async (folderNumber) => {
     setHelperText("Fetching folder data...") // Indicate loading before starting the fetch
 
