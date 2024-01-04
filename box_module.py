@@ -61,10 +61,31 @@ class eosBox:
 
     def get_files_in_folder(self, folder_id):
         folder = self.client.folder(folder_id).get()
+
+        # construct the folder's full path
+        full_folder_path = "/".join([entry['name'] for entry in folder.path_collection['entries'][1:]])
+        full_folder_path = f"{full_folder_path}/{folder.name}"
+
         items = []
         for item in folder.get_items():
-            items.append(item)
-        return items
+            print(item)
+            item_type = item.type
+            if item.name.endswith('.pdf'):
+                item_type = 'pdf'
+
+            item_dict = {
+                'type': item_type,
+                'name': item.name,
+            }
+
+            items.append(item_dict)
+
+        folder_dict = {
+            'path': full_folder_path,
+            'items': items
+        }
+
+        return folder_dict
 
     def get_pdfs_in_folder(self, folder_id):
         if self.client is None:
