@@ -14,3 +14,4 @@ setuptools~=68.2.0
 reportlab~=4.0.7
 boxsdk~=3.9.2
 requests~=2.31.0
+PyMuPDF~=1.23.8
