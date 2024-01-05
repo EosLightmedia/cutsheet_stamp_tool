@@ -4,7 +4,7 @@ from cutsheet_module import Stamp
 from datetime import datetime
 import logging
 logging.basicConfig(level=logging.DEBUG)
-
+HTTP_STATUS_SUCCESS = 200
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
 CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
