@@ -102,7 +102,7 @@ if __name__ == '__main__':
     CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
     CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
 
-    box = eosBox(CLIENT_ID, CLIENT_SECRET, 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app/api/auth')
+    box = eosBox(CLIENT_ID, CLIENT_SECRET, 'http://cutsheet-stamp-tool-at2sy.ondigitalocean.app/api/auth')
     print(f'url: {box.auth_url}')
     code = input('authorization code: ')
     box.authenticate_client(code)
