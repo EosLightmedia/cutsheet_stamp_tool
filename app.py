@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
 CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
-CALLBACK_URL = 'http://localhost:8000/'
+CALLBACK_URL = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app/'
 
 box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
 
