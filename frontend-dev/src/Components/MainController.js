@@ -84,6 +84,8 @@ function MainController() {
       packageSet: isPackagePDFs,
     }
 
+    console.log("Form Data:", formData)
+
     axios
       .post("/api/stamp", formData)
       .then((response) => {
