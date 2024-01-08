@@ -21,7 +21,7 @@ function MainController() {
   const [revisionNumber, setRevisionNumber] = useState(0)
   const [showPageNumbers, setShowPageNumbers] = useState(false)
   const [isPackagePDFs, setIsPackagePDFs] = useState(false)
-  const [disclaimer, setDisclaimer] = useState(0)
+  const [disclaimer, setDisclaimer] = useState([false, false, false])
   const [createdFolderNumber, setCreatedFolderNumber] = useState()
   const [foundPDFs, setFoundPDFs] = useState([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -36,6 +36,10 @@ function MainController() {
       jobName && jobCode && preparedFor && jobPhase && isValidLink
     setCanSubmit(areRequiredFieldsFilled)
   }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
+
+  useEffect(() => {
+    console.log(disclaimer)
+  }, [disclaimer])
 
   const handleSubmit = () => {
     setIsProcessing(true)
