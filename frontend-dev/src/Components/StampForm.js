@@ -76,9 +76,9 @@ function StampForm(props) {
           onChange={(e) => setPreparedFor(e.target.value)}
         />
         <TextInput
-          label="Job Phase"
+          label="Note"
           value={note}
-          placeHolder={"Job Phase"}
+          placeHolder={"Add a custom note"}
           onChange={(e) => setNote(e.target.value)}
         />
         <Dropdown

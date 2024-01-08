@@ -17,15 +17,13 @@ const Banner = ({ createdFolderNumber, setBannerIsVisible }) => {
     if (createdFolderNumber) {
       setBannerMessage(
         <>
-          Success! Click{" "}
           <a
             href={`https://eoslightmedia.app.box.com/folder/${createdFolderNumber}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            here
-          </a>{" "}
-          to find your newly stamped cut sheets on Box.
+            Success! Click here to find your newly stamped cut sheets on Box.
+          </a>
         </>
       )
       setBannerStyle({ ...bannerStyle, backgroundColor: "#4CAF50" })
@@ -36,7 +34,7 @@ const Banner = ({ createdFolderNumber, setBannerIsVisible }) => {
       setBannerStyle({ ...bannerStyle, backgroundColor: "#F44336" })
     }
 
-    // Start fading out the banner after 10 seconds
+    // Start fading out the banner after 30 seconds
     fadeOutTimer = setTimeout(() => {
       setBannerStyle({ ...bannerStyle, opacity: 0 })
     }, 30000)

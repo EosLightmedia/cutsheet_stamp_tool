@@ -37,11 +37,6 @@ function MainController() {
     setCanSubmit(areRequiredFieldsFilled)
   }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
 
-  useEffect(() => {
-    console.log(foundPDFs)
-    console.log(URLFolder)
-  }, [foundPDFs, URLFolder])
-
   const handleSubmit = () => {
     setIsProcessing(true)
     function extractFolderNumber(url) {

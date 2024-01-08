@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import axios from "axios"
 import mockData from "../Data/mockData.json"
+import LoadingSpinner from "../Assets/loading-spinner.gif"
 
 function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
   const defaultHelperText =
