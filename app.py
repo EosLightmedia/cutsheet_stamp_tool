@@ -8,6 +8,11 @@ import logging
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
+CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
+CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+CALLBACK_URL = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
+box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     print(f'Request received: {request}')
@@ -69,10 +74,3 @@ if __name__ == "__main__":
     box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
 
     app.run(port=8000, debug=True)
-
-else:
-
-    CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-    CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
-    CALLBACK_URL = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
-    box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
