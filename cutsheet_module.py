@@ -53,8 +53,6 @@ class Stamp:
         pdf_image = ImageReader(page_image_bytes)
         self.pdf_canvas.drawImage(pdf_image, self.page_width * 0.075, self.page_height * 0.15, self.page_width * scale, self.page_height * scale)
 
-
-
         # Draw footer
         self._draw_box((0, 0), (self.page_width, self.page_height * 0.15), 'black')
         self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
@@ -75,7 +73,7 @@ class Stamp:
         self.pdf_canvas.drawString(350, 40, str(self.note).upper())
 
         # Type
-        type_label = pdf_name.split('-')[0]
+        type_label = pdf_name.split('_')[0]
         self.pdf_canvas.setFont('Karla-Medium', 60)
         self.pdf_canvas.drawString(10, 50, str(type_label).upper())
 
@@ -96,38 +94,3 @@ class Stamp:
         pdf_bytes = self.buffer.getvalue()
         self.buffer.close()
         return pdf_bytes
-
-
-if __name__ == '__main__':
-    CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-    CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
-
-    box = eosBox(CLIENT_ID, CLIENT_SECRET, 'http://cutsheet-stamp-tool-at2sy.ondigitalocean.app/api/auth')
-    print(f'url: {box.auth_url}')
-    code = input('authorization code: ')
-    box.authenticate_client(code)
-
-    packet = "output.pdf"
-    stamp_data = {
-        "folderID": "240776517305",
-        "projectName": "Project X",
-        "projectNumber": "12345",
-        "preparedBy": "John Doe",
-        "preparedFor": "Jane Smith",
-        "client": "ACME Corp",
-        "isRevision": True,
-        "revisionNumber": 2,
-        "date": "DEC / 15 / 2023",
-        "jobPhase": "Phase 1",
-    }
-
-    # get items in folder
-    items = box.get_files_in_folder(stamp_data['folderId'])
-    pdfs = box.get_pdfs_in_folder(stamp_data['folderId'])
-    print(f'{len(items)} items')
-    print(f'{len(pdfs)} pdfs')
-
-    stamp = Stamp(stamp_data)
-    img = "image.jpg"
-    stamp.apply_stamp_to_img(img, 'EG01', 1, 2)
-    stamp.pdf_canvas.save()

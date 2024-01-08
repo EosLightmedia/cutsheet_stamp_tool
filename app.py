@@ -3,18 +3,14 @@ from box_module import eosBox
 from cutsheet_module import Stamp
 from datetime import datetime
 import logging
-logging.basicConfig(level=logging.DEBUG)
+
+
 HTTP_STATUS_SUCCESS = 200
+logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
-CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
-CALLBACK_URL = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
-
-box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
-
-
 @app.route("/", methods=['GET', 'POST'])
 def index():
+    print(f'Request received: {request.method}')
     code = request.args.get('code')
     if not code:
         return redirect(box.auth_url)
@@ -63,7 +59,17 @@ def post_stamp():
     return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)
 
 
-
 if __name__ == "__main__":
-    HTTP_STATUS_SUCCESS = 200
-    app.run(port=8000, debug=False)
+    CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
+    CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+    CALLBACK_URL = 'http://localhost:8000/'
+    box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
+
+    app.run(port=8000, debug=True)
+
+else:
+
+    CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
+    CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+    CALLBACK_URL = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
+    box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
