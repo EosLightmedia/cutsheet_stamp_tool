@@ -10,13 +10,15 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    print(f'Request received: {request.method}')
+    print(f'Request received: {request}')
     code = request.args.get('code')
     if not code:
+        print(f'Redirect: {box.auth_url}')
         return redirect(box.auth_url)
 
     try:
         box.authenticate_client(code)
+        print(f'Authenticated: {box.client}')
     except Exception as e:
         print(e)
         # If authentication fails, redirect back to the Box authentication URL
@@ -26,6 +28,7 @@ def index():
 
 @app.route('/api/folder/<folderID>', methods=["GET"])
 def check_folder_contents(folderID):
+    print(f'Getting files with {box.client}')
     files = box.get_files_in_folder(folderID)
 
     return files, HTTP_STATUS_SUCCESS

@@ -60,6 +60,7 @@ class eosBox:
         logging.info('...Authentication complete')
 
     def get_files_in_folder(self, folder_id):
+        print(f'client: {self.client}')
         folder = self.client.folder(folder_id).get()
 
         # construct the folder's full path
