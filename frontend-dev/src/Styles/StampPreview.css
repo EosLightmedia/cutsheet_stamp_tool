@@ -78,6 +78,7 @@
   bottom: 10px; /* Adjust as needed */
   margin: 0;
   z-index: 10;
+  text-align: right;
 }
 
 .disclaimer-div-content {
@@ -86,7 +87,7 @@
 
 .disclaimer-div p {
   margin: 0;
-  font-size: 0.8em;
+  font-size: 0.75em;
   color: #5d5d5d;
 }
 
@@ -108,7 +109,7 @@
   font-weight: bold;
 }
 
-.footer-content {
+.stamp-footer-content {
   display: flex;
   justify-content: space-between;
   align-items: center;

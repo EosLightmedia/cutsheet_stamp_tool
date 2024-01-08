@@ -24,6 +24,12 @@ function StampPreview(props) {
     return String(number).padStart(2, "0")
   }
 
+  const disclaimerTextOptions = {
+    0: "For bid purposes only.",
+    1: "For review and not for construction.",
+    2: "For shits and giggles.",
+  }
+
   const displayLogo =
     preparedBy === "Eos Lightmedia"
       ? EosLogo
@@ -54,21 +60,6 @@ function StampPreview(props) {
 
   const previewStyle = getGradientStyle(gradientStyle)
 
-  const getDisclaimerText = (disclaimerValue) => {
-    switch (disclaimerValue) {
-      case "1":
-        return "This document is for bid purposes only."
-      case "2":
-        return "This document is for review and not for construction."
-      case "3":
-        return "This is a generic disclaimer."
-      default:
-        return ""
-    }
-  }
-
-  const disclaimerText = getDisclaimerText(disclaimer)
-
   return (
     <div className="content-div">
       <div className="stamp-preview-div" style={previewStyle}>
@@ -94,7 +85,7 @@ function StampPreview(props) {
               <span className="value">{preparedFor}</span>
             </p>
             <p>
-              <span className="label">Project Phase</span>
+              <span className="label">Note</span>
               <span className="value">{jobPhase}</span>
             </p>
           </div>
@@ -104,15 +95,20 @@ function StampPreview(props) {
         )}
         <div className="disclaimer-div">
           <div className="disclaimer-div-content">
-            <p>
-              <em>{disclaimerText}</em>{" "}
-            </p>
+            {disclaimer.map(
+              (isSelected, index) =>
+                isSelected && (
+                  <p key={index}>
+                    <em>{disclaimerTextOptions[index]}</em>
+                  </p>
+                )
+            )}
           </div>
         </div>
       </div>
 
       <div className="preview-footer">
-        <div className="footer-content">
+        <div className="stamp-footer-content">
           <p>
             {isRevision ? "Revision Date" : "Issued Date"}:{" "}
             <span className="footer-value">{date}</span>

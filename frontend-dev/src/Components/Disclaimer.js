@@ -1,6 +1,6 @@
 import React from "react"
 
-const Disclaimer = ({ disclaimerOptions, disclaimer, setDisclaimer }) => {
+const Disclaimer = ({ disclaimer, setDisclaimer }) => {
   const handleOptionChange = (index) => {
     if (index === -1) {
       setDisclaimer(disclaimer.map(() => false))
