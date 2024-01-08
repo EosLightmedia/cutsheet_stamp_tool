@@ -29,7 +29,7 @@ class Stamp:
         self.page_width, self.page_height = A4
         self.pdf_canvas = canvas.Canvas(self.buffer)
 
-        pdfmetrics.registerFont(TTFont('Karla-Medium', 'static/karla-medium.ttf'))
+        pdfmetrics.registerFont(TTFont('Karla-Medium', 'static/Karla-Medium.ttf'))
         self.pdf_canvas.setFont('Karla-Medium', 12)
 
     def _draw_box(self, origin: tuple, size: tuple, color):
