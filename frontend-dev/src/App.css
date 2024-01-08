@@ -197,12 +197,16 @@ p {
   gap: 10px;
 }
 
-.helper-text {
+.box-helper-text {
   grid-column: 2;
   margin-top: 0;
-  font-size: 0.75em;
+  font-size: 0.78em;
   color: #6c757d;
   overflow: display;
+}
+
+.helper-text-block {
+  line-height: 1.5em;
 }
 
 h2.form-section-title {

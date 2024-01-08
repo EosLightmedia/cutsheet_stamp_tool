@@ -7,36 +7,56 @@ function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
   const defaultHelperText =
     "Paste Box link here (e.g. https://eoslightmedia.app.box.com/folder/240776517305)"
   const [helperText, setHelperText] = useState(defaultHelperText)
+  const loadingMessage = "Fetching folder data..."
 
   const fetchFolderData = async (folderNumber) => {
-    setHelperText("Fetching folder data...") // Indicate loading before starting the fetch
+    setHelperText(loadingMessage) // Indicate loading before starting the fetch
 
     // Check if the environment is development
     if (process.env.NODE_ENV === "development") {
-      // Simulate a delay to mimic network request
       setTimeout(() => {
         const pdfs = mockData.items.filter((item) => item.type === "pdf")
         setFoundPDFs(pdfs)
-        setHelperText(`Path: ${mockData.path}`)
-      }, 1000) // Simulate a fetch delay
+        console.log("📁 Found PDFs:", pdfs)
+
+        setHelperText(
+          <div className="helper-text-block">
+            <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
+            <br />
+            <strong style={{ fontWeight: "700" }}>📁 Path:</strong>{" "}
+            {mockData.path}
+            <br />
+            <strong style={{ fontWeight: "700" }}>📄 Total PDFs:</strong>{" "}
+            {pdfs.length}
+          </div>
+        )
+      }, 1000)
     } else {
-      // This block will run in production
       try {
         const response = await axios.get(`/api/folder/${folderNumber}`)
         const { items, path } = response.data
         const pdfs = items.filter((item) => item.type === "pdf")
         setFoundPDFs(pdfs)
-        setHelperText(`Path: ${path}`)
+        setHelperText(
+          <div className="helper-text-block">
+            <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
+            <br />
+            <strong style={{ fontWeight: "700" }}>📁 Path:</strong> {path}
+            <br />
+            <strong style={{ fontWeight: "700" }}>📄 Total PDFs:</strong>{" "}
+            {pdfs.length}
+          </div>
+        )
       } catch (error) {
-        setHelperText("Error fetching folder data.")
-        console.error("Error fetching folder data:", error)
+        setHelperText("❌ Error fetching folder data.")
+        console.error("❌ Error fetching folder data:", error)
       }
     }
   }
 
   const validateFolderLink = (inputUrl) => {
     setURLFolder(inputUrl)
-    setHelperText("Fetching folder data...") // Set this early to indicate loading
+    setHelperText("❌ Fetching folder data...")
 
     if (inputUrl === "") {
       setHelperText(defaultHelperText)
@@ -71,7 +91,18 @@ function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
         onChange={handleChange}
         placeholder="https://eoslightmedia.app.box.com/folder/240776517305"
       />
-      <p className="helper-text">{helperText}</p>
+      <p className="box-helper-text">
+        {helperText === loadingMessage && (
+          <img
+            src={LoadingSpinner}
+            className="loading-spinner-small"
+            alt="Loading"
+            style={{ width: "15px", marginRight: "5px", marginTop: "-1px" }}
+          />
+        )}
+
+        {helperText}
+      </p>
     </div>
   )
 }

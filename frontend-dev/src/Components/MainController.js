@@ -37,10 +37,6 @@ function MainController() {
     setCanSubmit(areRequiredFieldsFilled)
   }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
 
-  useEffect(() => {
-    console.log(disclaimer)
-  }, [disclaimer])
-
   const handleSubmit = () => {
     setIsProcessing(true)
     function extractFolderNumber(url) {
@@ -92,16 +88,14 @@ function MainController() {
       .post("/api/stamp", formData)
       .then((response) => {
         console.log("Newly Created Folder:", response.data)
-        setCreatedFolderNumber(response.data) // Update the created folder number
-        setIsProcessing(false) // Hide the processing page
-        setBannerIsVisible(true) // Show the banner with the success message
+        setCreatedFolderNumber(response.data)
+        setIsProcessing(false)
+        setBannerIsVisible(true)
       })
       .catch((error) => {
         console.error("There was an error submitting the form:", error)
-        setIsProcessing(false) // Hide the processing page on error
-        setBannerIsVisible(true) // Optionally show the banner with the error message
-        // You might want to set a state indicating an error occurred
-        // and use that state in the Banner component to show the appropriate message
+        setIsProcessing(false)
+        setBannerIsVisible(true)
       })
   }
 
