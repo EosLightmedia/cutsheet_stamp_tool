@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import MainController from "./Components/MainController"
+import LoadingImage from "./Assets/loading-spinner.gif"
 import "./App.css"
 
 function App() {
@@ -15,16 +16,26 @@ function App() {
     }
   }, [])
 
-  // Separate useEffect to log authCode when it changes
   useEffect(() => {
     if (authCode) {
       console.log("Auth Code:", authCode)
     }
-  }, [authCode]) // This useEffect runs whenever authCode changes
+  }, [authCode])
 
   return (
     <div className="center-container">
-      <MainController authCode={authCode} />
+      {authCode ? (
+        <MainController authCode={authCode} />
+      ) : (
+        <div className="loading-container">
+          <img
+            className="loading-spinner"
+            src={LoadingImage}
+            alt="Loading..."
+          />
+          <p>Verifying Box Credentials...</p>
+        </div>
+      )}
     </div>
   )
 }

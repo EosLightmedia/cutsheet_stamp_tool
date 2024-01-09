@@ -31,6 +31,8 @@ function MainController({ authCode }) {
   const [folderPath, setFolderPath] = useState("")
   const [canSubmit, setCanSubmit] = useState(false)
 
+  console.log("Auth Code MainController:", authCode)
+
   const openPopup = () => {
     document.body.classList.add("no-scroll")
     setConfirmPopUpIsVisible(true)
@@ -101,7 +103,7 @@ function MainController({ authCode }) {
     console.log("Form Data:", formData)
 
     axios
-      .post("/api/stamp", formData)
+      .post(`/api/stamp/?auth_code=${authCode}`, formData)
       .then((response) => {
         console.log("Newly Created Folder:", response.data)
         setCreatedFolderNumber(response.data)
@@ -174,6 +176,7 @@ function MainController({ authCode }) {
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
           setFolderPath={setFolderPath}
+          authCode={authCode}
         />
         <StampPreview
           jobName={jobName}

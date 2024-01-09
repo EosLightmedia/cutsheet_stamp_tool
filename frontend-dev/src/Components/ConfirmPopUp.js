@@ -13,12 +13,11 @@ function ConfirmPopUp({
   isPackagePDFs,
   foundPDFs,
   folderPath,
-  URLFolder,
   handleSubmit,
   closePopup,
 }) {
   let company
-  let disclaimer = [true, true, true]
+  // let disclaimer = [true, true, true]
 
   if (preparedBy === 0) {
     company = "Eos Lightmedia"
