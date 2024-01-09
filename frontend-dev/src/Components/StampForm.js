@@ -44,6 +44,8 @@ function StampForm(props) {
     authCode,
   } = props
 
+  console.log("Auth Code StampForm:", authCode)
+
   return (
     <div className="content-div form-container">
       <img src={StampLogo} alt="Stamp Logo" className="centered-logo" />

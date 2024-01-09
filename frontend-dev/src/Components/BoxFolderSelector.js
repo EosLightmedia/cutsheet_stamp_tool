@@ -62,6 +62,8 @@ function URLFolderSelector({
     }
   }
 
+  console.log("Auth Code BoxFolderSelector:", authCode)
+
   const validateFolderLink = (inputUrl) => {
     setURLFolder(inputUrl)
     setHelperText("❌ Fetching folder data...")
