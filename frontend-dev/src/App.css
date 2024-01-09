@@ -663,6 +663,11 @@ h2.form-section-title {
 }
 
 /* Confirm pop-up */
+
+.no-scroll {
+  overflow: hidden;
+}
+
 .confirm-pop-up {
   position: fixed; /* Fixed position to cover the entire viewport */
   top: 0;
@@ -676,17 +681,91 @@ h2.form-section-title {
   z-index: 1000; /* Ensure it's above other content */
 }
 
-.confirm-pop-up-content {
+.confirm-popup-main-div {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
   text-align: center;
-  width: 80%; /* Adjust width as needed */
-  max-width: 650px; /* Maximum width */
+  width: 750px;
+  max-width: 600px; /* Maximum width */
 }
 
-.confirm-pop-up-content button {
+.confirm-popup-content {
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.confirm-popup-content h2 {
+  font-size: 1.5em !important;
+  margin-bottom: 10px;
+}
+
+.main-prompt {
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.folder-path-text {
+  font-size: 0.9em;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.confirm-title {
+  text-transform: uppercase;
+  font-size: 0.75em;
+  margin-bottom: 10px;
+}
+
+.confirm-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
+  column-gap: 20px; /* Space between columns */
+  row-gap: 10px; /* Space between rows */
+  margin-bottom: 20px;
+  text-align: left;
+  margin: 10px;
+  margin-top: 0;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 10px;
+  align-self: center;
+  width: 100%;
+  background-color: #ebebeb;
+}
+
+.listed-files-div {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-bottom: 10px;
+  min-width: 500px;
+  align-self: center;
+  padding: 20px;
+  background-color: #ebebeb;
+  border-radius: 10px;
+}
+
+.pdf-listed-files {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Split into two equal columns */
+  gap: 10px; /* Space between columns */
+  align-items: center; /* Align items vertically */
+  text-align: left;
+}
+
+.pdf-listed-files p {
+  margin-bottom: 8px;
+  white-space: nowrap; /* Keep the content on a single line */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  text-align: left;
+  font-size: 0.9em;
+}
+
+.confirm-buttons button {
   width: 40%; /* Each button takes up 50% of the width */
   padding: 10px 0;
   margin: 10px;
@@ -697,24 +776,15 @@ h2.form-section-title {
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-weight: 700;
+  border-radius: 5px;
 }
 
-.confirm-pop-up-content button:nth-child(1) {
+.confirm-buttons button:nth-child(1) {
   background-color: #dc3545;
 }
 
-.confirm-pop-up-content button:hover {
+.confirm-buttons button:hover {
   background-color: #0056b3;
-}
-
-.confirm-details {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
-  column-gap: 20px; /* Space between columns */
-  row-gap: 10px; /* Space between rows */
-  margin-bottom: 20px;
-  text-align: left;
-  margin: 20px;
 }
 
 .confirm-details p {
@@ -725,6 +795,7 @@ h2.form-section-title {
 
 .confirm-details .value {
   font-weight: bold;
+  font-size: 0.95em;
 }
 
 /* Footer */

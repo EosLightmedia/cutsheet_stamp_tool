@@ -1,7 +1,6 @@
 import React from "react"
 import PreparedBySelector from "./PreparedBySelector"
 import TextInput from "./TextInput"
-import Dropdown from "./Dropdown"
 import Disclaimer from "./Disclaimer"
 import DateSelector from "./DateSelector"
 import RevisionSelector from "./RevisionSelector"
@@ -41,6 +40,8 @@ function StampForm(props) {
     setShowPageNumbers,
     foundPDFs,
     setFoundPDFs,
+    setFolderPath,
+    authCode,
   } = props
 
   return (
@@ -112,6 +113,8 @@ function StampForm(props) {
           setURLFolder={setURLFolder}
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
+          setFolderPath={setFolderPath}
+          authCode={authCode}
         />
       </div>
     </div>
