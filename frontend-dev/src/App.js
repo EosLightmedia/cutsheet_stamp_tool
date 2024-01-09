@@ -7,15 +7,20 @@ function App() {
 
   useEffect(() => {
     const cookieName = "auth_code"
-
     const value = `; ${document.cookie}`
     const parts = value.split(`; ${cookieName}=`)
     if (parts.length === 2) {
-      setAuthCode(parts.pop().split(";").shift())
+      const code = parts.pop().split(";").shift()
+      setAuthCode(code)
+    }
+  }, [])
+
+  // Separate useEffect to log authCode when it changes
+  useEffect(() => {
+    if (authCode) {
       console.log("Auth Code:", authCode)
     }
-    console.log("Cookie:", document.cookie)
-  }, [])
+  }, [authCode]) // This useEffect runs whenever authCode changes
 
   return (
     <div className="center-container">
