@@ -3,7 +3,13 @@ import axios from "axios"
 import mockData from "../Data/mockData.json"
 import LoadingSpinner from "../Assets/loading-spinner.gif"
 
-function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
+function URLFolderSelector({
+  URLFolder,
+  setURLFolder,
+  setFoundPDFs,
+  setFolderPath,
+  authCode,
+}) {
   const defaultHelperText =
     "Paste Box link here (e.g. https://eoslightmedia.app.box.com/folder/240776517305)"
   const [helperText, setHelperText] = useState(defaultHelperText)
@@ -17,8 +23,7 @@ function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
       setTimeout(() => {
         const pdfs = mockData.items.filter((item) => item.type === "pdf")
         setFoundPDFs(pdfs)
-        console.log("📁 Found PDFs:", pdfs)
-
+        setFolderPath(mockData.path)
         setHelperText(
           <div className="helper-text-block">
             <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
@@ -33,10 +38,13 @@ function URLFolderSelector({ URLFolder, setURLFolder, setFoundPDFs }) {
       }, 1000)
     } else {
       try {
-        const response = await axios.get(`/api/folder/${folderNumber}`)
+        const response = await axios.get(
+          `/api/folder/?folder_id=${folderNumber}&auth_code=${authCode}`
+        )
         const { items, path } = response.data
         const pdfs = items.filter((item) => item.type === "pdf")
         setFoundPDFs(pdfs)
+        setFolderPath(path)
         setHelperText(
           <div className="helper-text-block">
             <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>

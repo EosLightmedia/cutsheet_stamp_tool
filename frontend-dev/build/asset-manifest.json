@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.7a78c26c.css",
-    "main.js": "/static/js/main.84b1648e.js",
+    "main.css": "/static/css/main.77a86b7c.css",
+    "main.js": "/static/js/main.cb513607.js",
     "static/media/stamp-logo.png": "/static/media/stamp-logo.c6d9ecf041c1fc0d6a35.png",
     "static/media/purple-gradient.png": "/static/media/purple-gradient.d4158913ea60c14f19aa.png",
     "static/media/loading-spinner.gif": "/static/media/loading-spinner.90672f1deffccbcdf4f1.gif",
@@ -11,11 +11,11 @@
     "static/media/eos-logo.png": "/static/media/eos-logo.41995ff3f203db68e72f.png",
     "static/media/eos-logo-horizontal.png": "/static/media/eos-logo-horizontal.873d2ac513d2cd277f60.png",
     "index.html": "/index.html",
-    "main.7a78c26c.css.map": "/static/css/main.7a78c26c.css.map",
-    "main.84b1648e.js.map": "/static/js/main.84b1648e.js.map"
+    "main.77a86b7c.css.map": "/static/css/main.77a86b7c.css.map",
+    "main.cb513607.js.map": "/static/js/main.cb513607.js.map"
   },
   "entrypoints": [
-    "static/css/main.7a78c26c.css",
-    "static/js/main.84b1648e.js"
+    "static/css/main.77a86b7c.css",
+    "static/js/main.cb513607.js"
   ]
 }
