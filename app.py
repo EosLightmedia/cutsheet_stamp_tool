@@ -29,7 +29,6 @@ def authenticate_client(box, code):
     return client
 
 
-
 @app.route("/", methods=['GET', 'POST'])
 def index():
     print(f'Request received: {request}')
