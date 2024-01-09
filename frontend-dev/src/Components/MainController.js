@@ -3,11 +3,12 @@ import StampForm from "./StampForm"
 import StampPreview from "./StampPreview"
 import StampSubmit from "./StampSubmit"
 import ProcessingPage from "./ProcessingPage"
+import ConfirmPopUp from "./ConfirmPopUp"
 import Banner from "./Banner"
 import Footer from "./Footer"
 import axios from "axios"
 
-function MainController() {
+function MainController({ authCode }) {
   const [preparedBy, setPreparedBy] = useState("Eos Lightmedia")
   const [jobName, setJobName] = useState("")
   const [jobCode, setJobCode] = useState("")
@@ -21,12 +22,24 @@ function MainController() {
   const [revisionNumber, setRevisionNumber] = useState(0)
   const [showPageNumbers, setShowPageNumbers] = useState(false)
   const [isPackagePDFs, setIsPackagePDFs] = useState(false)
-  const [disclaimer, setDisclaimer] = useState(0)
+  const [disclaimer, setDisclaimer] = useState([false, false, false])
   const [createdFolderNumber, setCreatedFolderNumber] = useState()
   const [foundPDFs, setFoundPDFs] = useState([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [bannerIsVisible, setBannerIsVisible] = useState(false)
+  const [confirmPopUpIsVisible, setConfirmPopUpIsVisible] = useState(false)
+  const [folderPath, setFolderPath] = useState("")
   const [canSubmit, setCanSubmit] = useState(false)
+
+  const openPopup = () => {
+    document.body.classList.add("no-scroll")
+    setConfirmPopUpIsVisible(true)
+  }
+
+  const closePopup = () => {
+    document.body.classList.remove("no-scroll")
+    setConfirmPopUpIsVisible(false)
+  }
 
   useEffect(() => {
     const urlRegex =
@@ -37,12 +50,8 @@ function MainController() {
     setCanSubmit(areRequiredFieldsFilled)
   }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
 
-  useEffect(() => {
-    console.log(foundPDFs)
-    console.log(URLFolder)
-  }, [foundPDFs, URLFolder])
-
   const handleSubmit = () => {
+    closePopup()
     setIsProcessing(true)
     function extractFolderNumber(url) {
       const regex = /https:\/\/eoslightmedia\.app\.box\.com\/folder\/(\d+)/
@@ -89,25 +98,42 @@ function MainController() {
       packageSet: isPackagePDFs,
     }
 
+    console.log("Form Data:", formData)
+
     axios
       .post("/api/stamp", formData)
       .then((response) => {
         console.log("Newly Created Folder:", response.data)
-        setCreatedFolderNumber(response.data) // Update the created folder number
-        setIsProcessing(false) // Hide the processing page
-        setBannerIsVisible(true) // Show the banner with the success message
+        setCreatedFolderNumber(response.data)
+        setIsProcessing(false)
+        setBannerIsVisible(true)
       })
       .catch((error) => {
         console.error("There was an error submitting the form:", error)
-        setIsProcessing(false) // Hide the processing page on error
-        setBannerIsVisible(true) // Optionally show the banner with the error message
-        // You might want to set a state indicating an error occurred
-        // and use that state in the Banner component to show the appropriate message
+        setIsProcessing(false)
+        setBannerIsVisible(true)
       })
   }
 
   return (
     <>
+      {confirmPopUpIsVisible && (
+        <ConfirmPopUp
+          jobName={jobName}
+          jobCode={jobCode}
+          preparedBy={preparedBy}
+          preparedFor={preparedFor}
+          date={date}
+          isRevision={isRevision}
+          note={note}
+          revisionNumber={revisionNumber}
+          handleSubmit={handleSubmit}
+          closePopup={closePopup}
+          isPackagePDFs={isPackagePDFs}
+          foundPDFs={foundPDFs}
+          folderPath={folderPath}
+        />
+      )}
       {isProcessing && <ProcessingPage setIsProcessing={setIsProcessing} />}
       {bannerIsVisible && (
         <Banner
@@ -147,6 +173,7 @@ function MainController() {
           setDisclaimer={setDisclaimer}
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
+          setFolderPath={setFolderPath}
         />
         <StampPreview
           jobName={jobName}
@@ -163,7 +190,7 @@ function MainController() {
           disclaimer={disclaimer}
           showPageNumbers={showPageNumbers}
         />
-        <StampSubmit onClick={handleSubmit} isActive={true} />
+        <StampSubmit isActive={true} openPopup={openPopup} />
 
         <Footer />
       </div>

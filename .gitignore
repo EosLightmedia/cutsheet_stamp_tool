@@ -1,6 +1,4 @@
 *.pyc
 __pycache__/*
-venv
-/.idea/
-.venv
-.idea/
+/venv/
+.eslintcache

@@ -1,7 +1,7 @@
 import React from "react"
 import PreparedBySelector from "./PreparedBySelector"
 import TextInput from "./TextInput"
-import Dropdown from "./Dropdown"
+import Disclaimer from "./Disclaimer"
 import DateSelector from "./DateSelector"
 import RevisionSelector from "./RevisionSelector"
 import GradientSelector from "./GradientSelector"
@@ -23,7 +23,6 @@ function StampForm(props) {
     setPreparedFor,
     preparedBy,
     setPreparedBy,
-    date,
     setDate,
     isRevision,
     setIsRevision,
@@ -41,14 +40,9 @@ function StampForm(props) {
     setShowPageNumbers,
     foundPDFs,
     setFoundPDFs,
+    setFolderPath,
+    authCode,
   } = props
-
-  const disclaimerOptions = [
-    { label: "No Disclaimer", value: 0 },
-    { label: "Disclaimer 1", value: 1 },
-    { label: "Disclaimer 2", value: 2 },
-    { label: "Disclaimer 3", value: 3 },
-  ]
 
   return (
     <div className="content-div form-container">
@@ -76,18 +70,12 @@ function StampForm(props) {
           onChange={(e) => setPreparedFor(e.target.value)}
         />
         <TextInput
-          label="Job Phase"
+          label="Note"
           value={note}
-          placeHolder={"Job Phase"}
+          placeHolder={"Add a custom note"}
           onChange={(e) => setNote(e.target.value)}
         />
-        <Dropdown
-          label="Disclaimer"
-          value={disclaimer}
-          placeHolder={"Job Phase"}
-          onChange={(e) => setDisclaimer(e.target.value)}
-          options={disclaimerOptions}
-        />
+        <Disclaimer disclaimer={disclaimer} setDisclaimer={setDisclaimer} />
         <h2 className="form-section-title">Date</h2>
         <DateSelector setSelectedDate={setDate} />
         <div className="revision-section">
@@ -125,6 +113,8 @@ function StampForm(props) {
           setURLFolder={setURLFolder}
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
+          setFolderPath={setFolderPath}
+          authCode={authCode}
         />
       </div>
     </div>

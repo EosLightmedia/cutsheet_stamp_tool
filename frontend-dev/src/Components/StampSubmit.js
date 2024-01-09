@@ -1,12 +1,16 @@
-import React from "react";
-import StampIcon from "../Assets/stamp-icon.png";
+import React from "react"
+import StampIcon from "../Assets/stamp-icon.png"
 
-function StampSubmit({ onClick, isActive }) {
+function StampSubmit({ isActive, openPopup }) {
   return (
     <div className="stamp-div">
-      <button className="submit-button" onClick={onClick} disabled={!isActive}>
+      <button
+        className="submit-button"
+        onClick={() => openPopup()}
+        disabled={!isActive}
+      >
         <img src={StampIcon} className="stamp-icon" alt="Stamp Icon" />
-        Stamp Cut Sheets
+        Get Ready to Stamp
       </button>
       <p className="helper-text-submit">
         {isActive
@@ -14,7 +18,7 @@ function StampSubmit({ onClick, isActive }) {
           : "All fields must be filled in first."}
       </p>
     </div>
-  );
+  )
 }
 
-export default StampSubmit;
+export default StampSubmit

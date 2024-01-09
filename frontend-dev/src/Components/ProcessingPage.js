@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import LoadingSpinner from "../Assets/loading-spinner.gif"
 
 function ProcessingPage() {
-  const [secondsRemaining, setSecondsRemaining] = useState(30)
-
   return (
     <div className="processing-page-div">
       <div className="processing-page-content">
@@ -14,7 +12,7 @@ function ProcessingPage() {
         />
         <p className="large-pop-up-text">
           Your cut sheets are being stamped
-          <span class="ellipsis">
+          <span className="ellipsis">
             <span>.</span>
             <span>.</span>
             <span>.</span>

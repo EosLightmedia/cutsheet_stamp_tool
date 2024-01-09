@@ -17,23 +17,23 @@
       "type": "folder"
     },
     {
-      "name": "L01 - LiteLab a01.pdf",
+      "name": "L01_LiteLab a01.pdf",
       "type": "pdf"
     },
     {
-      "name": "L02 - LiteLab a04.pdf",
+      "name": "L02_LiteLab a04.pdf",
       "type": "pdf"
     },
     {
-      "name": "L04 - Gantom DMX Spot.pdf",
+      "name": "L04_Gantom DMX Spot.pdf",
       "type": "pdf"
     },
     {
-      "name": "L05 - DLC LumiSheet.pdf",
+      "name": "L05_DLC LumiSheet.pdf",
       "type": "pdf"
     },
     {
-      "name": "L06 - Altman Micro Par.pdf",
+      "name": "L06_Altman Micro Par.pdf",
       "type": "pdf"
     },
     {
@@ -41,13 +41,13 @@
       "type": "pdf"
     },
     {
-      "name": "T01 - LiteLab bus- 08h.pdf",
+      "name": "T01_LiteLab bus- 08h.pdf",
       "type": "pdf"
     },
     {
-      "name": "T02 - LiteLab bus-13.pdf",
+      "name": "T02.pdf",
       "type": "pdf"
     }
   ],
-  "path": "02-Projects/PMV - Port Metro Vancouver Upgrades/01-Design/05-Cutsheets/LX/New Spec"
+  "path": "02-Projects/TEST/01-Test/05-Cutsheets/LX/New Spec"
 }
