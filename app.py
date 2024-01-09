@@ -1,46 +1,81 @@
-from flask import Flask, send_from_directory, request, redirect, Response
+from flask import Flask, make_response, send_from_directory, request, redirect, Response
 from box_module import eosBox
 from cutsheet_module import Stamp
 from datetime import datetime
 import logging
 
-
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
-CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
-CALLBACK_URL = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
-box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
+
+
+def get_box():
+    client_id = 'ek7onbev0qocf7rtfuov0h8xo17picca'
+    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+
+    if __name__ == "__main__":
+        callback_url = 'http://localhost:8000/'
+
+    else:
+        callback_url = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
+
+    return eosBox(client_id, client_secret, callback_url)
+
+
+def authenticate_client(box, code):
+    box.authenticate_client(code)
+    client = box.client
+
+    return client
+
+
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
     print(f'Request received: {request}')
     code = request.args.get('code')
+
     if not code:
-        print(f'Redirect: {box.auth_url}')
+        box = get_box()
+        print(f'Authentication code approved')
         return redirect(box.auth_url)
 
-    try:
-        box.authenticate_client(code)
-        print(f'Authenticated: {box.client}')
-    except Exception as e:
-        print(e)
-        # If authentication fails, redirect back to the Box authentication URL
-        return redirect(box.auth_url)
-    return send_from_directory(app.static_folder, 'index.html')
+    else:
+        try:
+            box = get_box()
+            authenticate_client(box, code)
+            print(f'Authentication code approved')
+
+        except Exception as e:
+            print(f'Authentication error: {e}')
+            box = get_box()
+
+            return redirect(box.auth_url)
+
+    response = make_response(send_from_directory(app.static_folder, 'index.html'))
+    response.set_cookie('auth_code', code)
+    return response
 
 
-@app.route('/api/folder/<folderID>', methods=["GET"])
-def check_folder_contents(folderID):
-    print(f'Getting files with {box.client}')
-    files = box.get_files_in_folder(folderID)
+@app.route('/api/folder/', methods=["GET"])
+def check_folder_contents():
+    folder_id = request.args.get('folder_id')
+    code = request.args.get('code')
+
+    box = get_box()
+    authenticate_client(box, code)
+
+    files = box.get_files_in_folder(folder_id)
 
     return files, HTTP_STATUS_SUCCESS
 
 
 @app.route('/api/stamp', methods=['POST'])
 def post_stamp():
+    code = request.args.get('code')
+    box = get_box()
+    authenticate_client(box, code)
+
     try:
         logging.info('Stamping...')
         data = request.get_json()
@@ -68,9 +103,4 @@ def post_stamp():
 
 
 if __name__ == "__main__":
-    CLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-    CLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
-    CALLBACK_URL = 'http://localhost:8000/'
-    box = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)
-
     app.run(port=8000, debug=True)
