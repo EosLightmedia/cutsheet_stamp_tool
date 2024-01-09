@@ -6,13 +6,15 @@ function App() {
   const [authCode, setAuthCode] = useState("")
 
   useEffect(() => {
-    const cookieName = "auth_code" // Replace with your cookie's name
+    const cookieName = "auth_code"
+
     const value = `; ${document.cookie}`
     const parts = value.split(`; ${cookieName}=`)
     if (parts.length === 2) {
       setAuthCode(parts.pop().split(";").shift())
+      console.log("Auth Code:", authCode)
     }
-    console.log("Auth Code:", authCode)
+    console.log("Cookie:", document.cookie)
   }, [])
 
   return (
