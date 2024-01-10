@@ -826,23 +826,22 @@ h2.form-section-title {
   font-size: 0.7em;
 }
 
-.center-container {
+.center-container-app {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  background-color: #f0f0f0; /* Light grey background */
+  height: 100vh;
 }
 
-.loading-container {
+.loading-container-app {
   text-align: center; /* Center the text below the image */
 }
 
-.loading-container img {
+.loading-container-app img {
   display: block; /* To enable margin auto */
   margin: 0 auto; /* Center the image horizontally */
 }
 
-.loading-container p {
+.loading-container-app p {
   margin-top: 20px; /* Space between the image and the text */
 }
