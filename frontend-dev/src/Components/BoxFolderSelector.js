@@ -37,7 +37,7 @@ function URLFolderSelector({
     } else {
       try {
         const response = await axios.get(
-          `/api/folder/?folder_id=${folderNumber}&auth_code=${authCode}`
+          `/api/folder/?folder_id=${folderNumber}&access=${authCode}`
         )
         const { items, path } = response.data
         const pdfs = items.filter((item) => item.type === "pdf")
