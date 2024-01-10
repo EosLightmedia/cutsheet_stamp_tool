@@ -67,10 +67,10 @@ class Stamp:
 
         self.pdf_canvas.setFillColor('black')
 
-        self.pdf_canvas.drawString(350, 100, str(self.project_name).upper())
-        self.pdf_canvas.drawString(350, 80, str(self.project_number).upper())
-        self.pdf_canvas.drawString(350, 60, str(self.prepared_for).upper())
-        self.pdf_canvas.drawString(350, 40, str(self.note).upper())
+        self.pdf_canvas.drawString(250, 100, str(self.project_name).upper())
+        self.pdf_canvas.drawString(250, 80, str(self.project_number).upper())
+        self.pdf_canvas.drawString(250, 60, str(self.prepared_for).upper())
+        self.pdf_canvas.drawString(250, 40, str(self.note).upper())
 
         # Type
         type_label = pdf_name.split('_')[0]
@@ -94,3 +94,4 @@ class Stamp:
         pdf_bytes = self.buffer.getvalue()
         self.buffer.close()
         return pdf_bytes
+

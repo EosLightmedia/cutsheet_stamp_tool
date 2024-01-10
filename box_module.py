@@ -87,9 +87,6 @@ class eosBox:
         return folder_dict
 
     def get_pdfs_in_folder(self, folder_id):
-        if self.client is None:
-            logging.warning('Client not authenticated yet')
-            return None
         folder = self.client.folder(folder_id).get()
         pdfs = []
         page_count = 0
@@ -107,9 +104,9 @@ class eosBox:
 
         return pdfs, page_count
 
-    def save_file_to_box(self, file: bytes, file_name: str, folder_id: str):
+    def save_file_to_box(self, file: bytes, folder_name: str, file_name: str, folder_id: str):
         # Set folder name to be used
-        folder_name = 'Stamp Exports'
+        stamp_folder = 'Stamp Exports'
 
         # Get the list of items (folders and files) in the parent folder
         items = self.client.folder(folder_id).get_items()
@@ -117,13 +114,49 @@ class eosBox:
         # Try to find the folder with matching name
         exported_pdfs_folder = None
         for item in items:
-            if item.type == 'folder' and item.name == folder_name:
+            if item.type == 'folder' and item.name == stamp_folder:
                 exported_pdfs_folder = self.client.folder(item.object_id)
                 break
 
         # If the folder was not found, create it
         if exported_pdfs_folder is None:
-            exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(folder_name)
+            exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(stamp_folder)
+
+        # Create a sub-folder
+        sub_folder = None
+        items = self.client.folder(exported_pdfs_folder.object_id).get_items()
+        for item in items:
+            if item.type == 'folder' and item.name == folder_name:
+                sub_folder = self.client.folder(item.object_id)
+                break
+
+        if sub_folder is None:
+            sub_folder = self.client.folder(exported_pdfs_folder.object_id).create_subfolder(folder_name)
+
+        # Create a file-like object from the bytes
+        file_object = BytesIO(file)
+
+        # Upload file object to new folder
+        sub_folder.upload_stream(file_object, file_name)
+        return sub_folder.object_id
+
+    def save_package_to_box(self, file: bytes, file_name: str, folder_id: str):
+        # Set folder name to be used
+        stamp_folder = 'Stamp Exports'
+
+        # Get the list of items (folders and files) in the parent folder
+        items = self.client.folder(folder_id).get_items()
+
+        # Try to find the folder with matching name
+        exported_pdfs_folder = None
+        for item in items:
+            if item.type == 'folder' and item.name == stamp_folder:
+                exported_pdfs_folder = self.client.folder(item.object_id)
+                break
+
+        # If the folder was not found, create it
+        if exported_pdfs_folder is None:
+            exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(stamp_folder)
 
         # Create a file-like object from the bytes
         file_object = BytesIO(file)
