@@ -33,34 +33,32 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
 
 class eosBox:
     def __init__(self, client_id, client_secret, callback_url):
-        self.refresh_token = None
-        self.access_token = None
         self.auth_url = None
         self.client = None
+        self.client_id = client_id
+        self.client_secret = client_secret
 
         self.authorized = OAuth2(
             client_id=client_id,
-            client_secret=client_secret,
-            store_tokens=self._store_tokens
+            client_secret=client_secret
         )
 
         self.auth_url, _ = self.authorized.get_authorization_url(callback_url)
 
-    def _store_tokens(self, refresh_token, access_token):
-        logging.debug('Storing tokens')
-        self.refresh_token = refresh_token
-        self.access_token = access_token
-
-    def authenticate_client(self, auth_code):
-        logging.info('Authenticating...', )
+    def login(self, auth_code):
         access_token, refresh_token = self.authorized.authenticate(auth_code)
-        self.access_token = access_token
-        self.refresh_token = refresh_token
-        self.client = Client(self.authorized)
-        logging.info('...Authentication complete')
+        return access_token, refresh_token
+
+    def authenticate_client(self, access_token, refresh_token):
+        oauth2 = OAuth2(
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            access_token=access_token,
+            refresh_token=refresh_token
+        )
+        self.client = Client(oauth2)
 
     def get_files_in_folder(self, folder_id):
-        print(f'client: {self.client}')
         folder = self.client.folder(folder_id).get()
 
         # construct the folder's full path
