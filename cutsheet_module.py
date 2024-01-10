@@ -13,15 +13,15 @@ class Stamp:
 
     def __init__(self, stamp_data: dict):
 
-        print(f'stamp_data: {stamp_data}')
-
         self.buffer = BytesIO()
+        self.gradient = stamp_data["gradient"]
         self.folder_id = stamp_data["folderID"]
         self.project_name = stamp_data["projectName"]
         self.project_number = stamp_data["projectNumber"]
         self.prepared_by = stamp_data["preparedBy"]
         self.prepared_for = stamp_data["preparedFor"]
         self.is_revision = stamp_data["isRevision"]
+        self.is_page_number = stamp_data["showPageNumbers"]
         self.revision_number = stamp_data["revisionNumber"]
         self.date = stamp_data["date"]
         self.note = stamp_data["note"]
@@ -51,11 +51,20 @@ class Stamp:
         # Place image
         scale = 0.85
         pdf_image = ImageReader(page_image_bytes)
-        self.pdf_canvas.drawImage(pdf_image, self.page_width * 0.075, self.page_height * 0.15, self.page_width * scale, self.page_height * scale)
+        self.pdf_canvas.drawImage(pdf_image, self.page_width * 0.075, self.page_height * 0.15, self.page_width * scale,
+                                  self.page_height * scale)
 
         # Draw footer
         self._draw_box((0, 0), (self.page_width, self.page_height * 0.15), 'black')
-        self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
+
+        if self.gradient == 0:
+            self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
+        else:
+            image_path = [
+                'frontend-dist/static/media/purple-gradient.d4158913ea60c14f19aa.png',
+                'frontend-dist/static/media/orange-gradient.1174bcef997a2d5e694d.png'
+            ][self.gradient - 1]
+            self.pdf_canvas.drawImage(image_path, 5, 30, self.page_width - 10, (self.page_height * 0.15) - 35)
 
         self.pdf_canvas.setFillColor('grey')
 
@@ -67,10 +76,10 @@ class Stamp:
 
         self.pdf_canvas.setFillColor('black')
 
-        self.pdf_canvas.drawString(250, 100, str(self.project_name).upper())
-        self.pdf_canvas.drawString(250, 80, str(self.project_number).upper())
-        self.pdf_canvas.drawString(250, 60, str(self.prepared_for).upper())
-        self.pdf_canvas.drawString(250, 40, str(self.note).upper())
+        self.pdf_canvas.drawString(300, 100, str(self.project_name).upper())
+        self.pdf_canvas.drawString(300, 80, str(self.project_number).upper())
+        self.pdf_canvas.drawString(300, 60, str(self.prepared_for).upper())
+        self.pdf_canvas.drawString(300, 40, str(self.note).upper())
 
         # Type
         type_label = pdf_name.split('_')[0]
@@ -80,18 +89,25 @@ class Stamp:
         self.pdf_canvas.setFillColor('white')
         self.pdf_canvas.setFont('Karla-Medium', 10)
 
-        self.pdf_canvas.drawString(
-            15,
-            15,
-            f"{['ISSUED DATE: ', 'REVISED DATE: '][int(self.is_revision)]}{self.date}")
+        # Issue Date / Revision Date
+        date_type = f"{['ISSUED', 'REVISION'][int(self.is_revision)]}"
 
-        self.pdf_canvas.drawString(500, 15, f"PAGE {page_num:02} OF {page_total:02}")
+        if self.is_revision:
+            revision_number = f' | REV: {self.revision_number}'
+        else:
+            revision_number = ''
 
-        self.pdf_canvas.showPage()
+        date_text = f'{date_type}: {self.date}{revision_number}'
+
+        self.pdf_canvas.drawString(15, 15, date_text)
+
+        # Page Number
+        if self.is_page_number:
+            self.pdf_canvas.drawString(500, 15, f"PAGE {page_num:02} OF {page_total:02}")
+            self.pdf_canvas.showPage()
 
     def save_pdf(self):
         self.pdf_canvas.save()
         pdf_bytes = self.buffer.getvalue()
         self.buffer.close()
         return pdf_bytes
-
