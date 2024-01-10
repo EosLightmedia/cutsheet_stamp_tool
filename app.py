@@ -58,20 +58,22 @@ def index():
 def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
-    token = request.args.get('access')
+    token = request.args.get('auth_code')
     print(token, folder_id)
 
     box = get_box()
-    box.authenticate_client(token)
+    box.authenticate_client(token, '')
 
     files = box.get_files_in_folder(folder_id)
 
     return files, HTTP_STATUS_SUCCESS
 
 
-@app.route('/api/stamp', methods=['POST'])
+@app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
-    access = request.args.get('access')
+    print(f'Request received: {request}')
+    access = request.args.get('auth_code')
+    print(f'Token: {access}')
     # refresh = request.args.get('refresh')
     box = get_box()
     box.authenticate_client(access, '')
