@@ -73,55 +73,55 @@ def check_folder_contents():
 def post_stamp():
     print(f'Request received: {request}')
     access = request.args.get('auth_code')
-    print(f'Token: {access}')
+    data = request.get_json()
     # refresh = request.args.get('refresh')
     box = get_box()
     box.authenticate_client(access, '')
 
-    if True:
-        print('Stamping...')
-        data = request.get_json()
-        print(f'JSON received: {data}')
-        is_package = data.get('packageSet')
-        pdfs, total_page_count = box.get_pdfs_in_folder(data.get('folderID'))
-        print(f'{len(pdfs)} PDFs, and {total_page_count} pages')
+    print(f'Stamp data: {data}')
 
-        page_number = 0
-        saved_folder_id = 0
+    is_package = data.get('packageSet')
+    print(f'is_package: {is_package}')
 
-        current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+    pdfs, total_page_count = box.get_pdfs_in_folder(data.get('folderID'))
+    print(f'{len(pdfs)} PDFs, and {total_page_count} total pages')
+
+    page_number = 0
+    saved_folder_id = 0
+
+    current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+    print(f'Saving time as: {current_time}')
+
+    stamp = Stamp(data)
+
+    for i in range(len(pdfs)):
+        pdf = pdfs[i]
+        pdf_page_count = len(pdf['images'])
+
+        if is_package:
+            page_count = total_page_count
+        else:
+            page_count = pdf_page_count
 
         stamp = Stamp(data)
 
-        for i in range(len(pdfs)):
-            pdf = pdfs[i]
-            pdf_page_count = len(pdf['images'])
+        for j in range(len(pdf['images'])):
+            page_number += 1
+            image = pdf['images'][j]
+            stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)
 
-            if is_package:
-                page_count = total_page_count
-            else:
-                page_count = pdf_page_count
-
-            stamp = Stamp(data)
-
-            for j in range(len(pdf['images'])):
-                page_number += 1
-                image = pdf['images'][j]
-                logging.debug(f"Applying page {page_number}, with {pdf['name']}")
-                stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)
-
-            if not is_package:
-                page_number = 0
-                pdf_data = stamp.save_pdf()
-                type_label = pdf['name'].split('_')[0]
-                folder_name = f"cut-sheet_{current_time}"
-                file_name = f"{type_label}.pdf"
-                saved_folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, stamp.folder_id)
-
-        if is_package:
+        if not is_package:
+            page_number = 0
             pdf_data = stamp.save_pdf()
-            file_name = f"cut-sheet_{current_time}.pdf"
-            saved_folder_id = box.save_package_to_box(pdf_data, file_name, stamp.folder_id)
+            type_label = pdf['name'].split('_')[0]
+            folder_name = f"cut-sheet_{current_time}"
+            file_name = f"{type_label}.pdf"
+            saved_folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, stamp.folder_id)
+
+    if is_package:
+        pdf_data = stamp.save_pdf()
+        file_name = f"cut-sheet_{current_time}.pdf"
+        saved_folder_id = box.save_package_to_box(pdf_data, file_name, stamp.folder_id)
 
     return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)
 
