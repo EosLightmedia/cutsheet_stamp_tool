@@ -8,7 +8,7 @@ function ConfirmPopUp({
   preparedBy,
   date,
   isRevision,
-  jobPhase,
+  note,
   revisionNumber,
   isPackagePDFs,
   foundPDFs,
@@ -59,7 +59,7 @@ function ConfirmPopUp({
             </p>
             <p>
               <span className="confirm-title">Note:</span> <br />{" "}
-              <span className="value">{jobPhase}</span>
+              <span className="value">{note}</span>
             </p>
 
             <p>

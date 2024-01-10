@@ -26,13 +26,11 @@ function URLFolderSelector({
         setFolderPath(mockData.path)
         setHelperText(
           <div className="helper-text-block">
-            <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
+            <>✅ Box folder found!</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📁 Path:</strong>{" "}
-            {mockData.path}
+            <>📁 {mockData.path}</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📄 Total PDFs:</strong>{" "}
-            {pdfs.length}
+            <>📄 Total PDFs: </> <>{pdfs.length}</>
           </div>
         )
       }, 1000)
@@ -47,12 +45,11 @@ function URLFolderSelector({
         setFolderPath(path)
         setHelperText(
           <div className="helper-text-block">
-            <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
+            <>✅ Box folder found!</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📁 Path:</strong> {path}
+            <>📁 {path}</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📄 Total PDFs:</strong>{" "}
-            {pdfs.length}
+            <>📄 Total PDFs: </> <>{pdfs.length}</>
           </div>
         )
       } catch (error) {
