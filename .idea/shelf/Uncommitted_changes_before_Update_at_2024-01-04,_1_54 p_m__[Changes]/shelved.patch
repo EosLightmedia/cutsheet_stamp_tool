@@ -1,0 +1,81 @@
+Index: app.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, send_from_directory, request, redirect, Response\nfrom box_module import eosBox\nfrom cutsheet_module import Stamp\nfrom datetime import datetime\nimport logging\nlogging.basicConfig(level=logging.DEBUG)\n\napp = Flask(__name__, static_folder='frontend-dist', static_url_path='')\nCLIENT_ID = 'ek7onbev0qocf7rtfuov0h8xo17picca'\nCLIENT_SECRET = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'\nCALLBACK_URL = 'http://localhost:8000/'\n\nbox = eosBox(CLIENT_ID, CLIENT_SECRET, CALLBACK_URL)\n\n\n@app.route(\"/\", methods=['GET', 'POST'])\ndef index():\n    code = request.args.get('code')\n    if not code:\n        return redirect(box.auth_url)\n\n    try:\n        box.authenticate_client(code)\n    except Exception as e:\n        print(e)\n        # If authentication fails, redirect back to the Box authentication URL\n        return redirect(box.auth_url)\n    return send_from_directory(app.static_folder, 'index.html')\n\n\n@app.route('/api/folder-info', methods=[\"POST\"])\ndef check_folder_contents():\n    folder = request.args.get('folderId')\n    files = box.get_files_in_folder(folder)\n    return files, HTTP_STATUS_SUCCESS\n\n\n@app.route('/api/stamp', methods=['POST'])\ndef post_stamp():\n    logging.info('Stamping...')\n    data = request.get_json()\n    logging.debug(f'json data: {data}')\n    stamp = Stamp(data)\n    pdfs, page_count = box.get_pdfs_in_folder(stamp.folder_id)\n    logging.info(f'{len(pdfs)} PDFs, and {page_count} pages')\n    page_number = 0\n\n    for i in range(len(pdfs)):\n        pdf = pdfs[i]\n        for j in range(len(pdf['images'])):\n            page_number += 1\n            image = pdf['images'][j]\n            logging.debug(f\"Applying page {page_number}, with {pdf['name']}\")\n            stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)\n\n    current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')\n    pdf_data = stamp.save_pdf()\n    box.save_file_to_box(pdf_data, f\"cutsheet_{current_time}.pdf\", stamp.folder_id)\n    return Response(\"Success\", status=HTTP_STATUS_SUCCESS)\n\n\n\nif __name__ == \"__main__\":\n    HTTP_STATUS_SUCCESS = 200\n    app.run(port=8000, debug=False)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app.py b/app.py
+--- a/app.py	(revision 35127f54972c154a6bbceca2dfdce6f661d8c265)
++++ b/app.py	(date 1704394193357)
+@@ -28,10 +28,10 @@
+     return send_from_directory(app.static_folder, 'index.html')
+ 
+ 
+-@app.route('/api/folder-info', methods=["POST"])
+-def check_folder_contents():
+-    folder = request.args.get('folderId')
+-    files = box.get_files_in_folder(folder)
++@app.route('/api/folder-info/<folderID>', methods=["GET"])
++def check_folder_contents(folderID):
++    files = box.get_files_in_folder(folderID)
++
+     return files, HTTP_STATUS_SUCCESS
+ 
+ 
+Index: box_module.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from boxsdk import OAuth2, Client\nimport logging\nimport fitz\nimport datetime\nfrom io import BytesIO\nfrom PIL import Image\n\nlogging.basicConfig(level=logging.DEBUG, )\n\n\ndef _convert_pdf_to_png(pdf_file: object) -> list:\n    doc = fitz.Document(stream=pdf_file, filetype='pdf')\n    logging.debug(f'\\tFound {len(doc)} pages')\n    images = []\n\n    for i in range(len(doc)):\n        page = doc.load_page(i)\n        # zoom factor is 2.0 here\n        zoom_factor = 2.0\n        # create a matrix for transformation\n        mat = fitz.Matrix(zoom_factor, zoom_factor)\n        # get pixmap with the transformation matrix\n        render = page.get_pixmap(matrix=mat)\n\n        # convert fitz.Pixmap/render to a PIL.Image object\n        pil_img = Image.frombytes(\"RGB\", (render.width, render.height), render.samples)\n        output = BytesIO()\n        pil_img.save(output, 'png')\n        images.append(output)\n        print(images)\n    return images\n\n\nclass eosBox:\n    def __init__(self, client_id, client_secret, callback_url):\n        self.refresh_token = None\n        self.access_token = None\n        self.auth_url = None\n        self.client = None\n\n        self.authorized = OAuth2(\n            client_id=client_id,\n            client_secret=client_secret,\n            store_tokens=self._store_tokens\n        )\n\n        self.auth_url, _ = self.authorized.get_authorization_url(callback_url)\n\n    def _store_tokens(self, refresh_token, access_token):\n        logging.debug('Storing tokens')\n        self.refresh_token = refresh_token\n        self.access_token = access_token\n\n    def authenticate_client(self, auth_code):\n        logging.info('Authenticating...', )\n        access_token, refresh_token = self.authorized.authenticate(auth_code)\n        self.access_token = access_token\n        self.refresh_token = refresh_token\n        self.client = Client(self.authorized)\n        logging.info('...Authentication complete')\n\n    def get_files_in_folder(self, folder_id):\n        folder = self.client.folder(folder_id).get()\n        items = []\n        for item in folder.get_items():\n            items.append(item)\n        return items\n\n    def get_pdfs_in_folder(self, folder_id):\n        if self.client is None:\n            logging.warning('Client not authenticated yet')\n            return None\n        folder = self.client.folder(folder_id).get()\n        pdfs = []\n        page_count = 0\n        for item in folder.get_items():\n            if item.type == 'file' and item.name.endswith('.pdf'):\n                logging.debug(f'Processing {item.name}:')\n                pdf_file = self.client.file(item.id).content()\n                png_files = _convert_pdf_to_png(pdf_file)\n                page_count += len(png_files)\n\n                pdfs.append({\n                    'name': item.name,\n                    'images': png_files\n                })\n\n        return pdfs, page_count\n\n    def save_file_to_box(self, file: bytes, file_name: str, folder_id: str):\n        # Set folder name to be used\n        folder_name = 'Stamp Exports'\n\n        # Get the list of items (folders and files) in the parent folder\n        items = self.client.folder(folder_id).get_items()\n\n        # Try to find the folder with matching name\n        exported_pdfs_folder = None\n        for item in items:\n            if item.type == 'folder' and item.name == folder_name:\n                exported_pdfs_folder = self.client.folder(item.object_id)\n                break\n\n        # If the folder was not found, create it\n        if exported_pdfs_folder is None:\n            exported_pdfs_folder = self.client.folder(folder_id).create_subfolder(folder_name)\n\n        # Create a file-like object from the bytes\n        file_object = BytesIO(file)\n\n        # Upload file object to new folder\n        exported_pdfs_folder.upload_stream(file_object, file_name)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/box_module.py b/box_module.py
+--- a/box_module.py	(revision 35127f54972c154a6bbceca2dfdce6f661d8c265)
++++ b/box_module.py	(date 1704398575703)
+@@ -61,10 +61,31 @@
+ 
+     def get_files_in_folder(self, folder_id):
+         folder = self.client.folder(folder_id).get()
++
++        # construct the folder's full path
++        full_folder_path = "/".join([entry['name'] for entry in folder.path_collection['entries'][1:]])
++        full_folder_path = f"{full_folder_path}/{folder.name}"
++
+         items = []
+         for item in folder.get_items():
+-            items.append(item)
+-        return items
++            print(item)
++            item_type = item.type
++            if item.name.endswith('.pdf'):
++                item_type = 'pdf'
++
++            item_dict = {
++                'type': item_type,
++                'name': item.name,
++            }
++
++            items.append(item_dict)
++
++        folder_dict = {
++            'path': full_folder_path,
++            'items': items
++        }
++
++        return folder_dict
+ 
+     def get_pdfs_in_folder(self, folder_id):
+         if self.client is None:
+Index: calls/foldercheck.http
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/calls/foldercheck.http b/calls/foldercheck.http
+new file mode 100644
+--- /dev/null	(date 1704393950502)
++++ b/calls/foldercheck.http	(date 1704393950502)
+@@ -0,0 +1,1 @@
++GET http://localhost:8000/api/folder-info/240776517305
+\ No newline at end of file

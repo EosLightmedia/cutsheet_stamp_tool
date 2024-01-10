@@ -1,0 +1,18 @@
+Index: app.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, make_response, send_from_directory, request, redirect, Response\nfrom box_module import eosBox\nfrom cutsheet_module import Stamp\nfrom datetime import datetime\nimport logging\n\nHTTP_STATUS_SUCCESS = 200\nlogging.basicConfig(level=logging.DEBUG)\napp = Flask(__name__, static_folder='frontend-dist', static_url_path='')\n\n\ndef get_box():\n    client_id = 'ek7onbev0qocf7rtfuov0h8xo17picca'\n    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'\n\n    if __name__ == \"__main__\":\n        callback_url = 'http://localhost:8000/'\n\n    else:\n        callback_url = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'\n\n    return eosBox(client_id, client_secret, callback_url)\n\n\ndef authenticate_client(box, code):\n    box.authenticate_client(code)\n    client = box.client\n\n    return client\n\n\n\n@app.route(\"/\", methods=['GET', 'POST'])\ndef index():\n    print(f'Request received: {request}')\n    code = request.args.get('code')\n\n    if not code:\n        box = get_box()\n        print(f'Authentication code approved')\n        return redirect(box.auth_url)\n\n    else:\n        try:\n            box = get_box()\n            authenticate_client(box, code)\n            print(f'Authentication code approved')\n\n        except Exception as e:\n            print(f'Authentication error: {e}')\n            box = get_box()\n\n            return redirect(box.auth_url)\n\n    response = make_response(send_from_directory(app.static_folder, 'index.html'))\n    response.set_cookie('auth_code', code)\n    return response\n\n\n@app.route('/api/folder/', methods=[\"GET\"])\ndef check_folder_contents():\n    folder_id = request.args.get('folder_id')\n    code = request.args.get('code')\n\n    box = get_box()\n    authenticate_client(box, code)\n\n    files = box.get_files_in_folder(folder_id)\n\n    return files, HTTP_STATUS_SUCCESS\n\n\n@app.route('/api/stamp', methods=['POST'])\ndef post_stamp():\n    code = request.args.get('code')\n    box = get_box()\n    authenticate_client(box, code)\n\n    try:\n        logging.info('Stamping...')\n        data = request.get_json()\n        logging.debug(f'json data: {data}')\n        stamp = Stamp(data)\n        pdfs, page_count = box.get_pdfs_in_folder(stamp.folder_id)\n        logging.info(f'{len(pdfs)} PDFs, and {page_count} pages')\n        page_number = 0\n\n        for i in range(len(pdfs)):\n            pdf = pdfs[i]\n            for j in range(len(pdf['images'])):\n                page_number += 1\n                image = pdf['images'][j]\n                logging.debug(f\"Applying page {page_number}, with {pdf['name']}\")\n                stamp.apply_stamp_to_img(image, pdf['name'], page_number, page_count)\n\n        current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')\n        pdf_data = stamp.save_pdf()\n        saved_folder_id = box.save_file_to_box(pdf_data, f\"cutsheet_{current_time}.pdf\", stamp.folder_id)\n    except Exception as e:\n        return Response(f\"\\nPython Error: {e}\", status=HTTP_STATUS_SUCCESS)\n\n    return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)\n\n\nif __name__ == \"__main__\":\n    app.run(port=8000, debug=True)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app.py b/app.py
+--- a/app.py	(revision d101a3e1bbb3247fc897d1a3fc7b8d02a1a43ca3)
++++ b/app.py	(date 1704836535385)
+@@ -29,7 +29,6 @@
+     return client
+ 
+ 
+-
+ @app.route("/", methods=['GET', 'POST'])
+ def index():
+     print(f'Request received: {request}')
