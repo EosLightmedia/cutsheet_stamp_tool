@@ -9,6 +9,7 @@ function URLFolderSelector({
   setFoundPDFs,
   setFolderPath,
   authCode,
+  refresh,
 }) {
   const defaultHelperText =
     "Paste Box link here (e.g. https://eoslightmedia.app.box.com/folder/240776517305)"
@@ -37,7 +38,7 @@ function URLFolderSelector({
     } else {
       try {
         const response = await axios.get(
-          `/api/folder/?folder_id=${folderNumber}&access=${authCode}`
+          `/api/folder/?folder_id=${folderNumber}&access=${authCode}&refresh=${refresh}`
         )
         const { items, path } = response.data
         const pdfs = items.filter((item) => item.type === "pdf")
