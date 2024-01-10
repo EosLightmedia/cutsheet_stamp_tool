@@ -42,6 +42,7 @@ function StampForm(props) {
     setFoundPDFs,
     setFolderPath,
     authCode,
+    refresh,
   } = props
 
   return (
@@ -115,6 +116,7 @@ function StampForm(props) {
           setFoundPDFs={setFoundPDFs}
           setFolderPath={setFolderPath}
           authCode={authCode}
+          refresh={refresh}
         />
       </div>
     </div>
