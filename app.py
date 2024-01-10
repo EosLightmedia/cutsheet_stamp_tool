@@ -49,7 +49,7 @@ def index():
             return redirect(box.auth_url)
 
         response = make_response(send_from_directory(app.static_folder, 'index.html'))
-        response.set_cookie('auth_code', access_token)
+        response.set_cookie('access', access_token)
 
         return response
 
@@ -58,7 +58,7 @@ def index():
 def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
-    token = request.args.get('auth_code')
+    token = request.args.get('access')
     print(token, folder_id)
 
     box = get_box()
@@ -72,7 +72,7 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     print(f'Request received: {request}')
-    access = request.args.get('auth_code')
+    access = request.args.get('access')
     data = request.get_json()
     # refresh = request.args.get('refresh')
     box = get_box()
