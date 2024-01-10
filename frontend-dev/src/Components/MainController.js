@@ -31,8 +31,6 @@ function MainController({ authCode }) {
   const [folderPath, setFolderPath] = useState("")
   const [canSubmit, setCanSubmit] = useState(false)
 
-  console.log("Auth Code MainController:", authCode)
-
   const openPopup = () => {
     document.body.classList.add("no-scroll")
     setConfirmPopUpIsVisible(true)
@@ -94,6 +92,7 @@ function MainController({ authCode }) {
       date: date,
       note: note,
       isRevision: isRevision,
+      showPageNumbers: showPageNumbers,
       revisionNumber: revisionNumber,
       gradient: gradientNumber,
       disclaimer: disclaimer,
@@ -103,7 +102,7 @@ function MainController({ authCode }) {
     console.log("Form Data:", formData)
 
     axios
-      .post(`/api/stamp/?auth_code=${authCode}`, formData)
+      .post(`/api/stamp/?access=${authCode}`, formData)
       .then((response) => {
         console.log("Newly Created Folder:", response.data)
         setCreatedFolderNumber(response.data)

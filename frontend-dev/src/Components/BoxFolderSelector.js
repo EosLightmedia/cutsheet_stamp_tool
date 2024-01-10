@@ -26,20 +26,18 @@ function URLFolderSelector({
         setFolderPath(mockData.path)
         setHelperText(
           <div className="helper-text-block">
-            <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
+            <>✅ Box folder found!</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📁 Path:</strong>{" "}
-            {mockData.path}
+            <>📁 {mockData.path}</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📄 Total PDFs:</strong>{" "}
-            {pdfs.length}
+            <>📄 Total PDFs: </> <>{pdfs.length}</>
           </div>
         )
       }, 1000)
     } else {
       try {
         const response = await axios.get(
-          `/api/folder/?folder_id=${folderNumber}&auth_code=${authCode}`
+          `/api/folder/?folder_id=${folderNumber}&access=${authCode}`
         )
         const { items, path } = response.data
         const pdfs = items.filter((item) => item.type === "pdf")
@@ -47,12 +45,11 @@ function URLFolderSelector({
         setFolderPath(path)
         setHelperText(
           <div className="helper-text-block">
-            <strong style={{ fontWeight: "700" }}>✅ Box folder found!</strong>
+            <>✅ Box folder found!</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📁 Path:</strong> {path}
+            <>📁 {path}</>
             <br />
-            <strong style={{ fontWeight: "700" }}>📄 Total PDFs:</strong>{" "}
-            {pdfs.length}
+            <>📄 Total PDFs: </> <>{pdfs.length}</>
           </div>
         )
       } catch (error) {
