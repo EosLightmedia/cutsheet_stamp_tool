@@ -50,7 +50,7 @@ def index():
 
         response = make_response(send_from_directory(app.static_folder, 'index.html'))
         response.set_cookie('access', access_token)
-
+        response.set_cookie('refresh', refresh_token)
         return response
 
 
@@ -58,11 +58,11 @@ def index():
 def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
-    token = request.args.get('access')
-    print(token, folder_id)
+    access_token = request.args.get('access')
+    refresh = request.args.get('refresh')
 
     box = get_box()
-    box.authenticate_client(token, '')
+    box.authenticate_client(access_token)
 
     files = box.get_files_in_folder(folder_id)
 
@@ -76,7 +76,7 @@ def post_stamp():
     data = request.get_json()
     # refresh = request.args.get('refresh')
     box = get_box()
-    box.authenticate_client(access, '')
+    box.authenticate_client(access)
 
     print(f'Stamp data: {data}')
 
@@ -103,8 +103,6 @@ def post_stamp():
         else:
             page_count = pdf_page_count
 
-        stamp = Stamp(data)
-
         for j in range(len(pdf['images'])):
             page_number += 1
             image = pdf['images'][j]
@@ -117,6 +115,7 @@ def post_stamp():
             folder_name = f"cut-sheet_{current_time}"
             file_name = f"{type_label}.pdf"
             saved_folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, stamp.folder_id)
+            stamp = Stamp(data)
 
     if is_package:
         pdf_data = stamp.save_pdf()
