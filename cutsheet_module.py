@@ -3,8 +3,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from datetime import datetime
-from box_module import eosBox
+from numpy import interp
 from io import BytesIO
 
 
@@ -25,6 +24,7 @@ class Stamp:
         self.revision_number = stamp_data["revisionNumber"]
         self.date = stamp_data["date"]
         self.note = stamp_data["note"]
+        self.disclaimer = stamp_data["disclaimer"]
 
         self.page_width, self.page_height = A4
         self.pdf_canvas = canvas.Canvas(self.buffer)
@@ -66,6 +66,15 @@ class Stamp:
             ][self.gradient - 1]
             self.pdf_canvas.drawImage(image_path, 5, 30, self.page_width - 10, (self.page_height * 0.15) - 35)
 
+        logo_path = [
+            'frontend-dist/static/media/eos-logo.41995ff3f203db68e72f.png',
+            'frontend-dist/static/media/abernathy-logo.c0d4809a4631d4f433e5.png'
+            ][self.prepared_by]
+
+        self.pdf_canvas.drawImage(logo_path, self.page_width - 100, 100, 80, 80)
+
+        # Details
+        self.pdf_canvas.setFont('Karla-Medium', 12)
         self.pdf_canvas.setFillColor('grey')
 
         self.pdf_canvas.drawString(10, 105, 'TYPE')
@@ -81,9 +90,20 @@ class Stamp:
         self.pdf_canvas.drawString(300, 60, str(self.prepared_for).upper())
         self.pdf_canvas.drawString(300, 40, str(self.note).upper())
 
+        # Disclaimer
+        disclaimers = [
+            'Disclaimer 1',
+            'Disclaimer 2',
+            'Disclaimer 3'
+        ]
+
+
+
         # Type
         type_label = pdf_name.split('_')[0]
-        self.pdf_canvas.setFont('Karla-Medium', 60)
+        type_size = interp(len(type_label), [4, 8], [60, 20])
+
+        self.pdf_canvas.setFont('Karla-Medium', int(type_size))
         self.pdf_canvas.drawString(10, 50, str(type_label).upper())
 
         self.pdf_canvas.setFillColor('white')
@@ -104,7 +124,8 @@ class Stamp:
         # Page Number
         if self.is_page_number:
             self.pdf_canvas.drawString(500, 15, f"PAGE {page_num:02} OF {page_total:02}")
-            self.pdf_canvas.showPage()
+
+        self.pdf_canvas.showPage()
 
     def save_pdf(self):
         self.pdf_canvas.save()
