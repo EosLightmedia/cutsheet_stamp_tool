@@ -49,11 +49,12 @@ class eosBox:
         access_token, refresh_token = self.authorized.authenticate(auth_code)
         return access_token, refresh_token
 
-    def authenticate_client(self, access_token):
+    def authenticate_client(self, access_token, refresh_token):
         oauth2 = OAuth2(
             client_id=self.client_id,
             client_secret=self.client_secret,
-            access_token=access_token
+            access_token=access_token,
+            refresh_token=refresh_token
         )
         self.client = Client(oauth2)
 
