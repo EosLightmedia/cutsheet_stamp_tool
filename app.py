@@ -1,3 +1,5 @@
+#! /.venv/bin/python
+
 from flask import Flask, make_response, send_from_directory, request, redirect, Response
 from box_module import eosBox
 from cutsheet_module import Stamp
@@ -59,10 +61,10 @@ def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
     access_token = request.args.get('access')
-    refresh = request.args.get('refresh')
+    refresh_token = request.args.get('refresh')
 
     box = get_box()
-    box.authenticate_client(access_token)
+    box.authenticate_client(access_token, refresh_token)
 
     files = box.get_files_in_folder(folder_id)
 
@@ -72,11 +74,11 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     print(f'Request received: {request}')
-    access = request.args.get('access')
+    access_token = request.args.get('access')
+    refresh_token = request.args.get('refresh')
     data = request.get_json()
-    # refresh = request.args.get('refresh')
     box = get_box()
-    box.authenticate_client(access)
+    box.authenticate_client(access_token, refresh_token)
 
     print(f'Stamp data: {data}')
 
