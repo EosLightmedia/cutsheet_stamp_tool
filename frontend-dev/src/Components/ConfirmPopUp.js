@@ -1,5 +1,6 @@
 import React from "react"
 import PDFChecker from "./PDFChecker"
+import StampIcon from "../Assets/stamp-icon.png"
 
 function ConfirmPopUp({
   jobName,
@@ -27,6 +28,10 @@ function ConfirmPopUp({
 
   return (
     <div className="confirm-pop-up">
+      <button
+        className="close-button-big"
+        onClick={() => closePopup()}
+      ></button>
       <div className="confirm-popup-main-div">
         <div className="confirm-popup-content">
           <h2>Just to confirm...</h2>
@@ -88,7 +93,7 @@ function ConfirmPopUp({
             </p>
           </div>
           <div className="listed-files-div">
-            <div className="pdf-listed-files">
+            <div className="pdf-listed-files-title">
               <p>
                 <strong>PDF File</strong>
               </p>
@@ -96,13 +101,19 @@ function ConfirmPopUp({
                 <strong>Extracted Type Name</strong>
               </p>
             </div>
+            <div className="spacer"></div>
+
             {foundPDFs.map((pdf, index) => (
               <PDFChecker key={index} name={pdf.name} type={pdf.type} />
             ))}
           </div>
           <div className="confirm-buttons">
             <button onClick={() => closePopup()}>CANCEL</button>
-            <button onClick={handleSubmit}>YES, STAMP AWAY</button>
+            <button onClick={handleSubmit}>
+              {" "}
+              <img src={StampIcon} className="stamp-icon" alt="Stamp Icon" />
+              YES, STAMP AWAY
+            </button>
           </div>
         </div>
       </div>

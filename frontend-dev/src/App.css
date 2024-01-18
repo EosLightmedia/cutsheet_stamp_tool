@@ -146,13 +146,13 @@
 
 p {
   margin: 0;
-  color: inherit; /* Make sure the paragraph text color is the same as the banner */
+  color: inherit;
 }
 
 .banner-main-div a {
-  font-weight: bold; /* Make the link text bold */
-  text-decoration: none; /* Remove underline from the link */
-  color: inherit; /* Keep the link color the same as the text */
+  font-weight: bold;
+  text-decoration: none;
+  color: inherit;
 }
 
 /*******  FORM STYLING   **********/
@@ -202,7 +202,9 @@ p {
   margin-top: 0;
   font-size: 0.78em;
   color: #6c757d;
-  overflow: display;
+  /* overflow: visible;
+  white-space: nowrap; */
+  /* text-overflow: clip; */
 }
 
 .helper-text-block {
@@ -681,6 +683,20 @@ h2.form-section-title {
   z-index: 1000; /* Ensure it's above other content */
 }
 
+.close-button-big {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5em;
+
+  z-index: -1;
+}
+
 .confirm-popup-main-div {
   background-color: white;
   padding: 20px;
@@ -688,7 +704,10 @@ h2.form-section-title {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
   text-align: center;
   width: 750px;
-  max-width: 600px; /* Maximum width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* max-width: 850px;  */
 }
 
 .confirm-popup-content {
@@ -728,11 +747,12 @@ h2.form-section-title {
   text-align: left;
   margin: 10px;
   margin-top: 0;
-  max-width: 500px;
+  width: 650px;
   padding: 20px;
+  padding-bottom: 35px;
   border-radius: 10px;
   align-self: center;
-  width: 100%;
+  margin-bottom: 25px;
   background-color: #ebebeb;
 }
 
@@ -741,11 +761,39 @@ h2.form-section-title {
   flex-direction: column;
   align-items: left;
   margin-bottom: 10px;
-  min-width: 500px;
+  min-width: 650px;
   align-self: center;
   padding: 20px;
   background-color: #ebebeb;
   border-radius: 10px;
+
+  min-height: 150px;
+  max-height: 300px; /* Adjust this value as needed */
+  overflow-y: scroll; /* Always show vertical scrollbar */
+}
+
+.pdf-listed-files-title {
+  position: fixed;
+  padding: 20px;
+  margin-top: -20px;
+  padding-bottom: 10px;
+  padding-left: 0;
+  border-bottom: 1px solid rgb(128, 128, 128, 0.5);
+  width: 630px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Split into two equal columns */
+  gap: 30px; /* Space between columns */
+  align-items: center; /* Align items vertically */
+  text-align: left;
+  background-color: #ebebeb;
+}
+
+.spacer {
+  width: 100%;
+  height: 1px;
+  background-color: grey;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 .pdf-listed-files {
@@ -754,6 +802,7 @@ h2.form-section-title {
   gap: 10px; /* Space between columns */
   align-items: center; /* Align items vertically */
   text-align: left;
+  margin-bottom: 5px;
 }
 
 .pdf-listed-files p {
@@ -765,9 +814,19 @@ h2.form-section-title {
   font-size: 0.9em;
 }
 
+.confirm-buttons {
+  width: 700px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
 .confirm-buttons button {
-  width: 40%; /* Each button takes up 50% of the width */
-  padding: 10px 0;
+  width: 50%; /* Each button takes up 50% of the width */
+  padding: 15px 0;
   margin: 10px;
   border: none;
   background-color: #007bff; /* Blue background for one button */
@@ -781,6 +840,10 @@ h2.form-section-title {
 
 .confirm-buttons button:nth-child(1) {
   background-color: #dc3545;
+}
+
+.confirm-buttons button:nth-child(1):hover {
+  background-color: #931622;
 }
 
 .confirm-buttons button:hover {

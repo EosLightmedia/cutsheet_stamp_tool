@@ -60,13 +60,15 @@ function App() {
       {authCode && refreshToken ? (
         <MainController authCode={authCode} refresh={refreshToken} />
       ) : (
-        <div className="loading-container">
-          <img
-            className="loading-spinner"
-            src={LoadingImage}
-            alt="Loading..."
-          />
-          <p>Verifying Box Credentials...</p>
+        <div className="center-container-app">
+          <div className="loading-container-app">
+            <img
+              className="loading-spinner"
+              src={LoadingImage}
+              alt="Loading..."
+            />
+            <p>Verifying Box Credentials...</p>
+          </div>
         </div>
       )}
     </div>

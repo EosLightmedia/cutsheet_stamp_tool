@@ -10,11 +10,11 @@ function StampSubmit({ isActive, openPopup }) {
         disabled={!isActive}
       >
         <img src={StampIcon} className="stamp-icon" alt="Stamp Icon" />
-        Get Ready to Stamp
+        Confirm Stamp Details
       </button>
       <p className="helper-text-submit">
         {isActive
-          ? "Good job! Looks ready for stamping..."
+          ? "Good job! Almost ready for stamping..."
           : "All fields must be filled in first."}
       </p>
     </div>

@@ -31,7 +31,7 @@ function URLFolderSelector({
             <br />
             <>📁 {mockData.path}</>
             <br />
-            <>📄 Total PDFs: </> <>{pdfs.length}</>
+            <>📄 Found PDFs: </> <>{pdfs.length}</>
           </div>
         )
       }, 1000)
@@ -50,7 +50,7 @@ function URLFolderSelector({
             <br />
             <>📁 {path}</>
             <br />
-            <>📄 Total PDFs: </> <>{pdfs.length}</>
+            <>📄 Found PDFs: </> <>{pdfs.length}</>
           </div>
         )
       } catch (error) {
