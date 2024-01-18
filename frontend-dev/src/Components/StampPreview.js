@@ -20,6 +20,8 @@ function StampPreview(props) {
     showPageNumbers,
   } = props
 
+  console.log(gradientStyle)
+
   const formatRevisionNumber = (number) => {
     return String(number).padStart(2, "0")
   }
@@ -27,7 +29,7 @@ function StampPreview(props) {
   const disclaimerTextOptions = {
     0: "For bid purposes only.",
     1: "For review and not for construction.",
-    2: "For shits and giggles.",
+    2: "For even more testing.",
   }
 
   const displayLogo =
@@ -37,25 +39,28 @@ function StampPreview(props) {
       ? AbernathyLogo
       : null
 
-  const getGradientStyle = (gradient) => {
-    switch (gradient) {
-      case "Purple/Blue":
-        return {
-          backgroundImage: `url(${PurpleGradient})`,
-          backgroundPosition: "bottom left",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }
-      case "Yellow/Green":
-        return {
-          backgroundImage: `url(${OrangeGradient})`,
-          backgroundPosition: "bottom left",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }
-      default:
-        return {}
+  const getGradientStyle = (gradientStyle, preparedBy) => {
+    if (!gradientStyle) {
+      return {} // Return an empty object if gradientStyle is false
     }
+
+    if (preparedBy === "Eos Lightmedia") {
+      return {
+        backgroundImage: `url(${PurpleGradient})`,
+        backgroundPosition: "bottom left",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }
+    } else if (preparedBy === "Abernathy Lighting Design") {
+      return {
+        backgroundImage: `url(${OrangeGradient})`,
+        backgroundPosition: "bottom left",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }
+    }
+
+    return {} // Return an empty object as default
   }
 
   const previewStyle = getGradientStyle(gradientStyle)

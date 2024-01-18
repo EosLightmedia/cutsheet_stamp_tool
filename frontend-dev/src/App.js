@@ -12,9 +12,9 @@ function App() {
       // Set arbitrary values in development environment
       setAuthCode("dev-auth-code")
       setRefreshToken("dev-refresh-token")
-      console.log(
-        "Development mode: Using arbitrary Auth Code and Refresh Token."
-      )
+      // console.log(
+      //   "Development mode: Using arbitrary Auth Code and Refresh Token."
+      // )
     } else {
       // Function to check and set cookie values
       const checkAndSetCookie = (cookieName, setState) => {
@@ -43,17 +43,17 @@ function App() {
     }
   }, [])
 
-  useEffect(() => {
-    if (authCode) {
-      console.log("Auth Code:", authCode)
-    }
-  }, [authCode])
+  // useEffect(() => {
+  //   if (authCode) {
+  //     console.log("Auth Code:", authCode)
+  //   }
+  // }, [authCode])
 
-  useEffect(() => {
-    if (refreshToken) {
-      console.log("Refresh Token:", refreshToken)
-    }
-  }, [refreshToken])
+  // useEffect(() => {
+  //   if (refreshToken) {
+  //     console.log("Refresh Token:", refreshToken)
+  //   }
+  // }, [refreshToken])
 
   return (
     <div className="center-container">

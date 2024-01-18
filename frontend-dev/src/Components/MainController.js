@@ -18,7 +18,7 @@ function MainController({ authCode, refresh }) {
   const [isRevision, setIsRevision] = useState(false)
   const [jobPhase, setJobPhase] = useState("")
   const [note, setNote] = useState("")
-  const [gradientStyle, setGradientStyle] = useState("No Gradient")
+  const [gradientStyle, setGradientStyle] = useState(true)
   const [revisionNumber, setRevisionNumber] = useState(0)
   const [showPageNumbers, setShowPageNumbers] = useState(true)
   const [isPackagePDFs, setIsPackagePDFs] = useState(true)
@@ -68,21 +68,6 @@ function MainController({ authCode, refresh }) {
       preparedByNumber = 1
     }
 
-    let gradientNumber
-    switch (gradientStyle) {
-      case "No Gradient":
-        gradientNumber = 0
-        break
-      case "Purple/Blue":
-        gradientNumber = 1
-        break
-      case "Orange":
-        gradientNumber = 2
-        break
-      default:
-        gradientNumber = 0
-    }
-
     const formData = {
       folderID: folderNumber,
       projectName: jobName,
@@ -94,7 +79,7 @@ function MainController({ authCode, refresh }) {
       isRevision: isRevision,
       showPageNumbers: showPageNumbers,
       revisionNumber: revisionNumber,
-      gradient: gradientNumber,
+      isGradient: gradientStyle,
       disclaimer: disclaimer,
       packageSet: isPackagePDFs,
     }
