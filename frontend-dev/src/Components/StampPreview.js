@@ -3,7 +3,7 @@ import EosLogo from "../Assets/eos-logo.png"
 import AbernathyLogo from "../Assets/abernathy-logo.png"
 import PurpleGradient from "../Assets/purple-gradient.png"
 import OrangeGradient from "../Assets/orange-gradient.png"
-import "../Styles/StampPreview.css"
+// import "../Styles/StampPreview.css"
 
 function StampPreview(props) {
   const {
@@ -19,8 +19,6 @@ function StampPreview(props) {
     disclaimer,
     showPageNumbers,
   } = props
-
-  console.log(gradientStyle)
 
   const formatRevisionNumber = (number) => {
     return String(number).padStart(2, "0")
@@ -63,7 +61,7 @@ function StampPreview(props) {
     return {} // Return an empty object as default
   }
 
-  const previewStyle = getGradientStyle(gradientStyle)
+  const previewStyle = getGradientStyle(gradientStyle, preparedBy)
 
   return (
     <div className="content-div">

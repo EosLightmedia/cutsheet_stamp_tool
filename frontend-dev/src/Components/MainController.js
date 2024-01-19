@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import StampForm from "./StampForm"
 import StampPreview from "./StampPreview"
+import StampPreviewNew from "./StampPreviewNew"
 import StampSubmit from "./StampSubmit"
 import ProcessingPage from "./ProcessingPage"
 import ConfirmPopUp from "./ConfirmPopUp"
@@ -19,7 +20,7 @@ function MainController({ authCode, refresh }) {
   const [jobPhase, setJobPhase] = useState("")
   const [note, setNote] = useState("")
   const [gradientStyle, setGradientStyle] = useState(true)
-  const [revisionNumber, setRevisionNumber] = useState(0)
+  const [revisionNumber, setRevisionNumber] = useState(1)
   const [showPageNumbers, setShowPageNumbers] = useState(true)
   const [isPackagePDFs, setIsPackagePDFs] = useState(true)
   const [disclaimer, setDisclaimer] = useState([false, false, false])
@@ -163,7 +164,7 @@ function MainController({ authCode, refresh }) {
           authCode={authCode}
           refresh={refresh}
         />
-        <StampPreview
+        <StampPreviewNew
           jobName={jobName}
           jobCode={jobCode}
           URLFolder={URLFolder}
@@ -179,7 +180,6 @@ function MainController({ authCode, refresh }) {
           showPageNumbers={showPageNumbers}
         />
         <StampSubmit isActive={true} openPopup={openPopup} />
-
         <Footer />
       </div>
     </>
