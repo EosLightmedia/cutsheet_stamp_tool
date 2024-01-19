@@ -13,7 +13,7 @@ function StampPreviewNew(props) {
     preparedBy,
     date,
     isRevision,
-    jobPhase,
+    note,
     gradientStyle,
     revisionNumber,
     disclaimer,
@@ -67,8 +67,8 @@ function StampPreviewNew(props) {
     <div className="content-div">
       <div className="stamp-preview-div" style={previewStyle}>
         <div className="type-div">
-          {/* <p className="preview-title">Type</p> */}
-          <p className="preview-type-big-text">EG01-TYPE</p>
+          <p className="preview-title">Type</p>
+          <p className="preview-type-big-text">EG01-TYPE-TYPE-TYPE</p>
         </div>
         <div className="details-div">
           <p className="preview-title">Job Name</p>
@@ -78,8 +78,14 @@ function StampPreviewNew(props) {
           <p className="preview-details-text">{jobCode}</p>
           <p className="preview-title">Prepared For</p>
           <p className="preview-details-text">{preparedFor}</p>
-          <p className="preview-title">NOTE</p>
-          <p className="preview-details-text">{jobPhase}</p>
+
+          {note && (
+            <>
+              <p className="preview-title">NOTE</p>
+              <p className="preview-details-text">{note}</p>
+            </>
+          )}
+
           {displayLogo && (
             <img
               className="preview-logo"

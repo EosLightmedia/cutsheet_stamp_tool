@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import StampForm from "./StampForm"
 import StampPreview from "./StampPreview"
-import StampPreviewNew from "./StampPreviewNew"
+
 import StampSubmit from "./StampSubmit"
 import ProcessingPage from "./ProcessingPage"
 import ConfirmPopUp from "./ConfirmPopUp"
@@ -17,7 +17,6 @@ function MainController({ authCode, refresh }) {
   const [preparedFor, setPreparedFor] = useState("")
   const [date, setDate] = useState("")
   const [isRevision, setIsRevision] = useState(false)
-  const [jobPhase, setJobPhase] = useState("")
   const [note, setNote] = useState("")
   const [gradientStyle, setGradientStyle] = useState(true)
   const [revisionNumber, setRevisionNumber] = useState(1)
@@ -47,9 +46,9 @@ function MainController({ authCode, refresh }) {
       /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
     const isValidLink = urlRegex.test(URLFolder)
     const areRequiredFieldsFilled =
-      jobName && jobCode && preparedFor && jobPhase && isValidLink
+      jobName && jobCode && preparedFor && isValidLink
     setCanSubmit(areRequiredFieldsFilled)
-  }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
+  }, [jobName, jobCode, preparedFor, URLFolder])
 
   const handleSubmit = () => {
     closePopup()
@@ -146,8 +145,6 @@ function MainController({ authCode, refresh }) {
           setDate={setDate}
           isRevision={isRevision}
           setIsRevision={setIsRevision}
-          jobPhase={jobPhase}
-          setJobPhase={setJobPhase}
           gradientStyle={gradientStyle}
           setGradientStyle={setGradientStyle}
           revisionNumber={revisionNumber}
@@ -164,7 +161,7 @@ function MainController({ authCode, refresh }) {
           authCode={authCode}
           refresh={refresh}
         />
-        <StampPreviewNew
+        <StampPreview
           jobName={jobName}
           jobCode={jobCode}
           URLFolder={URLFolder}
@@ -173,7 +170,7 @@ function MainController({ authCode, refresh }) {
           preparedBy={preparedBy}
           date={date}
           isRevision={isRevision}
-          jobPhase={note}
+          note={note}
           gradientStyle={gradientStyle}
           revisionNumber={revisionNumber}
           disclaimer={disclaimer}
