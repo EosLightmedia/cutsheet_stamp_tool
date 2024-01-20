@@ -26,6 +26,18 @@ function ConfirmPopUp({
     company = "Abernathy Lighting Design"
   }
 
+  const problematicPDFs = foundPDFs.filter((pdf) => {
+    const nameWithoutExtension = pdf.name.replace(".pdf", "")
+    return (
+      !nameWithoutExtension.includes("_") ||
+      nameWithoutExtension.split("_")[0].length > 15
+    )
+  })
+
+  const normalPDFs = foundPDFs.filter((pdf) => !problematicPDFs.includes(pdf))
+
+  const sortedPDFs = [...problematicPDFs, ...normalPDFs] // First problematic, then normal PDFs
+
   return (
     <div className="confirm-pop-up">
       <button
@@ -34,11 +46,8 @@ function ConfirmPopUp({
       ></button>
       <div className="confirm-popup-main-div">
         <div className="confirm-popup-content">
-          <h2>Just to confirm...</h2>
-          <p className="main-prompt">
-            You want to stamp the PDFs in this Box folder:
-          </p>
-          <p className="folder-path-text">{folderPath}</p>
+          <h2>Confirm Details Before Stamping</h2>
+
           <div className="confirm-details">
             <p>
               <span className="confirm-title">Job Name:</span> <br />
@@ -94,17 +103,16 @@ function ConfirmPopUp({
           </div>
           <div className="listed-files-div">
             <div className="pdf-listed-files-title">
-              <p>
-                <strong>PDF File</strong>
-              </p>
-              <p>
-                <strong>Extracted Type Name</strong>
-              </p>
+              <p className="confirm-title">PDF Files</p>
+              <p className="confirm-title">Extracted Type Name</p>
             </div>
-            <div className="spacer"></div>
 
-            {foundPDFs.map((pdf, index) => (
-              <PDFChecker key={index} name={pdf.name} type={pdf.type} />
+            {sortedPDFs.map((pdf, index) => (
+              <PDFChecker
+                key={index}
+                name={pdf.name}
+                hasIssues={problematicPDFs.includes(pdf)} // Pass true if PDF is problematic
+              />
             ))}
           </div>
           <div className="confirm-buttons">

@@ -1,11 +1,12 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import EosLogo from "../Assets/eos-logo.png"
 import AbernathyLogo from "../Assets/abernathy-logo.png"
 import PurpleGradient from "../Assets/purple-gradient.png"
 import OrangeGradient from "../Assets/orange-gradient.png"
-import "../Styles/StampPreviewNew.css"
+import LoadingSpinner from "../Assets/loading-spinner.gif"
+import "../Styles/StampPreview.css"
 
-function StampPreviewNew(props) {
+function StampPreview(props) {
   const {
     jobName,
     jobCode,
@@ -18,7 +19,43 @@ function StampPreviewNew(props) {
     revisionNumber,
     disclaimer,
     showPageNumbers,
+    typeArray,
   } = props
+
+  const [currentType, setCurrentType] = useState("")
+  const [key, setKey] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const processTypeNames = (types) => {
+    return types.map((type) => {
+      let processedName = type.includes("_")
+        ? type.split("_")[0]
+        : type.replace(".pdf", "")
+      return processedName
+    })
+  }
+
+  useEffect(() => {
+    if (typeArray && typeArray.length > 0) {
+      setIsLoading(true) // Start loading when typeArray is received
+
+      const processedTypes = processTypeNames(typeArray)
+
+      let index = 0
+      const interval = setInterval(() => {
+        setCurrentType(processedTypes[index])
+        setKey((prevKey) => prevKey + 1)
+        if (index === 0) {
+          setIsLoading(false) // End loading after the first type is set
+        }
+        index = (index + 1) % processedTypes.length
+      }, 5000)
+
+      return () => clearInterval(interval)
+    } else {
+      setIsLoading(false) // Set loading to false if typeArray is empty or not provided
+    }
+  }, [typeArray])
 
   const formatRevisionNumber = (number) => {
     return String(number).padStart(2, "0")
@@ -68,24 +105,57 @@ function StampPreviewNew(props) {
       <div className="stamp-preview-div" style={previewStyle}>
         <div className="type-div">
           <p className="preview-title">Type</p>
-          <p className="preview-type-big-text">EG01-TYPE-TYPE-TYPE</p>
+          {isLoading ? (
+            <p className="preview-type-big-text-loading">
+              <img src={LoadingSpinner} alt="" className="preview-loader-gif" />{" "}
+              <em>Loading Found Type Names</em>
+            </p>
+          ) : typeArray && typeArray.length > 0 ? (
+            <p
+              className="preview-type-big-text"
+              key={key}
+              style={{ color: currentType.length > 15 ? "red" : "inherit" }}
+            >
+              {currentType}
+            </p>
+          ) : (
+            <p className="preview-type-big-text-placeholder">
+              <em>Type Placeholder</em>
+            </p>
+          )}
         </div>
         <div className="details-div">
           <p className="preview-title">Job Name</p>
-          <p className="preview-details-text">{jobName}</p>
-
+          {jobName ? (
+            <p className="preview-details-text">{jobName}</p>
+          ) : (
+            <p className="preview-details-text-placeholder">
+              <em>Job Name</em>
+            </p>
+          )}
           <p className="preview-title">JOB CODE</p>
-          <p className="preview-details-text">{jobCode}</p>
-          <p className="preview-title">Prepared For</p>
-          <p className="preview-details-text">{preparedFor}</p>
 
+          {jobCode ? (
+            <p className="preview-details-text">{jobCode}</p>
+          ) : (
+            <p className="preview-details-text-placeholder">
+              <em>Job Code</em>
+            </p>
+          )}
+          <p className="preview-title">Prepared For</p>
+          {preparedFor ? (
+            <p className="preview-details-text">{preparedFor}</p>
+          ) : (
+            <p className="preview-details-text-placeholder">
+              <em>Client Name</em>
+            </p>
+          )}
           {note && (
             <>
               <p className="preview-title">NOTE</p>
               <p className="preview-details-text">{note}</p>
             </>
           )}
-
           {displayLogo && (
             <img
               className="preview-logo"
@@ -133,4 +203,4 @@ function StampPreviewNew(props) {
   )
 }
 
-export default StampPreviewNew
+export default StampPreview

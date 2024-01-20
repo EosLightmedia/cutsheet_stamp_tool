@@ -29,6 +29,7 @@ function MainController({ authCode, refresh }) {
   const [bannerIsVisible, setBannerIsVisible] = useState(false)
   const [confirmPopUpIsVisible, setConfirmPopUpIsVisible] = useState(false)
   const [folderPath, setFolderPath] = useState("")
+  const [typeArray, setTypeArray] = useState([])
   const [canSubmit, setCanSubmit] = useState(false)
 
   const openPopup = () => {
@@ -46,9 +47,9 @@ function MainController({ authCode, refresh }) {
       /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
     const isValidLink = urlRegex.test(URLFolder)
     const areRequiredFieldsFilled =
-      jobName && jobCode && preparedFor && isValidLink
+      jobName && jobCode && preparedFor && isValidLink && typeArray.length > 0
     setCanSubmit(areRequiredFieldsFilled)
-  }, [jobName, jobCode, preparedFor, URLFolder])
+  }, [jobName, jobCode, preparedFor, URLFolder, typeArray])
 
   const handleSubmit = () => {
     closePopup()
@@ -158,12 +159,14 @@ function MainController({ authCode, refresh }) {
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
           setFolderPath={setFolderPath}
+          setTypeArray={setTypeArray}
           authCode={authCode}
           refresh={refresh}
         />
         <StampPreview
           jobName={jobName}
           jobCode={jobCode}
+          typeArray={typeArray}
           URLFolder={URLFolder}
           setURLFolder={setURLFolder}
           preparedFor={preparedFor}
@@ -176,7 +179,14 @@ function MainController({ authCode, refresh }) {
           disclaimer={disclaimer}
           showPageNumbers={showPageNumbers}
         />
-        <StampSubmit isActive={true} openPopup={openPopup} />
+        <StampSubmit
+          jobName={jobName}
+          jobCode={jobCode}
+          preparedFor={preparedFor}
+          URLFolder={URLFolder}
+          isActive={canSubmit}
+          openPopup={openPopup}
+        />
         <Footer />
       </div>
     </>
