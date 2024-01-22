@@ -37,7 +37,35 @@
       "type": "pdf"
     },
     {
-      "name": "L06a - Soraa Par 20 lamp.pdf",
+      "name": "T01_LiteLab bus- 08h.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L01_LiteLab a01-2.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L02_LiteLab a04-4.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L04_Gantom DMX Spot-5.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L05_DLC LumiSheet-6.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L06_Altman Micro Pa-7.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "T01_LiteLab bus- 08h-9.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L06_Altman Micro Par.pdf",
       "type": "pdf"
     },
     {
@@ -45,9 +73,33 @@
       "type": "pdf"
     },
     {
-      "name": "T02.pdf",
+      "name": "L01_LiteLab a01-2.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L02_LiteLab a04-4.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L04_Gantom DMX Spot-5.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L05_DLC LumiSheet-6.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "L06_Altman Micro Pa-7.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "T01_LiteLab bus- 08h-9.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "T02-10.pdf",
       "type": "pdf"
     }
   ],
-  "path": "02-Projects/TEST/01-Test/05-Cutsheets/LX/New Spec"
+  "path": "02-Projects/TEST/01-Test/long-test/super-long path/01-Test/long-test/super-long path/05-Cutsheets/LX/New Spec"
 }

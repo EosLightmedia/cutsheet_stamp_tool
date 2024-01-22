@@ -7,16 +7,16 @@ const PackageSettings = ({ isPackagePDFs, setIsPackagePDFs }) => {
       <div>
         <div className="button-group-package">
           <button
-            onClick={() => setIsPackagePDFs(false)}
-            className={!isPackagePDFs ? "selected" : ""}
-          >
-            No
-          </button>
-          <button
             onClick={() => setIsPackagePDFs(true)}
             className={isPackagePDFs ? "selected" : ""}
           >
             Yes
+          </button>
+          <button
+            onClick={() => setIsPackagePDFs(false)}
+            className={!isPackagePDFs ? "selected" : ""}
+          >
+            No
           </button>
         </div>
         <div className="helper-text-package-div">
