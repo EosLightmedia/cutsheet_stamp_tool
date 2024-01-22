@@ -57,7 +57,7 @@ function BoxFolderSelector({
       setHelperText(
         <div className="helper-text-block">
           <p className="success-helper-p">
-            ✅ Box folder found containing <strong>{pdfs.length} </strong>PDFs!
+            ✅ Box folder found containing <strong>{pdfs.length}</strong> PDFs!
           </p>
           <p>
             📁 <strong>{path}</strong>{" "}
