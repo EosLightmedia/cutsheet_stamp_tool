@@ -1,22 +1,37 @@
 import React from "react"
 import StampIcon from "../Assets/stamp-icon.png"
 
-function StampSubmit({ isActive, openPopup }) {
+function StampSubmit({ openPopup, jobName, jobCode, preparedFor, URLFolder }) {
+  // Determine if all required fields are filled out
+  const isActive = jobName && jobCode && preparedFor && URLFolder
+
+  const getMissingFieldsMessage = () => {
+    const missingFields = []
+    if (!jobName) missingFields.push("Job Name")
+    if (!jobCode) missingFields.push("Job Code")
+    if (!preparedFor) missingFields.push("Prepared For")
+    if (!URLFolder) missingFields.push("Box Folder Link")
+
+    return missingFields.length ? (
+      <span>
+        Please complete: <strong>{missingFields.join(", ")}</strong>
+      </span>
+    ) : (
+      "Good job! Almost ready for stamping..."
+    )
+  }
+
   return (
     <div className="stamp-div">
       <button
         className="submit-button"
-        onClick={() => openPopup()}
+        onClick={openPopup}
         disabled={!isActive}
       >
         <img src={StampIcon} className="stamp-icon" alt="Stamp Icon" />
-        Get Ready to Stamp
+        Confirm Stamp Details
       </button>
-      <p className="helper-text-submit">
-        {isActive
-          ? "Good job! Looks ready for stamping..."
-          : "All fields must be filled in first."}
-      </p>
+      <p className="helper-text-submit">{getMissingFieldsMessage()}</p>
     </div>
   )
 }

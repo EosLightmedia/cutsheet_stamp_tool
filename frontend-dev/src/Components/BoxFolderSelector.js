@@ -3,11 +3,12 @@ import axios from "axios"
 import mockData from "../Data/mockData.json"
 import LoadingSpinner from "../Assets/loading-spinner.gif"
 
-function URLFolderSelector({
+function BoxFolderSelector({
   URLFolder,
   setURLFolder,
   setFoundPDFs,
   setFolderPath,
+  setTypeArray,
   authCode,
   refresh,
 }) {
@@ -17,50 +18,73 @@ function URLFolderSelector({
   const loadingMessage = "Fetching folder data..."
 
   const fetchFolderData = async (folderNumber) => {
-    setHelperText(loadingMessage) // Indicate loading before starting the fetch
+    setHelperText(loadingMessage)
 
-    // Check if the environment is development
+    // Common function to process the response and set helper text
+    const processResponse = (items, path) => {
+      const pdfs = items.filter((item) => item.type === "pdf")
+      const pdfNames = pdfs.map((pdf) => pdf.name)
+      setTypeArray(pdfNames)
+      setFoundPDFs(pdfs)
+      setFolderPath(path)
+
+      // Find PDFs that don't have an underscore and are longer than 15 characters
+      const problematicPDFs = pdfs.filter(
+        (pdf) => !pdf.name.includes("_") && pdf.name.length - 4 > 15
+      )
+
+      // Construct the helper text with potential issues
+      const issueText =
+        problematicPDFs.length > 0 ? (
+          <>
+            <br />
+            <p className="issue-alert">⚠️ Possible file naming issues found:</p>
+            <ul className="issue-list">
+              {problematicPDFs.map((pdf) => (
+                <li key={pdf.name}>{pdf.name}</li>
+              ))}
+            </ul>
+            <p className="info-helper-text">
+              <strong>
+                {" "}
+                ℹ️ "Type" is determined by the text before the first underscore
+                "_" in the file name and should not exceed 15 characters.
+              </strong>
+            </p>
+          </>
+        ) : null
+
+      setHelperText(
+        <div className="helper-text-block">
+          <p className="success-helper-p">
+            ✅ Box folder found containing <strong>{pdfs.length} </strong>PDFs!
+          </p>
+          <p>
+            📁 <strong>{path}</strong>{" "}
+          </p>
+          {issueText}
+        </div>
+      )
+    }
+
     if (process.env.NODE_ENV === "development") {
       setTimeout(() => {
-        const pdfs = mockData.items.filter((item) => item.type === "pdf")
-        setFoundPDFs(pdfs)
-        setFolderPath(mockData.path)
-        setHelperText(
-          <div className="helper-text-block">
-            <>✅ Box folder found!</>
-            <br />
-            <>📁 {mockData.path}</>
-            <br />
-            <>📄 Total PDFs: </> <>{pdfs.length}</>
-          </div>
-        )
+        processResponse(mockData.items, mockData.path)
       }, 1000)
     } else {
       try {
         const response = await axios.get(
           `/api/folder/?folder_id=${folderNumber}&access=${authCode}&refresh=${refresh}`
         )
-        const { items, path } = response.data
-        const pdfs = items.filter((item) => item.type === "pdf")
-        setFoundPDFs(pdfs)
-        setFolderPath(path)
-        setHelperText(
-          <div className="helper-text-block">
-            <>✅ Box folder found!</>
-            <br />
-            <>📁 {path}</>
-            <br />
-            <>📄 Total PDFs: </> <>{pdfs.length}</>
-          </div>
-        )
+        processResponse(response.data.items, response.data.path)
       } catch (error) {
-        setHelperText("❌ Error fetching folder data.")
+        setHelperText(
+          "❌ Error fetching folder data. You might not have permission or the folder doesn't exist."
+        )
         console.error("❌ Error fetching folder data:", error)
       }
     }
   }
-
-  console.log("Auth Code BoxFolderSelector:", authCode)
 
   const validateFolderLink = (inputUrl) => {
     setURLFolder(inputUrl)
@@ -99,7 +123,7 @@ function URLFolderSelector({
         onChange={handleChange}
         placeholder="https://eoslightmedia.app.box.com/folder/240776517305"
       />
-      <p className="box-helper-text">
+      <div className="box-helper-text">
         {helperText === loadingMessage && (
           <img
             src={LoadingSpinner}
@@ -108,11 +132,10 @@ function URLFolderSelector({
             style={{ width: "15px", marginRight: "5px", marginTop: "-1px" }}
           />
         )}
-
         {helperText}
-      </p>
+      </div>
     </div>
   )
 }
 
-export default URLFolderSelector
+export default BoxFolderSelector

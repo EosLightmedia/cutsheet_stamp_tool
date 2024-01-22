@@ -41,6 +41,7 @@ function StampForm(props) {
     foundPDFs,
     setFoundPDFs,
     setFolderPath,
+    setTypeArray,
     authCode,
     refresh,
   } = props
@@ -57,24 +58,32 @@ function StampForm(props) {
           value={jobName}
           placeHolder={"Project Name"}
           onChange={(e) => setJobName(e.target.value)}
+          optionalOrRequired={true}
+          optionalOrRequiredText="Required Field"
         />
         <TextInput
           label="Job Code"
           value={jobCode}
           placeHolder={"Project Code"}
           onChange={(e) => setJobCode(e.target.value)}
+          optionalOrRequired={true}
+          optionalOrRequiredText="Required Field"
         />
         <TextInput
           label="Prepared For"
           value={preparedFor}
           placeHolder={"Client"}
           onChange={(e) => setPreparedFor(e.target.value)}
+          optionalOrRequired={true}
+          optionalOrRequiredText="Required Field"
         />
         <TextInput
           label="Note"
           value={note}
           placeHolder={"Add a custom note"}
           onChange={(e) => setNote(e.target.value)}
+          optionalOrRequired={false}
+          optionalOrRequiredText="Optional Field"
         />
         <Disclaimer disclaimer={disclaimer} setDisclaimer={setDisclaimer} />
         <h2 className="form-section-title">Date</h2>
@@ -115,6 +124,7 @@ function StampForm(props) {
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
           setFolderPath={setFolderPath}
+          setTypeArray={setTypeArray}
           authCode={authCode}
           refresh={refresh}
         />

@@ -23,16 +23,16 @@ const PageNumberSelector = ({
       <div>
         <div className="button-group-package">
           <button
-            onClick={() => setShowPageNumbers(false)}
-            className={!showPageNumbers ? "selected" : ""}
-          >
-            No
-          </button>
-          <button
             onClick={() => setShowPageNumbers(true)}
             className={showPageNumbers ? "selected" : ""}
           >
             Yes
+          </button>
+          <button
+            onClick={() => setShowPageNumbers(false)}
+            className={!showPageNumbers ? "selected" : ""}
+          >
+            No
           </button>
         </div>
         <div className="helper-text-package-div">
