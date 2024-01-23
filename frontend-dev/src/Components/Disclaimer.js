@@ -34,7 +34,7 @@ const Disclaimer = ({ disclaimer, setDisclaimer }) => {
             checked={disclaimer[0]}
             onChange={() => handleOptionChange(0)}
           />
-          Disclaimer Option 1
+          For coordination only
         </label>
         <label>
           <input
@@ -43,7 +43,7 @@ const Disclaimer = ({ disclaimer, setDisclaimer }) => {
             checked={disclaimer[1]}
             onChange={() => handleOptionChange(1)}
           />
-          Disclaimer Option 2
+          Issued for tender
         </label>
         <label>
           <input
