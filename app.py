@@ -21,7 +21,7 @@ def get_box():
         callback_url = 'http://localhost:8000/'
 
     else:
-        callback_url = 'http://pdfstamper.eoslightmedia.com'
+        callback_url = 'https://pdfstamper.eoslightmedia.com'
 
     return eosBox(client_id, client_secret, callback_url)
 
