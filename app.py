@@ -5,6 +5,8 @@ from box_module import eosBox
 from cutsheet_module import Stamp
 from datetime import datetime
 import logging
+import os
+
 
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.DEBUG)
@@ -12,8 +14,8 @@ app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 
 
 def get_box():
-    client_id = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+    client_id = os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
 
     if __name__ == "__main__":
         callback_url = 'http://localhost:8000/'
