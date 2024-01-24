@@ -13,12 +13,12 @@ class Stamp:
     def __init__(self, stamp_data: dict):
 
         self.buffer = BytesIO()
-        self.gradient = stamp_data["gradient"]
+        self.is_gradient = stamp_data["isGradient"]
         self.folder_id = stamp_data["folderID"]
         self.project_name = stamp_data["projectName"]
         self.project_number = stamp_data["projectNumber"]
-        self.prepared_by = stamp_data["preparedBy"]
-        self.prepared_for = stamp_data["preparedFor"]
+        self.prepared_by: int = stamp_data["preparedBy"]
+        self.prepared_for: str = stamp_data["preparedFor"]
         self.is_revision = stamp_data["isRevision"]
         self.is_page_number = stamp_data["showPageNumbers"]
         self.revision_number = stamp_data["revisionNumber"]
@@ -57,19 +57,19 @@ class Stamp:
         # Draw footer
         self._draw_box((0, 0), (self.page_width, self.page_height * 0.15), 'black')
 
-        if self.gradient == 0:
-            self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
-        else:
-            image_path = [
-                'frontend-dist/static/media/purple-gradient.d4158913ea60c14f19aa.png',
-                'frontend-dist/static/media/orange-gradient.1174bcef997a2d5e694d.png'
-            ][self.gradient - 1]
-            self.pdf_canvas.drawImage(image_path, 5, 30, self.page_width - 10, (self.page_height * 0.15) - 35)
-
-        logo_path = [
-            'frontend-dist/static/media/eos-logo.41995ff3f203db68e72f.png',
-            'frontend-dist/static/media/abernathy-logo.c0d4809a4631d4f433e5.png'
-            ][self.prepared_by]
+        # if self.gradient == 0:
+        #     self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
+        # else:
+        #     image_path = [
+        #         'frontend-dist/static/media/purple-gradient.d4158913ea60c14f19aa.png',
+        #         'frontend-dist/static/media/orange-gradient.1174bcef997a2d5e694d.png'
+        #     ][self.gradient - 1]
+        #     self.pdf_canvas.drawImage(image_path, 5, 30, self.page_width - 10, (self.page_height * 0.15) - 35)
+        #
+        # logo_path = [
+        #     'frontend-dist/static/media/eos-logo.41995ff3f203db68e72f.png',
+        #     'frontend-dist/static/media/abernathy-logo.c0d4809a4631d4f433e5.png'
+        #     ][self.prepared_by]
 
         self.pdf_canvas.drawImage(logo_path, self.page_width - 100, 100, 80, 80)
 
