@@ -6,6 +6,10 @@ from cutsheet_module import Stamp
 from datetime import datetime
 import logging
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 HTTP_STATUS_SUCCESS = 200
