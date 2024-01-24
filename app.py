@@ -19,7 +19,7 @@ def get_box():
         callback_url = 'http://localhost:8000/'
 
     else:
-        callback_url = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
+        callback_url = 'https://pdfstamper.eoslightmedia.com/'
 
     return eosBox(client_id, client_secret, callback_url)
 
@@ -32,7 +32,7 @@ def index():
     if not code:
         print('No code provided')
         box = get_box()
-        print('Redirecting')
+        print(f'Redirecting: {box.auth_url}')
         return redirect(box.auth_url)
 
     else:
