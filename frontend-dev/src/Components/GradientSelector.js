@@ -1,24 +1,38 @@
-import React from "react";
+import React from "react"
 
-function GradientSelector({ gradient, setGradient }) {
-  const gradients = ["No Gradient", "Purple/Blue", "Yellow/Green"];
+const GradientSelector = ({ gradient, setGradient }) => {
+  const getHelperText = () => {
+    if (gradient) {
+      return "Stamp will have a gradient."
+    } else {
+      return "No gradient will be shown."
+    }
+  }
 
   return (
-    <div className="gradient-selector-container">
-      <label className="input-label">Gradient Style:</label>
-      <div className="button-group">
-        {gradients.map((g) => (
+    <div className="text-input-container">
+      <label className="selector-label-input-package">Show Gradient?</label>
+      <div>
+        <div className="button-group-package">
           <button
-            key={g}
-            onClick={() => setGradient(g)}
-            className={gradient === g ? "selected" : ""}
+            onClick={() => setGradient(true)}
+            className={gradient ? "selected" : ""}
           >
-            {g}
+            Yes
           </button>
-        ))}
+          <button
+            onClick={() => setGradient(false)}
+            className={!gradient ? "selected" : ""}
+          >
+            No
+          </button>
+        </div>
+        <div className="helper-text-package-div">
+          <p className="helper-text-package">{getHelperText()}</p>
+        </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default GradientSelector;
+export default GradientSelector

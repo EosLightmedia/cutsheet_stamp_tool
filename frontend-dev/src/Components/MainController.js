@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import StampForm from "./StampForm"
 import StampPreview from "./StampPreview"
+
 import StampSubmit from "./StampSubmit"
 import ProcessingPage from "./ProcessingPage"
 import ConfirmPopUp from "./ConfirmPopUp"
@@ -16,12 +17,11 @@ function MainController({ authCode, refresh }) {
   const [preparedFor, setPreparedFor] = useState("")
   const [date, setDate] = useState("")
   const [isRevision, setIsRevision] = useState(false)
-  const [jobPhase, setJobPhase] = useState("")
   const [note, setNote] = useState("")
-  const [gradientStyle, setGradientStyle] = useState("No Gradient")
-  const [revisionNumber, setRevisionNumber] = useState(0)
-  const [showPageNumbers, setShowPageNumbers] = useState(false)
-  const [isPackagePDFs, setIsPackagePDFs] = useState(false)
+  const [gradientStyle, setGradientStyle] = useState(true)
+  const [revisionNumber, setRevisionNumber] = useState(1)
+  const [showPageNumbers, setShowPageNumbers] = useState(true)
+  const [isPackagePDFs, setIsPackagePDFs] = useState(true)
   const [disclaimer, setDisclaimer] = useState([false, false, false])
   const [createdFolderNumber, setCreatedFolderNumber] = useState()
   const [foundPDFs, setFoundPDFs] = useState([])
@@ -29,6 +29,7 @@ function MainController({ authCode, refresh }) {
   const [bannerIsVisible, setBannerIsVisible] = useState(false)
   const [confirmPopUpIsVisible, setConfirmPopUpIsVisible] = useState(false)
   const [folderPath, setFolderPath] = useState("")
+  const [typeArray, setTypeArray] = useState([])
   const [canSubmit, setCanSubmit] = useState(false)
 
   const openPopup = () => {
@@ -46,9 +47,9 @@ function MainController({ authCode, refresh }) {
       /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
     const isValidLink = urlRegex.test(URLFolder)
     const areRequiredFieldsFilled =
-      jobName && jobCode && preparedFor && jobPhase && isValidLink
+      jobName && jobCode && preparedFor && isValidLink && typeArray.length > 0
     setCanSubmit(areRequiredFieldsFilled)
-  }, [jobName, jobCode, preparedFor, jobPhase, URLFolder])
+  }, [jobName, jobCode, preparedFor, URLFolder, typeArray])
 
   const handleSubmit = () => {
     closePopup()
@@ -68,21 +69,6 @@ function MainController({ authCode, refresh }) {
       preparedByNumber = 1
     }
 
-    let gradientNumber
-    switch (gradientStyle) {
-      case "No Gradient":
-        gradientNumber = 0
-        break
-      case "Purple/Blue":
-        gradientNumber = 1
-        break
-      case "Orange":
-        gradientNumber = 2
-        break
-      default:
-        gradientNumber = 0
-    }
-
     const formData = {
       folderID: folderNumber,
       projectName: jobName,
@@ -94,7 +80,7 @@ function MainController({ authCode, refresh }) {
       isRevision: isRevision,
       showPageNumbers: showPageNumbers,
       revisionNumber: revisionNumber,
-      gradient: gradientNumber,
+      isGradient: gradientStyle,
       disclaimer: disclaimer,
       packageSet: isPackagePDFs,
     }
@@ -160,8 +146,6 @@ function MainController({ authCode, refresh }) {
           setDate={setDate}
           isRevision={isRevision}
           setIsRevision={setIsRevision}
-          jobPhase={jobPhase}
-          setJobPhase={setJobPhase}
           gradientStyle={gradientStyle}
           setGradientStyle={setGradientStyle}
           revisionNumber={revisionNumber}
@@ -175,26 +159,34 @@ function MainController({ authCode, refresh }) {
           foundPDFs={foundPDFs}
           setFoundPDFs={setFoundPDFs}
           setFolderPath={setFolderPath}
+          setTypeArray={setTypeArray}
           authCode={authCode}
           refresh={refresh}
         />
         <StampPreview
           jobName={jobName}
           jobCode={jobCode}
+          typeArray={typeArray}
           URLFolder={URLFolder}
           setURLFolder={setURLFolder}
           preparedFor={preparedFor}
           preparedBy={preparedBy}
           date={date}
           isRevision={isRevision}
-          jobPhase={note}
+          note={note}
           gradientStyle={gradientStyle}
           revisionNumber={revisionNumber}
           disclaimer={disclaimer}
           showPageNumbers={showPageNumbers}
         />
-        <StampSubmit isActive={true} openPopup={openPopup} />
-
+        <StampSubmit
+          jobName={jobName}
+          jobCode={jobCode}
+          preparedFor={preparedFor}
+          URLFolder={URLFolder}
+          isActive={canSubmit}
+          openPopup={openPopup}
+        />
         <Footer />
       </div>
     </>
