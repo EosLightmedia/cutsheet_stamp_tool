@@ -16,3 +16,9 @@ venv/
 start_app.sh
 update_project.sh
 .env
+
+# Ignore node_modules cache files in frontend-dev
+node_modules/
+
+.vscode/
+```
