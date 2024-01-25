@@ -21,4 +21,6 @@ update_project.sh
 node_modules/
 
 .vscode/
+
+calls/
 ```
