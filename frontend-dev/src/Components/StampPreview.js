@@ -62,9 +62,9 @@ function StampPreview(props) {
   }
 
   const disclaimerTextOptions = {
-    0: "For bid purposes only",
-    1: "For internal review only",
-    2: "This is a generic disclaimer as a placeholder",
+    0: "For coordination only",
+    1: "Issued for tender",
+    2: "Kathlene's Pick",
   }
 
   const displayLogo =
