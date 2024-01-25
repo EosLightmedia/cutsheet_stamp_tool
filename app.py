@@ -35,6 +35,7 @@ def index():
     print(f'Request received: {request}')
     code = request.args.get('code')
 
+
     if not code:
         print('No code provided')
         box = get_box()
@@ -57,8 +58,8 @@ def index():
             return redirect(box.auth_url)
 
         response = make_response(send_from_directory(app.static_folder, 'index.html'))
-        response.set_cookie('access', access_token)
-        response.set_cookie('refresh', refresh_token)
+        response.set_cookie('access', access_token, httponly=True)
+        response.set_cookie('refresh', refresh_token, httponly=True)
         return response
 
 
