@@ -26,3 +26,9 @@ frontend-dev/node_modules/             # Installed Node.js modules
 
 # Custom directories
 calls/                    # Custom directory (specify purpose if needed)
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/cutsheet_stamp_tool_dev.iml
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
