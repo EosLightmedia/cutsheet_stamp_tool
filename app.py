@@ -32,64 +32,48 @@ def get_box():
 @app.route("/", methods=['GET', 'POST'])
 def index():
     print(f'Request received: {request}')
-    code = request.args.get('code')
-    access_token = request.cookies.get('access')
-    refresh_token = request.cookies.get('refresh')
+    response = make_response(send_from_directory(app.static_folder, 'index.html'))
+    box = get_box()
 
-    # response = make_response(send_from_directory(app.static_folder, 'index.html'))
-    # response.set_cookie('access', access_token)
-    # response.set_cookie('refresh', refresh_token)
-    #
-    # if not code:
-    #     print('No code provided')
-    #
-    #     print('Trying Cookie')
-    #     try:
-    #         box = get_box()
-    #         box.authenticate_client(access_token, refresh_token)
-    #         print('Cookie valid')
-    #         return response
-    #
-    #     except Exception as e:
-    #         print('Authentication error: ')
-    #         print(e)
-    #
-    #         box = get_box()
-    #         print('Redirecting')
-    #         return redirect(box.auth_url)
+    try:
+        code = request.args.get('code')
 
-    if not code:
-        box = get_box()
-        print('Redirecting')
-        return redirect(box.auth_url)
+        if not code:  # If no code provided, let's try with cookies
+            raise Exception('No code provided')
 
-    else:
         print(f'Code: {code}')
+        print('Logging in with code...')
+        access_token, refresh_token = box.login(code)
+        print(f'Login successful')
+
+    except Exception:
+        print('Checking cookies')
+        access_token = request.cookies.get('access')
+        refresh_token = request.cookies.get('refresh')
 
         try:
-            print('Logging in with code...')
-            box = get_box()
-            access_token, refresh_token = box.login(code)
-            print(f'Login successful')
+            if access_token is None:
+                raise Exception('No access token found')
+
+            box.authenticate_client(access_token, refresh_token)
+            print('Cookie valid')
 
         except Exception as e:
-            print(f'Login error: {e}')
-            box = get_box()
+            print(f'Authentication error: {e}')
             print('Redirecting')
-            return redirect(box.auth_url)
+            return response#redirect(box.auth_url)
 
-        response = make_response(send_from_directory(app.static_folder, 'index.html'))
-        response.set_cookie('access', access_token)
-        response.set_cookie('refresh', refresh_token)
-        return response
+    response.set_cookie('access', access_token)
+    response.set_cookie('refresh', refresh_token)
+    return response
 
 
 @app.route('/api/folder/', methods=["GET"])
 def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
-    access_token = request.args.get('access')
-    refresh_token = request.args.get('refresh')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
 
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
@@ -102,8 +86,8 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     print(f'Request received: {request}')
-    access_token = request.args.get('access')
-    refresh_token = request.args.get('refresh')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
     data = request.get_json()
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
