@@ -13,7 +13,7 @@ class Stamp:
     def __init__(self, stamp_data: dict):
 
         self.buffer = BytesIO()
-        self.is_gradient = stamp_data["isGradient"]
+        self.is_gradient = stamp_data.get("isGradient", False)
         self.folder_id = stamp_data["folderID"]
         self.project_name = stamp_data["projectName"]
         self.project_number = stamp_data["projectNumber"]
