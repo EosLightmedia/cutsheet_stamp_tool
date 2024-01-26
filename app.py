@@ -88,6 +88,10 @@ def post_stamp():
 
     print(f'Stamp data: {data}')
 
+    # Check if 'isGradient' key exists in data, and set it to False if not
+    if 'isGradient' not in data:
+        data['isGradient'] = False  # Assuming default is False; set to True if needed
+
     is_package = data.get('packageSet')
     print(f'is_package: {is_package}')
 
