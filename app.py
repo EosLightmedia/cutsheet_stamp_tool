@@ -5,6 +5,11 @@ from box_module import eosBox
 from cutsheet_module import Stamp
 from datetime import datetime
 import logging
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.DEBUG)
@@ -12,14 +17,14 @@ app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 
 
 def get_box():
-    client_id = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
+    client_id = os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
 
     if __name__ == "__main__":
         callback_url = 'http://localhost:8000/'
 
     else:
-        callback_url = 'https://pdfstamper.eoslightmedia.com/'
+        callback_url = 'https://pdfstamper.eoslightmedia.com'
 
     return eosBox(client_id, client_secret, callback_url)
 
@@ -27,41 +32,48 @@ def get_box():
 @app.route("/", methods=['GET', 'POST'])
 def index():
     print(f'Request received: {request}')
-    code = request.args.get('code')
+    response = make_response(send_from_directory(app.static_folder, 'index.html'))
+    box = get_box()
 
-    if not code:
-        print('No code provided')
-        box = get_box()
-        print('Redirecting')
-        return redirect(box.auth_url)
+    try:
+        code = request.args.get('code')
 
-    else:
+        if not code:
+            raise Exception('No code provided')
+
         print(f'Code: {code}')
+        print('Logging in with code...')
+        access_token, refresh_token = box.login(code)
+        print(f'Login successful')
 
+    except Exception:
+        print('Checking cookies')
+        access_token = request.cookies.get('access')
+        refresh_token = request.cookies.get('refresh')
+        print(f'Access token: {access_token}')
         try:
-            print('Logging in with code...')
-            box = get_box()
-            access_token, refresh_token = box.login(code)
-            print(f'Login successful')
+            if access_token is None:
+                raise Exception('No access token found')
+
+            box.authenticate_client(access_token, refresh_token)
+            print('Cookie valid')
 
         except Exception as e:
-            print(f'Login error: {e}')
-            box = get_box()
+            print(f'Authentication error: {e}')
             print('Redirecting')
             return redirect(box.auth_url)
 
-        response = make_response(send_from_directory(app.static_folder, 'index.html'))
-        response.set_cookie('access', access_token)
-        response.set_cookie('refresh', refresh_token)
-        return response
+    response.set_cookie('access', access_token)
+    response.set_cookie('refresh', refresh_token)
+    return response
 
 
 @app.route('/api/folder/', methods=["GET"])
 def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
-    access_token = request.args.get('access')
-    refresh_token = request.args.get('refresh')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
 
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
@@ -74,8 +86,8 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     print(f'Request received: {request}')
-    access_token = request.args.get('access')
-    refresh_token = request.args.get('refresh')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
     data = request.get_json()
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
