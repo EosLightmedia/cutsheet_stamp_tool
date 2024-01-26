@@ -34,38 +34,25 @@ def index():
     print(f'Request received: {request}')
     response = make_response(send_from_directory(app.static_folder, 'index.html'))
     box = get_box()
+    code = request.args.get('code')
 
-    try:
-        code = request.args.get('code')
-
-        if not code:
-            raise Exception('No code provided')
-
+    if code:
         print(f'Code: {code}')
         print('Logging in with code...')
-        access_token, refresh_token = box.login(code)
-        print(f'Login successful')
 
-    except Exception:
-        print('Checking cookies')
-        access_token = request.cookies.get('access')
-        refresh_token = request.cookies.get('refresh')
-        print(f'Access token: {access_token}')
         try:
-            if access_token is None:
-                raise Exception('No access token found')
-
-            box.authenticate_client(access_token, refresh_token)
-            print('Cookie valid')
+            access_token, refresh_token = box.login(code)
+            print(f'Login successful')
+            response.set_cookie('access', access_token)
+            response.set_cookie('refresh', refresh_token)
+            return response
 
         except Exception as e:
-            print(f'Authentication error: {e}')
-            print('Redirecting')
-            return redirect(box.auth_url)
+            print(f'Login error:\n{e}')
 
-    response.set_cookie('access', access_token)
-    response.set_cookie('refresh', refresh_token)
-    return response
+    print('Invalid Code')
+    print('Redirecting:')
+    return redirect(box.auth_url)
 
 
 @app.route('/api/folder/', methods=["GET"])
