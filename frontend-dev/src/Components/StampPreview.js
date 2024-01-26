@@ -64,7 +64,7 @@ function StampPreview(props) {
   const disclaimerTextOptions = {
     0: "For coordination only",
     1: "Issued for tender",
-    2: "Kathlene's Pick",
+    2: "Submitted for Review, Comment & Approval",
   }
 
   const displayLogo =

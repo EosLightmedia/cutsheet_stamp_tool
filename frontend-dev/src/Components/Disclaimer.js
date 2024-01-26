@@ -52,7 +52,7 @@ const Disclaimer = ({ disclaimer, setDisclaimer }) => {
             checked={disclaimer[2]}
             onChange={() => handleOptionChange(2)}
           />
-          Disclaimer Option 3
+          Submitted for Review, Comment & Approval
         </label>
       </div>
     </div>

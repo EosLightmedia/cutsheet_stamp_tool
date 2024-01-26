@@ -9,7 +9,7 @@ import Banner from "./Banner"
 import Footer from "./Footer"
 import axios from "axios"
 
-function MainController({ authCode, refresh }) {
+function MainController() {
   const [preparedBy, setPreparedBy] = useState("Eos Lightmedia")
   const [jobName, setJobName] = useState("")
   const [jobCode, setJobCode] = useState("")
@@ -88,7 +88,7 @@ function MainController({ authCode, refresh }) {
     console.log("Form Data:", formData)
 
     axios
-      .post(`/api/stamp/?access=${authCode}&refresh=${refresh}`, formData)
+      .post(`/api/stamp/`, formData)
       .then((response) => {
         console.log("Newly Created Folder:", response.data)
         setCreatedFolderNumber(response.data)
@@ -160,8 +160,6 @@ function MainController({ authCode, refresh }) {
           setFoundPDFs={setFoundPDFs}
           setFolderPath={setFolderPath}
           setTypeArray={setTypeArray}
-          authCode={authCode}
-          refresh={refresh}
         />
         <StampPreview
           jobName={jobName}
