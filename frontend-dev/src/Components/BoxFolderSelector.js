@@ -9,8 +9,6 @@ function BoxFolderSelector({
   setFoundPDFs,
   setFolderPath,
   setTypeArray,
-  authCode,
-  refresh,
 }) {
   const defaultHelperText =
     "Paste Box link here (e.g. https://eoslightmedia.app.box.com/folder/240776517305)"
@@ -74,7 +72,7 @@ function BoxFolderSelector({
     } else {
       try {
         const response = await axios.get(
-          `/api/folder/?folder_id=${folderNumber}&access=${authCode}&refresh=${refresh}`
+          `/api/folder/?folder_id=${folderNumber}`
         )
         processResponse(response.data.items, response.data.path)
       } catch (error) {

@@ -19,7 +19,8 @@ update_project.sh         # Shell script for updating the project
 .env                      # Environment variables file
 
 # Node.js modules
-frontend-dev/node_modules/             # Installed Node.js modules
+frontend-dev/node_modules/    # Installed Node.js modules
+frontend-dev/node_modules/.cache/           
 
 # Miscellaneous file types
 *.pdf                     # PDF files
