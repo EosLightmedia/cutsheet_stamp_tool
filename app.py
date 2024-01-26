@@ -38,7 +38,7 @@ def index():
     try:
         code = request.args.get('code')
 
-        if not code:  # If no code provided, let's try with cookies
+        if not code:
             raise Exception('No code provided')
 
         print(f'Code: {code}')
@@ -50,7 +50,7 @@ def index():
         print('Checking cookies')
         access_token = request.cookies.get('access')
         refresh_token = request.cookies.get('refresh')
-
+        print(f'Access token: {access_token}')
         try:
             if access_token is None:
                 raise Exception('No access token found')
@@ -61,7 +61,7 @@ def index():
         except Exception as e:
             print(f'Authentication error: {e}')
             print('Redirecting')
-            return response#redirect(box.auth_url)
+            return redirect(box.auth_url)
 
     response.set_cookie('access', access_token)
     response.set_cookie('refresh', refresh_token)
