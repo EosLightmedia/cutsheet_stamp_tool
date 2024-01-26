@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
@@ -34,10 +33,32 @@ def get_box():
 def index():
     print(f'Request received: {request}')
     code = request.args.get('code')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
 
+    # response = make_response(send_from_directory(app.static_folder, 'index.html'))
+    # response.set_cookie('access', access_token)
+    # response.set_cookie('refresh', refresh_token)
+    #
+    # if not code:
+    #     print('No code provided')
+    #
+    #     print('Trying Cookie')
+    #     try:
+    #         box = get_box()
+    #         box.authenticate_client(access_token, refresh_token)
+    #         print('Cookie valid')
+    #         return response
+    #
+    #     except Exception as e:
+    #         print('Authentication error: ')
+    #         print(e)
+    #
+    #         box = get_box()
+    #         print('Redirecting')
+    #         return redirect(box.auth_url)
 
     if not code:
-        print('No code provided')
         box = get_box()
         print('Redirecting')
         return redirect(box.auth_url)
@@ -58,8 +79,8 @@ def index():
             return redirect(box.auth_url)
 
         response = make_response(send_from_directory(app.static_folder, 'index.html'))
-        response.set_cookie('access', access_token, httponly=True)
-        response.set_cookie('refresh', refresh_token, httponly=True)
+        response.set_cookie('access', access_token)
+        response.set_cookie('refresh', refresh_token)
         return response
 
 
