@@ -2,4 +2,4 @@
 
 Gave permissions
 
-BIG TEST!
+TEST WITH REMOVED UPDATE_APP
