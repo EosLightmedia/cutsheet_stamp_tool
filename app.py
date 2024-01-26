@@ -5,12 +5,6 @@ from box_module import eosBox
 from cutsheet_module import Stamp
 from datetime import datetime
 import logging
-import os
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
-
 
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.DEBUG)
@@ -18,14 +12,14 @@ app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 
 
 def get_box():
-    client_id = os.getenv("CLIENT_ID")
-    client_secret = os.getenv("CLIENT_SECRET")
+    client_id = 'ek7onbev0qocf7rtfuov0h8xo17picca'
+    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
 
     if __name__ == "__main__":
         callback_url = 'http://localhost:8000/'
 
     else:
-        callback_url = 'https://pdfstamper.eoslightmedia.com'
+        callback_url = 'https://cutsheet-stamp-tool-at2sy.ondigitalocean.app'
 
     return eosBox(client_id, client_secret, callback_url)
 
@@ -87,10 +81,6 @@ def post_stamp():
     box.authenticate_client(access_token, refresh_token)
 
     print(f'Stamp data: {data}')
-
-    # Check if 'isGradient' key exists in data, and set it to False if not
-    if 'isGradient' not in data:
-        data['isGradient'] = False  # Assuming default is False; set to True if needed
 
     is_package = data.get('packageSet')
     print(f'is_package: {is_package}')

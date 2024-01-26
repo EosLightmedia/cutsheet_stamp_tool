@@ -5,7 +5,7 @@ import datetime
 from io import BytesIO
 from PIL import Image
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, )
 
 
 def _convert_pdf_to_png(pdf_file: object) -> list:
@@ -15,14 +15,19 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
 
     for i in range(len(doc)):
         page = doc.load_page(i)
+        # zoom factor is 2.0 here
         zoom_factor = 2.0
+        # create a matrix for transformation
         mat = fitz.Matrix(zoom_factor, zoom_factor)
+        # get pixmap with the transformation matrix
         render = page.get_pixmap(matrix=mat)
 
+        # convert fitz.Pixmap/render to a PIL.Image object
         pil_img = Image.frombytes("RGB", (render.width, render.height), render.samples)
         output = BytesIO()
         pil_img.save(output, 'png')
         images.append(output)
+        print(images)
     return images
 
 
@@ -38,11 +43,7 @@ class eosBox:
             client_secret=client_secret
         )
 
-        # Check if callback_url is not None
-        if callback_url:
-            self.auth_url, _ = self.authorized.get_authorization_url(callback_url)
-        else:
-            logging.error("Callback URL is None or invalid")
+        self.auth_url, _ = self.authorized.get_authorization_url(callback_url)
 
     def login(self, auth_code):
         access_token, refresh_token = self.authorized.authenticate(auth_code)
