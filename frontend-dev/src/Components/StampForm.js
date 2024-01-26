@@ -60,6 +60,8 @@ function StampForm(props) {
           onChange={(e) => setJobName(e.target.value)}
           optionalOrRequired={true}
           optionalOrRequiredText="Required Field"
+          id={"job-name-input"}
+          name={"job-name-input"}
         />
         <TextInput
           label="Job Code"
@@ -68,6 +70,8 @@ function StampForm(props) {
           onChange={(e) => setJobCode(e.target.value)}
           optionalOrRequired={true}
           optionalOrRequiredText="Required Field"
+          id={"job-code-input"}
+          name={"job-code-input"}
         />
         <TextInput
           label="Prepared For"
@@ -76,6 +80,8 @@ function StampForm(props) {
           onChange={(e) => setPreparedFor(e.target.value)}
           optionalOrRequired={true}
           optionalOrRequiredText="Required Field"
+          id={"prepared-for-input"}
+          name={"prepared-for-input"}
         />
         <TextInput
           label="Note"
@@ -84,6 +90,8 @@ function StampForm(props) {
           onChange={(e) => setNote(e.target.value)}
           optionalOrRequired={false}
           optionalOrRequiredText="Optional Field"
+          id={"note-input"}
+          name={"note-input"}
         />
         <Disclaimer disclaimer={disclaimer} setDisclaimer={setDisclaimer} />
         <h2 className="form-section-title">Date</h2>

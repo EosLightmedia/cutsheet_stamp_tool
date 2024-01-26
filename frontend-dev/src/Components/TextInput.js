@@ -8,6 +8,8 @@ function TextInput({
   onChange,
   optionalOrRequired,
   optionalOrRequiredText,
+  id,
+  name,
 }) {
   return (
     <div className="text-input-container">
@@ -17,6 +19,8 @@ function TextInput({
         placeholder={placeHolder}
         value={value}
         onChange={onChange}
+        id={id}
+        name={name}
       />
       <p className="optional-or-required-p">
         <em>{optionalOrRequiredText}</em>
