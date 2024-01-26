@@ -15,7 +15,6 @@ venv/                     # Python virtual environment
 
 # Shell scripts and environment files
 start_app.sh              # Shell script for starting the application
-update_project.sh         # Shell script for updating the project
 .env                      # Environment variables file
 
 # Node.js modules
