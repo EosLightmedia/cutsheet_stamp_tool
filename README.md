@@ -2,4 +2,4 @@
 
 Gave permissions
 
-TEST WITH REMOVED UPDATE_APP
+TEST WITH REMOVED UPDATE_APP and restarted webhook-listener
