@@ -13,7 +13,7 @@ load_dotenv()
 
 HTTP_STATUS_SUCCESS = 200
 logging.basicConfig(level=logging.WARNING)
-app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
+app = Flask(__name__, static_folder='frontend', static_url_path='')
 
 
 def get_box():
