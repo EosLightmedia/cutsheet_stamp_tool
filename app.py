@@ -67,6 +67,8 @@ def check_folder_contents():
     folder_id = request.args.get('folder_id')
     access_token = request.cookies.get('access')
     refresh_token = request.cookies.get('refresh')
+    print(f'Access token: {access_token}')
+    print(f'Refresh token: {refresh_token}')
 
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
