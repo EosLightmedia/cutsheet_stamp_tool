@@ -1,3 +1,3 @@
 ## TEST PUSH
 
-Testing automation
+TESTING AUTOMATED PUSH
