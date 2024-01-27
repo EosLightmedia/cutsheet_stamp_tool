@@ -43,8 +43,14 @@ def index():
         try:
             access_token, refresh_token = box.login(code)
             print(f'Login successful')
+            print(f'Access token: {access_token}')
+            print(f'Refresh token: {refresh_token}')
+
+            print(f'Setting cookies...')
             response.set_cookie('access', access_token)
             response.set_cookie('refresh', refresh_token)
+
+            print(f'Rendering...')
             return response
 
         except Exception as e:
@@ -75,6 +81,9 @@ def post_stamp():
     print(f'Request received: {request}')
     access_token = request.cookies.get('access')
     refresh_token = request.cookies.get('refresh')
+    print(f'Access token: {access_token}')
+    print(f'Refresh token: {refresh_token}')
+
     data = request.get_json()
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
