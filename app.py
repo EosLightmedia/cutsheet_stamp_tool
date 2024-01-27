@@ -18,7 +18,7 @@ app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
 
 def get_box():
     client_id = 'ek7onbev0qocf7rtfuov0h8xo17picca'
-    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR33'
+    client_secret = 'IXlVDtc03kOdwskeVfXkbz2Urj6jLnR3'
 
     if __name__ == "__main__":
         callback_url = 'http://localhost:8000/'
