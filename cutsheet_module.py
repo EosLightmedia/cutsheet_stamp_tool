@@ -46,6 +46,7 @@ class Stamp:
         logo = self._get_logo()
         logo_img = ImageReader(logo)
         self.pdf_canvas.drawImage(logo_img, self.page_width - 100, 10, 80, 80)
+        self.pdf_canvas.drawImage(logo_img, self.page_width - 100, 10, 80, 80)
 
     def apply_stamp_to_img(self, page_image_bytes, pdf_name: str, page_num: int, page_total: int):
         # Place image
@@ -58,7 +59,7 @@ class Stamp:
         self._draw_box((0, 0), (self.page_width, self.page_height * 0.15), 'black')
 
         # if self.gradient == 0:
-        #     self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
+        self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
         # else:
         #     image_path = [
         #         'frontend-dist/static/media/purple-gradient.d4158913ea60c14f19aa.png',
@@ -71,7 +72,7 @@ class Stamp:
         #     'frontend-dist/static/media/abernathy-logo.c0d4809a4631d4f433e5.png'
         #     ][self.prepared_by]
 
-        self.pdf_canvas.drawImage(logo_path, self.page_width - 100, 100, 80, 80)
+        # self.pdf_canvas.drawImage(logo_path, self.page_width - 100, 100, 80, 80)
 
         # Details
         self.pdf_canvas.setFont('Karla-Medium', 12)

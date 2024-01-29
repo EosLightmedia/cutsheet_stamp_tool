@@ -11,10 +11,9 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-
 HTTP_STATUS_SUCCESS = 200
-logging.basicConfig(level=logging.DEBUG)
-app = Flask(__name__, static_folder='frontend-dist', static_url_path='')
+logging.basicConfig(level=logging.WARNING)
+app = Flask(__name__, static_folder='frontend', static_url_path='')
 
 
 def get_box():
@@ -33,42 +32,41 @@ def get_box():
 @app.route("/", methods=['GET', 'POST'])
 def index():
     print(f'Request received: {request}')
+    response = make_response(send_from_directory(app.static_folder, 'index.html'))
+    box = get_box()
     code = request.args.get('code')
 
-
-    if not code:
-        print('No code provided')
-        box = get_box()
-        print('Redirecting')
-        return redirect(box.auth_url)
-
-    else:
+    if code:
         print(f'Code: {code}')
+        print('Logging in with code...')
 
         try:
-            print('Logging in with code...')
-            box = get_box()
             access_token, refresh_token = box.login(code)
             print(f'Login successful')
+            print(f'Access token: {access_token}')
+            print(f'Refresh token: {refresh_token}')
+
+            print(f'Setting cookies...')
+            response.set_cookie('access', access_token)
+            response.set_cookie('refresh', refresh_token)
+
+            print(f'Rendering...')
+            return response
 
         except Exception as e:
-            print(f'Login error: {e}')
-            box = get_box()
-            print('Redirecting')
-            return redirect(box.auth_url)
+            print(f'Login error:\n{e}')
 
-        response = make_response(send_from_directory(app.static_folder, 'index.html'))
-        response.set_cookie('access', access_token, httponly=True)
-        response.set_cookie('refresh', refresh_token, httponly=True)
-        return response
+    print('Invalid Code')
+    print('Redirecting:')
+    return redirect(box.auth_url)
 
 
 @app.route('/api/folder/', methods=["GET"])
 def check_folder_contents():
     print(f'Request received: {request}')
     folder_id = request.args.get('folder_id')
-    access_token = request.args.get('access')
-    refresh_token = request.args.get('refresh')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
 
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
@@ -81,8 +79,11 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     print(f'Request received: {request}')
-    access_token = request.args.get('access')
-    refresh_token = request.args.get('refresh')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
+    print(f'Access token: {access_token}')
+    print(f'Refresh token: {refresh_token}')
+
     data = request.get_json()
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
