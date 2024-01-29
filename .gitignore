@@ -20,6 +20,8 @@ start_app.sh              # Shell script for starting the application
 # Node.js modules
 node_modules/             # Installed Node.js modules
 
+.DS_Store
+
 
 # Miscellaneous file types
 *.pdf                     # PDF files
