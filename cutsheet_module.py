@@ -29,7 +29,8 @@ class Stamp:
         self.page_width, self.page_height = A4
         self.pdf_canvas = canvas.Canvas(self.buffer)
 
-        pdfmetrics.registerFont(TTFont('Karla-Medium', 'static/Karla-Medium.ttf'))
+        pdfmetrics.registerFont(TTFont('Karla-Medium', 'stamp-assets/Karla-Medium.ttf'))
+        pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-ExtraLight.ttf'))
         self.pdf_canvas.setFont('Karla-Medium', 12)
 
     def _draw_box(self, origin: tuple, size: tuple, color):
@@ -56,59 +57,44 @@ class Stamp:
                                   self.page_height * scale)
 
         # Draw footer
-        self._draw_box((0, 0), (self.page_width, self.page_height * 0.15), 'black')
+        prep_by = ['eos', 'ald'][self.prepared_by]
+        gradient = ['white', 'gradient'][int(self.is_gradient)]
+        file_path = f'stamp-assets/{prep_by}-{gradient}.png'
 
-        # if self.gradient == 0:
-        self._draw_box((5, 30), (self.page_width - 10, (self.page_height * 0.15) - 35), 'white')
-        # else:
-        #     image_path = [
-        #         'frontend-dist/static/media/purple-gradient.d4158913ea60c14f19aa.png',
-        #         'frontend-dist/static/media/orange-gradient.1174bcef997a2d5e694d.png'
-        #     ][self.gradient - 1]
-        #     self.pdf_canvas.drawImage(image_path, 5, 30, self.page_width - 10, (self.page_height * 0.15) - 35)
-        #
-        # logo_path = [
-        #     'frontend-dist/static/media/eos-logo.41995ff3f203db68e72f.png',
-        #     'frontend-dist/static/media/abernathy-logo.c0d4809a4631d4f433e5.png'
-        #     ][self.prepared_by]
+        gradient_file = open(file_path, 'rb')
+        gradient_bytes = BytesIO(gradient_file.read())
+        gradient_image = ImageReader(gradient_bytes)
+        gradient_file.close()
 
-        # self.pdf_canvas.drawImage(logo_path, self.page_width - 100, 100, 80, 80)
+        self._draw_box((0, 13), (self.page_width, self.page_height * 0.14), 'black')
+        self.pdf_canvas.drawImage(gradient_image, 5, 30, self.page_width - 10, self.page_height * 0.155 - 35)
 
         # Details
-        self.pdf_canvas.setFont('Karla-Medium', 12)
-        self.pdf_canvas.setFillColor('grey')
-
-        self.pdf_canvas.drawString(10, 105, 'TYPE')
-        self.pdf_canvas.drawString(200, 100, 'PROJECT NAME')
-        self.pdf_canvas.drawString(200, 80, 'JOB CODE')
-        self.pdf_canvas.drawString(200, 60, 'PREPARED FOR')
-        self.pdf_canvas.drawString(200, 40, 'PROJECT PHASE')
-
+        self.pdf_canvas.setFont('Karla-Light', 10)
         self.pdf_canvas.setFillColor('black')
 
-        self.pdf_canvas.drawString(300, 100, str(self.project_name).upper())
-        self.pdf_canvas.drawString(300, 80, str(self.project_number).upper())
-        self.pdf_canvas.drawString(300, 60, str(self.prepared_for).upper())
-        self.pdf_canvas.drawString(300, 40, str(self.note).upper())
+        self.pdf_canvas.drawString(15, 110, 'TYPE')
+        self.pdf_canvas.drawString(15, 55, 'JOB NAME')
+        self.pdf_canvas.drawString(235, 55, 'JOB CODE')
+        self.pdf_canvas.drawString(15, 40, 'PREPARED FOR')
+        if self.note != '':
+            self.pdf_canvas.drawString(235, 40, 'NOTE')
 
-        # Disclaimer
-        disclaimers = [
-            'Disclaimer 1',
-            'Disclaimer 2',
-            'Disclaimer 3'
-        ]
+        self.pdf_canvas.setFont('Karla-Medium', 10)
+
+        self.pdf_canvas.drawString(90, 55, str(self.project_name).upper())
+        self.pdf_canvas.drawString(290, 55, str(self.project_number).upper())
+        self.pdf_canvas.drawString(90, 40, str(self.prepared_for).upper())
+        self.pdf_canvas.drawString(290, 40, str(self.note).upper())
 
 
 
         # Type
-        type_label = pdf_name.split('_')[0]
-        type_size = interp(len(type_label), [4, 8], [60, 20])
+        type_label = pdf_name.split('.')[0]
+        type_label = type_label.split('_')[0]
+        self.pdf_canvas.setFont('Karla-Medium', 45)
 
-        self.pdf_canvas.setFont('Karla-Medium', int(type_size))
-        self.pdf_canvas.drawString(10, 50, str(type_label).upper())
-
-        self.pdf_canvas.setFillColor('white')
-        self.pdf_canvas.setFont('Karla-Medium', 10)
+        self.pdf_canvas.drawString(13, 75, str(type_label).upper())
 
         # Issue Date / Revision Date
         date_type = f"{['ISSUED', 'REVISION'][int(self.is_revision)]}"
@@ -120,11 +106,33 @@ class Stamp:
 
         date_text = f'{date_type}: {self.date}{revision_number}'
 
-        self.pdf_canvas.drawString(15, 15, date_text)
+        self.pdf_canvas.setFillColor('white')
+        self.pdf_canvas.setFont('Karla-Medium', 8)
+
+        self.pdf_canvas.drawString(15, 18, date_text)
 
         # Page Number
         if self.is_page_number:
-            self.pdf_canvas.drawString(500, 15, f"PAGE {page_num:02} OF {page_total:02}")
+            self.pdf_canvas.drawString(520, 18, f"PAGE {page_num:02} OF {page_total:02}")
+
+
+
+        # Disclaimer
+        disclaimers = [
+            'For Coordination Only',
+            'Issued for Tender',
+            'Submitted for Review, Comment & Approval'
+        ]
+
+        active_disclaimers = []
+        for i in range(len(self.disclaimer)):
+            if self.disclaimer[i] is True:
+                active_disclaimers.append(disclaimers[i].upper())
+        disclaimer_text = ', '.join(active_disclaimers)
+
+        self.pdf_canvas.setFont('Karla-Medium', 8)
+        self.pdf_canvas.setFillColor('black')
+        self.pdf_canvas.drawString(15, 4, disclaimer_text)
 
         self.pdf_canvas.showPage()
 
@@ -133,3 +141,31 @@ class Stamp:
         pdf_bytes = self.buffer.getvalue()
         self.buffer.close()
         return pdf_bytes
+
+if __name__ == '__main__':
+    stamp_data = {
+        "isGradient": 0,
+        "folderID": 123,
+        "projectName": "Project",
+        "projectNumber": "12345",
+        "preparedBy": 0,
+        "preparedFor": "Client",
+        "isRevision": True,
+        "showPageNumbers": False,
+        "revisionNumber": 99,
+        "date": "2049/01/01",
+        "note": "",
+        "disclaimer": [True, False, True]
+    }
+
+    stamp = Stamp(stamp_data)
+    image_file = open("stamp-assets/eos-gradient.png", 'rb')
+    image = BytesIO(image_file.read())
+    image_file.close()
+
+    stamp.apply_stamp_to_img(image, 'longexample_01.pdf', 69, 420)
+
+    pdf_bytes = stamp.save_pdf()
+    pdf_file = open("output.pdf", 'wb')
+    pdf_file.write(pdf_bytes)
+    pdf_file.close()
