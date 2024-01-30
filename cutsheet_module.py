@@ -30,7 +30,7 @@ class Stamp:
         self.pdf_canvas = canvas.Canvas(self.buffer)
 
         pdfmetrics.registerFont(TTFont('Karla-Medium', 'stamp-assets/Karla-Medium.ttf'))
-        pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-ExtraLight.ttf'))
+        pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-Light.ttf'))
         self.pdf_canvas.setFont('Karla-Medium', 12)
 
     def _draw_box(self, origin: tuple, size: tuple, color):
