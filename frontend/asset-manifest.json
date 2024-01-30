@@ -1,11 +1,11 @@
 {
   "files": {
     "main.css": "/static/css/main.747d268f.css",
-    "main.js": "/static/js/main.a849e5ae.js",
+    "main.js": "/static/js/main.f9a7e29a.js",
+    "static/media/purple-gradient.png": "/static/media/purple-gradient.f476431279d633df3b9b.png",
+    "static/media/orange-gradient.png": "/static/media/orange-gradient.87ba17620aab1dbf602c.png",
     "static/media/stamp-logo.png": "/static/media/stamp-logo.c6d9ecf041c1fc0d6a35.png",
-    "static/media/purple-gradient.png": "/static/media/purple-gradient.d4158913ea60c14f19aa.png",
     "static/media/loading-spinner.gif": "/static/media/loading-spinner.90672f1deffccbcdf4f1.gif",
-    "static/media/orange-gradient.png": "/static/media/orange-gradient.1174bcef997a2d5e694d.png",
     "static/media/good.png": "/static/media/good.de9b3a65ac5651a3bb05.png",
     "static/media/ald-logo-horizontal.png": "/static/media/ald-logo-horizontal.806a074968cb61a2122e.png",
     "static/media/abernathy-logo.png": "/static/media/abernathy-logo.c0d4809a4631d4f433e5.png",
@@ -13,10 +13,10 @@
     "static/media/eos-logo-horizontal.png": "/static/media/eos-logo-horizontal.873d2ac513d2cd277f60.png",
     "index.html": "/index.html",
     "main.747d268f.css.map": "/static/css/main.747d268f.css.map",
-    "main.a849e5ae.js.map": "/static/js/main.a849e5ae.js.map"
+    "main.f9a7e29a.js.map": "/static/js/main.f9a7e29a.js.map"
   },
   "entrypoints": [
     "static/css/main.747d268f.css",
-    "static/js/main.a849e5ae.js"
+    "static/js/main.f9a7e29a.js"
   ]
 }
