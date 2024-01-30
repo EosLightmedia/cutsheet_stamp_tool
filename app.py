@@ -99,10 +99,15 @@ def post_stamp():
     page_number = 0
     saved_folder_id = 0
 
-    current_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+    current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
     print(f'Saving time as: {current_time}')
 
     stamp = Stamp(data)
+
+    #Folder details
+    job_code = data.get('projectNumber')
+    pdf_type = ['Stamped', 'Packaged'][int(is_package)]
+    folder_name = f'{job_code.upper()} - {pdf_type} Cut Sheets - {current_time}'
 
     for i in range(len(pdfs)):
         pdf = pdfs[i]
@@ -121,16 +126,16 @@ def post_stamp():
         if not is_package:
             page_number = 0
             pdf_data = stamp.save_pdf()
-            type_label = pdf['name'].split('_')[0]
-            folder_name = f"cut-sheet_{current_time}"
+            type_label = pdf['name'].split('.')[0]
+            type_label = type_label.split('_')[0]
             file_name = f"{type_label}.pdf"
             saved_folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, stamp.folder_id)
             stamp = Stamp(data)
 
     if is_package:
         pdf_data = stamp.save_pdf()
-        file_name = f"cut-sheet_{current_time}.pdf"
-        saved_folder_id = box.save_package_to_box(pdf_data, file_name, stamp.folder_id)
+        file_name = f"{job_code.upper()} - Cut Sheet Package.pdf"
+        saved_folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, stamp.folder_id)
 
     return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)
 
