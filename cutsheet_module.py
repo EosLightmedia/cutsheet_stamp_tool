@@ -30,11 +30,7 @@ class Stamp:
         self.pdf_canvas = canvas.Canvas(self.buffer)
 
         pdfmetrics.registerFont(TTFont('Karla-Medium', 'stamp-assets/Karla-Medium.ttf'))
-<<<<<<< HEAD
-        pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-ExtraLight.ttf'))
-=======
         pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-Light.ttf'))
->>>>>>> droplet-staging
         self.pdf_canvas.setFont('Karla-Medium', 12)
 
     def _draw_box(self, origin: tuple, size: tuple, color):
@@ -173,4 +169,3 @@ if __name__ == '__main__':
     pdf_file = open("output.pdf", 'wb')
     pdf_file.write(pdf_bytes)
     pdf_file.close()
-
