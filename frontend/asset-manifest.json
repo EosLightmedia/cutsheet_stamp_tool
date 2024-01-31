@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.747d268f.css",
-    "main.js": "/static/js/main.f9a7e29a.js",
+    "main.css": "/static/css/main.752ad429.css",
+    "main.js": "/static/js/main.5d563138.js",
     "static/media/purple-gradient.png": "/static/media/purple-gradient.f476431279d633df3b9b.png",
     "static/media/orange-gradient.png": "/static/media/orange-gradient.87ba17620aab1dbf602c.png",
     "static/media/stamp-logo.png": "/static/media/stamp-logo.c6d9ecf041c1fc0d6a35.png",
@@ -12,11 +12,12 @@
     "static/media/eos-logo.png": "/static/media/eos-logo.41995ff3f203db68e72f.png",
     "static/media/eos-logo-horizontal.png": "/static/media/eos-logo-horizontal.873d2ac513d2cd277f60.png",
     "index.html": "/index.html",
-    "main.747d268f.css.map": "/static/css/main.747d268f.css.map",
-    "main.f9a7e29a.js.map": "/static/js/main.f9a7e29a.js.map"
+    "static/media/recheck-icon.svg": "/static/media/recheck-icon.47f7f1c1059cdc9fc60d86ac238ed003.svg",
+    "main.752ad429.css.map": "/static/css/main.752ad429.css.map",
+    "main.5d563138.js.map": "/static/js/main.5d563138.js.map"
   },
   "entrypoints": [
-    "static/css/main.747d268f.css",
-    "static/js/main.f9a7e29a.js"
+    "static/css/main.752ad429.css",
+    "static/js/main.5d563138.js"
   ]
 }
