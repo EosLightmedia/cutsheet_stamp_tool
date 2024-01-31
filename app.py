@@ -99,7 +99,7 @@ def post_stamp():
     page_number = 0
     saved_folder_id = 0
 
-    current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
+    current_time = datetime.now().strftime('%y-%m-%d | %H:%M')
     print(f'Saving time as: {current_time}')
 
     stamp = Stamp(data)
