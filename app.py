@@ -99,15 +99,8 @@ def post_stamp():
     page_number = 0
     saved_folder_id = 0
     
-    def format_time_to_12h(current_time):
-        dt_object = datetime.strptime(current_time, '%y-%m-%d | %H:%M')
-        formatted_time = dt_object.strftime('%y-%m-%d | %I:%M%p').lower()
-        return formatted_time
-
-    twentyfourhour_time = datetime.now().strftime('%y-%m-%d | %H:%M')
-    current_time = format_time_to_12h(twentyfourhour_time)
+    current_time = datetime.now().strftime('%y-%m-%d | %H:%M')
     print(f'Saving time as: {current_time}')
-
 
     stamp = Stamp(data)
 
