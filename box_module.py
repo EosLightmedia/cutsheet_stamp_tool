@@ -106,7 +106,7 @@ class eosBox:
 
     def save_file_to_box(self, file: bytes, folder_name: str, file_name: str, folder_id: str):
         # Set folder name to be used
-        stamp_folder = 'Stamped Cut Sheets'
+        stamp_folder = '_Stamped Cut Sheets'
 
         # Get the list of items (folders and files) in the parent folder
         items = self.client.folder(folder_id).get_items()
