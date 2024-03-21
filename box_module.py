@@ -90,7 +90,7 @@ class eosBox:
         folder = self.client.folder(folder_id).get()
         pdfs = []
         page_count = 0
-        for item in folder.get_items():
+        for item in folder.get_items(sort='name'):
             if item.type == 'file' and item.name.endswith('.pdf'):
                 logging.debug(f'Processing {item.name}:')
                 pdf_file = self.client.file(item.id).content()
