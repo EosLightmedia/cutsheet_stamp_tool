@@ -5,12 +5,13 @@ import datetime
 from io import BytesIO
 from PIL import Image
 
-logging.basicConfig(level=logging.DEBUG, )
 
 
-def _convert_pdf_to_png(pdf_file: object) -> list:
+
+def _convert_pdf_to_png(pdf_file: object, logger) -> list:
     doc = fitz.Document(stream=pdf_file, filetype='pdf')
-    logging.debug(f'\tFound {len(doc)} pages')
+    logger.debug('Converting pdf to png:')
+    logger.debug(f'\tFound {len(doc)} pages')
     images = []
 
     for i in range(len(doc)):
@@ -27,12 +28,11 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
         output = BytesIO()
         pil_img.save(output, 'png')
         images.append(output)
-        print(images)
     return images
 
 
 class eosBox:
-    def __init__(self, client_id, client_secret, callback_url):
+    def __init__(self, client_id, client_secret, callback_url, logger):
         self.auth_url = None
         self.client = None
         self.client_id = client_id

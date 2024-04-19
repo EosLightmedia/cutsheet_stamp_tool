@@ -1,17 +1,32 @@
 #! /.venv/bin/python
-
+from io import StringIO
 from flask import Flask, make_response, send_from_directory, request, redirect, Response
 from box_module import eosBox
 from cutsheet_module import Stamp
 from datetime import datetime
 import logging
+from logging.handlers import MemoryHandler
 import os
 from dotenv import load_dotenv
 
+
+class ByteIOHandler(logging.StreamHandler):
+    def __init__(self):
+        super().__init__(StringIO())
+
+    def read(self):
+        self.flush()
+        self.stream.seek(0)
+        return self.stream.getvalue().encode()
+
+
 logging.getLogger("urllib3").setLevel(logging.INFO)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('StamperApp')
+handler = ByteIOHandler()
+logger.setLevel(logging.INFO)
+log_memory = MemoryHandler(capacity=1024 * 16, target=handler)
+logger.addHandler(log_memory)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -30,41 +45,42 @@ def get_callback_url():
 
     return callback_url
 
+
 def get_box():
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
-    return eosBox(client_id, client_secret, get_callback_url())
+    return eosBox(client_id, client_secret, get_callback_url(), logger)
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    logger.info(f'Request received: {request}')
+    logger.info('Welcome')
     response = make_response(send_from_directory(app.static_folder, 'index.html'))
     box = get_box()
     code = request.args.get('code')
+    logger.info(f'Session Code: {code}')
 
     if code:
-        logger.info(f'Code: {code}')
         logger.info('Logging in with code...')
 
         try:
             access_token, refresh_token = box.login(code)
             logger.info('Login successful')
-            logger.info(f'Access token: {access_token}')
-            logger.info(f'Refresh token: {refresh_token}')
+            logger.debug(f'Access token: {access_token}')
+            logger.debug(f'Refresh token: {refresh_token}')
 
             logger.info('Setting cookies...')
             response.set_cookie('access', access_token)
             response.set_cookie('refresh', refresh_token)
 
-            logger.info('Rendering...')
+            logger.info('Rendering AJAX web page')
             return response
 
         except Exception as e:
             logger.error(f'Login error:\n{e}')
 
     logger.warning('Invalid Code')
-    logger.info('Redirecting:')
+    logger.info('Redirecting to authentication url:')
     return redirect(box.auth_url)
 
 
@@ -85,7 +101,6 @@ def check_folder_contents():
 
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
-
     def get_pdf_name(pdf):
         return pdf['name'].split('.')[0].split('_')[0]
 
@@ -134,6 +149,8 @@ def post_stamp():
     refresh_token = request.cookies.get('refresh')
 
     data = request.get_json()
+    logging.debug(f'Submitted data: {data}')
+
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
 
@@ -152,7 +169,13 @@ def post_stamp():
         for i in range(len(pdfs)):
             saved_folder_id = process_single_pdf(pdfs[i], folder_name, job_code)
 
+    if data.get('note') == 'DEBUG':
+        log_memory.flush()
+        log_bytes = handler.read()
+        box.save_file_to_box(log_bytes, folder_name, 'debug.txt', data['folderID'])
+
     return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)
+
 
 logger.info(f"Callback URL: {get_callback_url()}")
 
