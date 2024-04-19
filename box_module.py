@@ -1,5 +1,4 @@
 from boxsdk import OAuth2, Client
-import logging
 import fitz
 import datetime
 from io import BytesIO
@@ -92,7 +91,6 @@ class eosBox:
         page_count = 0
         for item in folder.get_items(sort='name'):
             if item.type == 'file' and item.name.endswith('.pdf'):
-                logging.debug(f'Processing {item.name}:')
                 pdf_file = self.client.file(item.id).content()
                 png_files = _convert_pdf_to_png(pdf_file)
                 page_count += len(png_files)
