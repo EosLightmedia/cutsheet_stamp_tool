@@ -143,8 +143,8 @@ class Stamp:
         return date_text
 
     def _get_page_text(self, page_number: int, page_total):
-        page_number += self.stamp_data['offsetNumber']
-        page_total += self.stamp_data['offsetNumber']
+        page_number += self.stamp_data['offsetNumber'] - 1
+        page_total += self.stamp_data['offsetNumber'] - 1
         return f"PAGE {page_number:02} OF {page_total:02}"
 
     def _get_disclaimer_text(self):

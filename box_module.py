@@ -1,16 +1,16 @@
 from boxsdk import OAuth2, Client
-import logging
 import fitz
 import datetime
 from io import BytesIO
 from PIL import Image
 
-logging.basicConfig(level=logging.DEBUG, )
 
 
-def _convert_pdf_to_png(pdf_file: object) -> list:
+
+def _convert_pdf_to_png(pdf_file: object, logger) -> list:
     doc = fitz.Document(stream=pdf_file, filetype='pdf')
-    logging.debug(f'\tFound {len(doc)} pages')
+    logger.debug('Converting pdf to png:')
+    logger.debug(f'\tFound {len(doc)} pages')
     images = []
 
     for i in range(len(doc)):
@@ -27,12 +27,11 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
         output = BytesIO()
         pil_img.save(output, 'png')
         images.append(output)
-        print(images)
     return images
 
 
 class eosBox:
-    def __init__(self, client_id, client_secret, callback_url):
+    def __init__(self, client_id, client_secret, callback_url, logger):
         self.auth_url = None
         self.client = None
         self.client_id = client_id
@@ -90,9 +89,8 @@ class eosBox:
         folder = self.client.folder(folder_id).get()
         pdfs = []
         page_count = 0
-        for item in folder.get_items():
+        for item in folder.get_items(sort='name'):
             if item.type == 'file' and item.name.endswith('.pdf'):
-                logging.debug(f'Processing {item.name}:')
                 pdf_file = self.client.file(item.id).content()
                 png_files = _convert_pdf_to_png(pdf_file)
                 page_count += len(png_files)
@@ -106,7 +104,7 @@ class eosBox:
 
     def save_file_to_box(self, file: bytes, folder_name: str, file_name: str, folder_id: str):
         # Set folder name to be used
-        stamp_folder = '_Stamped Cut Sheets'
+        stamp_folder = 'Stamped Cut Sheets'
 
         # Get the list of items (folders and files) in the parent folder
         items = self.client.folder(folder_id).get_items()
