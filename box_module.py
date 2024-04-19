@@ -5,12 +5,8 @@ from io import BytesIO
 from PIL import Image
 
 
-
-
-def _convert_pdf_to_png(pdf_file: object, logger) -> list:
+def _convert_pdf_to_png(pdf_file: object) -> list:
     doc = fitz.Document(stream=pdf_file, filetype='pdf')
-    logger.debug('Converting pdf to png:')
-    logger.debug(f'\tFound {len(doc)} pages')
     images = []
 
     for i in range(len(doc)):
