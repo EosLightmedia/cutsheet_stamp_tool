@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.ab1864df.css",
-    "main.js": "/static/js/main.5f3282e0.js",
+    "main.css": "/static/css/main.39ea9489.css",
+    "main.js": "/static/js/main.d6056d32.js",
     "static/media/purple-gradient.png": "/static/media/purple-gradient.f476431279d633df3b9b.png",
     "static/media/orange-gradient.png": "/static/media/orange-gradient.87ba17620aab1dbf602c.png",
     "static/media/stamp-logo.png": "/static/media/stamp-logo.c6d9ecf041c1fc0d6a35.png",
@@ -10,14 +10,15 @@
     "static/media/ald-logo-horizontal.png": "/static/media/ald-logo-horizontal.806a074968cb61a2122e.png",
     "static/media/abernathy-logo.png": "/static/media/abernathy-logo.c0d4809a4631d4f433e5.png",
     "static/media/eos-logo.png": "/static/media/eos-logo.41995ff3f203db68e72f.png",
+    "static/media/natgeo-logo.png": "/static/media/natgeo-logo.0f6d7d7b765efaeea838.png",
     "static/media/eos-logo-horizontal.png": "/static/media/eos-logo-horizontal.873d2ac513d2cd277f60.png",
     "index.html": "/index.html",
     "static/media/recheck-icon.svg": "/static/media/recheck-icon.47f7f1c1059cdc9fc60d86ac238ed003.svg",
-    "main.ab1864df.css.map": "/static/css/main.ab1864df.css.map",
-    "main.5f3282e0.js.map": "/static/js/main.5f3282e0.js.map"
+    "main.39ea9489.css.map": "/static/css/main.39ea9489.css.map",
+    "main.d6056d32.js.map": "/static/js/main.d6056d32.js.map"
   },
   "entrypoints": [
-    "static/css/main.ab1864df.css",
-    "static/js/main.5f3282e0.js"
+    "static/css/main.39ea9489.css",
+    "static/js/main.d6056d32.js"
   ]
 }
