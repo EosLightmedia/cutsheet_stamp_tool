@@ -102,7 +102,7 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     def get_pdf_name(pdf):
-        return pdf['name'].split('.')[0].split('_')[0]
+        return pdf['name'].split('.')[0].split('_')[0].replace(' ', '')
 
     def get_folder_name(job_code, is_package, time):
         pdf_type = ['Stamped', 'Packaged'][int(is_package)]
