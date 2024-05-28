@@ -3,36 +3,31 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from numpy import interp
 from io import BytesIO
 
 
-DISCLAIMERS = [
-            'For Coordination Only',
-            'Issued for Tender',
-            'Submitted for Review, Comment & Approval'
-        ]
-
-
 class Stamp:
+    DISCLAIMERS = [
+        'For Coordination Only',
+        'Issued for Tender',
+        'Submitted for Review, Comment & Approval'
+    ]
     def __init__(self, stamp_data: dict):
+        self._register_fonts()
         self.stamp_data: dict = stamp_data
-        self.memory_buffer: BytesIO = BytesIO()
-        self.pdf_canvas = canvas.Canvas(self.memory_buffer)
-        self.pdf_cursor: tuple[int, int] = (0, 0)
+        self.memory_allocation: BytesIO = BytesIO()
+        self.pdf_canvas = canvas.Canvas(self.memory_allocation)
+        self.cursor: tuple[int, int] = (0, 0)
 
+    @staticmethod
+    def _register_fonts():
         pdfmetrics.registerFont(TTFont('Karla-Medium', 'stamp-assets/Karla-Medium.ttf'))
         pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-Light.ttf'))
 
-    def render_page(self, document_image, type_name: str, page_number: int, page_total: int):
-        self.pdf_cursor = (A4[0] * 0.06, 0)
+    def render_page(self, document_image: BytesIO, type_name: str, page_number: int, page_total: int):
+        self.cursor = (A4[0] * 0.06, 0)
 
-
-        is_header: bool = False
-
-
-
-        if is_header:
+        if self.stamp_data['isHeader'] is True:
             self._draw_disclaimer()
             self._draw_document(document_image)
             self._draw_stamp(type_name, page_number, page_total)
@@ -43,14 +38,19 @@ class Stamp:
 
         self.pdf_canvas.showPage()
 
+    def render_cover_sheet(self):
+
+        self._put_image(ImageReader("stamp-assets/letterhead-bg.png"),(0, 0), A4)
+        self.pdf_canvas.showPage()
+
     def save_pdf(self):
         self.pdf_canvas.save()
-        pdf_memory = self.memory_buffer.getvalue()
-        self.memory_buffer.close()
+        pdf_memory = self.memory_allocation.getvalue()
+        self.memory_allocation.close()
         return pdf_memory
 
     def _draw_stamp(self, type_name, page_number: int, page_total: int):
-        at_cursor = self.pdf_cursor
+        at_cursor = self.cursor
         stamp_size = (A4[0] * 0.88, A4[1] * 0.12)
         self._put_rect(at_cursor, stamp_size)
 
@@ -96,20 +96,20 @@ class Stamp:
             at_page = (at_cursor[0] + 450, at_cursor[1] + 4)
             self._put_text(self._get_page_text(page_number, page_total), at_page, 'white', 8, False)
 
-        self.pdf_cursor = (self.pdf_cursor[0], self.pdf_cursor[1] + stamp_size[1])
+        self.cursor = (self.cursor[0], self.cursor[1] + stamp_size[1])
 
     def _draw_document(self, document_image):
-        at_cursor = self.pdf_cursor
+        at_cursor = self.cursor
         document_size = (A4[0] * 0.88, A4[1] * 0.88)
 
         self._put_image(document_image, at_cursor, document_size)
-        self.pdf_cursor = (self.pdf_cursor[0], self.pdf_cursor[1] + document_size[1])
+        self.cursor = (self.cursor[0], self.cursor[1] + document_size[1])
 
     def _draw_disclaimer(self):
-        at_cursor = self.pdf_cursor
+        at_cursor = self.cursor
         at_disclaimer = (at_cursor[0] + 7, at_cursor[1] + 2)
         self._put_text(self._get_disclaimer_text(), at_disclaimer, size=7)
-        self.pdf_cursor = (self.pdf_cursor[0], self.pdf_cursor[1] + (A4[1] * 0.01))
+        self.cursor = (self.cursor[0], self.cursor[1] + (A4[1] * 0.01))
 
     def _put_text(self, text: str, at: tuple[int, int], color: str = 'Black', size: int = 10, bold: bool = True):
         if bold:
@@ -125,7 +125,6 @@ class Stamp:
 
     def _put_image(self, image_obj, at: tuple[int, int], size: tuple[int, int]):
         self.pdf_canvas.drawImage(ImageReader(image_obj), at[0], at[1], size[0], size[1])
-        ...
 
     def _get_gradiant(self):
         prep_by = ['eos', 'ald'][self.stamp_data['preparedBy']]
@@ -143,8 +142,8 @@ class Stamp:
         return date_text
 
     def _get_page_text(self, page_number: int, page_total):
-        page_number += self.stamp_data['offsetNumber'] - 1
-        page_total += self.stamp_data['offsetNumber'] - 1
+        page_number += self.stamp_data['pageStart'] - 1
+        page_total += self.stamp_data['pageStart'] - 1
         return f"PAGE {page_number:02} OF {page_total:02}"
 
     def _get_disclaimer_text(self):
@@ -152,7 +151,7 @@ class Stamp:
 
         for i in range(len(self.stamp_data["disclaimer"])):
             if self.stamp_data["disclaimer"][i] is True:
-                active_disclaimers.append(DISCLAIMERS[i].upper())
+                active_disclaimers.append(self.DISCLAIMERS[i].upper())
 
         disclaimer_text = ', '.join(active_disclaimers)
         return disclaimer_text
@@ -171,14 +170,16 @@ if __name__ == '__main__':
         "date": "2049/01/01",
         "note": "he he",
         "disclaimer": [True, True, True],
-        "offsetNumber": 10
+        "pageStart": 1,
+        "isHeader": False
     }
 
     stamp = Stamp(stamp_data=_stamp_data)
-    image_file = open("stamp-assets/eos-gradient.png", 'rb')
+    image_file = open("stamp-assets/letterhead-bg.png", 'rb')
     image = BytesIO(image_file.read())
     image_file.close()
 
+    stamp.render_cover_sheet()
     stamp.render_page(image, 'longexample', 69, 420)
 
     pdf_bytes = stamp.save_pdf()

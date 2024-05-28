@@ -19,12 +19,16 @@ class ByteIOHandler(logging.StreamHandler):
         self.stream.seek(0)
         return self.stream.getvalue().encode()
 
-
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(module)s:%(levelname)s] [%(funcName)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
-logger = logging.getLogger('StamperApp')
+logger = logging.getLogger(__name__)
 handler = ByteIOHandler()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 log_memory = MemoryHandler(capacity=1024 * 16, target=handler)
 logger.addHandler(log_memory)
 
@@ -49,7 +53,7 @@ def get_callback_url():
 def get_box():
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
-    return eosBox(client_id, client_secret, get_callback_url(), logger)
+    return eosBox(client_id, client_secret, get_callback_url())
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -77,7 +81,7 @@ def index():
             return response
 
         except Exception as e:
-            logger.error(f'Login error:\n{e}')
+            logger.warning(f'Login error:\n{e}')
 
     logger.warning('Invalid Code')
     logger.info('Redirecting to authentication url:')
@@ -102,7 +106,7 @@ def check_folder_contents():
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
     def get_pdf_name(pdf):
-        return pdf['name'].split('.')[0].split('_')[0]
+        return pdf['name'].split('.')[0].split('_')[0].replace(' ', '')
 
     def get_folder_name(job_code, is_package, time):
         pdf_type = ['Stamped', 'Packaged'][int(is_package)]
