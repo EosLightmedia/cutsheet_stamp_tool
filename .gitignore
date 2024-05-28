@@ -27,3 +27,4 @@ node_modules/             # Installed Node.js modules
 
 # Custom directories
 calls/                    # Custom directory (specify purpose if needed)
+__pycache__/
