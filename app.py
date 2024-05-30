@@ -2,7 +2,7 @@
 from io import StringIO
 from flask import Flask, make_response, send_from_directory, request, redirect, Response
 from box_module import eosBox
-from cutsheet_module import Stamp
+from cutsheet import CutSheet
 from datetime import datetime
 import logging
 from logging.handlers import MemoryHandler
@@ -42,7 +42,7 @@ app = Flask(__name__, static_folder='frontend', static_url_path='')
 
 def get_callback_url():
     if __name__ == "__main__":
-        callback_url = 'http://localhost:8000/'
+        callback_url = 'http://localhost:8000'
 
     else:
         callback_url = 'https://pdfstamper.eoslightmedia.com'
@@ -113,17 +113,20 @@ def post_stamp():
         return f'{job_code.upper()} - {pdf_type} Cut Sheets - {time}'
 
     def process_single_pdf(pdf, folder_name, job_code):
-        stamp = Stamp(data)
+        cut_sheet = CutSheet(data)
         pdf_page_count = len(pdf['images'])
-        page_number = 0
+        coversheet_offset = int(data['coverSheet'])
+        page_number = coversheet_offset
+        if data['coverSheet']:
+            cut_sheet.render_cover_sheet()
 
         for j in range(len(pdf['images'])):
             page_number += 1
             image = pdf['images'][j]
             pdf_name = get_pdf_name(pdf)
-            stamp.render_page(image, pdf_name, page_number, pdf_page_count)
+            cut_sheet.render_page(image, pdf_name, page_number, pdf_page_count)
 
-        pdf_data = stamp.save_pdf()
+        pdf_data = cut_sheet.save_pdf()
         type_label = get_pdf_name(pdf)
         file_name = f"{type_label}.pdf"
 
@@ -131,9 +134,12 @@ def post_stamp():
         return folder_id
 
     def process_pdf_package(pdfs, folder_name, job_code):
-        stamp = Stamp(data)
-        page_number = 0
-        page_count = total_page_count
+        cut_sheet = CutSheet(data)
+        coversheet_offset = int(data['coverSheet'])
+        page_number = coversheet_offset
+        page_count = total_page_count + page_number
+        if data['coverSheet']:
+            cut_sheet.render_cover_sheet()
 
         for i in range(len(pdfs)):
             pdf = pdfs[i]
@@ -141,9 +147,9 @@ def post_stamp():
             for j in range(len(pdf['images'])):
                 page_number += 1
                 image = pdf['images'][j]
-                stamp.render_page(image, pdf_name, page_number, page_count)
+                cut_sheet.render_page(image, pdf_name, page_number, page_count)
 
-        pdf_data = stamp.save_pdf()
+        pdf_data = cut_sheet.save_pdf()
         file_name = f"{job_code.upper()} - Cut Sheet Package.pdf"
 
         folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, data['folderID'])
