@@ -1,13 +1,16 @@
 from boxsdk import OAuth2, Client
 import fitz
 import datetime
+import logging
 from io import BytesIO
 from PIL import Image
 
+log = logging.getLogger(__name__)
 
 def _convert_pdf_to_png(pdf_file: object) -> list:
     doc = fitz.Document(stream=pdf_file, filetype='pdf')
     images = []
+    log.info(f'Flattening {len(doc)} pages.')
 
     for i in range(len(doc)):
         page = doc.load_page(i)
@@ -27,7 +30,7 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
 
 
 class eosBox:
-    def __init__(self, client_id, client_secret, callback_url, logger):
+    def __init__(self, client_id, client_secret, callback_url):
         self.auth_url = None
         self.client = None
         self.client_id = client_id

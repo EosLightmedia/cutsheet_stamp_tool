@@ -2,7 +2,7 @@
 from io import StringIO
 from flask import Flask, make_response, send_from_directory, request, redirect, Response
 from box_module import eosBox
-from cutsheet_module import Stamp
+from cutsheet import CutSheet
 from datetime import datetime
 import logging
 from logging.handlers import MemoryHandler
@@ -20,11 +20,16 @@ class ByteIOHandler(logging.StreamHandler):
         return self.stream.getvalue().encode()
 
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(module)s:%(levelname)s] [%(funcName)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
-logger = logging.getLogger('StamperApp')
+logger = logging.getLogger(__name__)
 handler = ByteIOHandler()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 log_memory = MemoryHandler(capacity=1024 * 16, target=handler)
 logger.addHandler(log_memory)
 
@@ -38,7 +43,7 @@ app = Flask(__name__, static_folder='frontend', static_url_path='')
 
 def get_callback_url():
     if __name__ == "__main__":
-        callback_url = 'http://localhost:8000/'
+        callback_url = 'http://localhost:8000'
 
     else:
         callback_url = 'https://pdfstamper.eoslightmedia.com'
@@ -49,7 +54,7 @@ def get_callback_url():
 def get_box():
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
-    return eosBox(client_id, client_secret, get_callback_url(), logger)
+    return eosBox(client_id, client_secret, get_callback_url())
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -77,7 +82,7 @@ def index():
             return response
 
         except Exception as e:
-            logger.error(f'Login error:\n{e}')
+            logger.warning(f'Login error:\n{e}')
 
     logger.warning('Invalid Code')
     logger.info('Redirecting to authentication url:')
@@ -101,45 +106,60 @@ def check_folder_contents():
 
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
+    data: dict = request.get_json()
+
+    logger.info(f'Stamping cut sheet with data:\n{request.data}')
+
     def get_pdf_name(pdf):
-        return pdf['name'].split('.')[0].split('_')[0]
+        pdf_name: list[str] = pdf['name'].split('.')[0].split('_')
+        type_name = pdf_name[0].replace(' ', '')
+        description = pdf_name[1]
+        part_number = pdf_name[2].replace(' ', '')
+        return [type_name, description, part_number]
 
     def get_folder_name(job_code, is_package, time):
         pdf_type = ['Stamped', 'Packaged'][int(is_package)]
         return f'{job_code.upper()} - {pdf_type} Cut Sheets - {time}'
 
     def process_single_pdf(pdf, folder_name, job_code):
-        stamp = Stamp(data)
+        cut_sheet = CutSheet(data)
         pdf_page_count = len(pdf['images'])
-        page_number = 0
+        coversheet_offset = int(data['coverSheet'])
+        page_number = coversheet_offset
+        if data['coverSheet']:
+            cut_sheet_item_document_details = get_pdf_name(pdf)
+            cut_sheet.render_cover_sheet(cut_sheet_item_document_details)
 
         for j in range(len(pdf['images'])):
             page_number += 1
             image = pdf['images'][j]
-            pdf_name = get_pdf_name(pdf)
-            stamp.render_page(image, pdf_name, page_number, pdf_page_count)
+            pdf_name = get_pdf_name(pdf)[0]
+            cut_sheet.render_page(image, pdf_name, page_number, pdf_page_count)
 
-        pdf_data = stamp.save_pdf()
-        type_label = get_pdf_name(pdf)
+        pdf_data = cut_sheet.save_pdf()
+        type_label = get_pdf_name(pdf)[0]
         file_name = f"{type_label}.pdf"
 
         folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, data['folderID'])
         return folder_id
 
     def process_pdf_package(pdfs, folder_name, job_code):
-        stamp = Stamp(data)
-        page_number = 0
-        page_count = total_page_count
+        cut_sheet = CutSheet(data)
+        coversheet_offset = int(data['coverSheet'])
+        page_number = coversheet_offset
+        page_count = total_page_count + page_number
+        if data['coverSheet']:
+            cut_sheet.render_cover_sheet()
 
         for i in range(len(pdfs)):
             pdf = pdfs[i]
-            pdf_name = get_pdf_name(pdf)
+            pdf_name = get_pdf_name(pdf)[0]
             for j in range(len(pdf['images'])):
                 page_number += 1
                 image = pdf['images'][j]
-                stamp.render_page(image, pdf_name, page_number, page_count)
+                cut_sheet.render_page(image, pdf_name, page_number, page_count)
 
-        pdf_data = stamp.save_pdf()
+        pdf_data = cut_sheet.save_pdf()
         file_name = f"{job_code.upper()} - Cut Sheet Package.pdf"
 
         folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, data['folderID'])
@@ -148,7 +168,6 @@ def post_stamp():
     access_token = request.cookies.get('access')
     refresh_token = request.cookies.get('refresh')
 
-    data = request.get_json()
     logging.debug(f'Submitted data: {data}')
 
     box = get_box()
