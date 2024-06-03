@@ -19,6 +19,7 @@ class ByteIOHandler(logging.StreamHandler):
         self.stream.seek(0)
         return self.stream.getvalue().encode()
 
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(module)s:%(levelname)s] [%(funcName)s] %(message)s",
@@ -105,8 +106,16 @@ def check_folder_contents():
 
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
+    data: dict = request.get_json()
+
+    logger.info(f'Stamping cut sheet with data:\n{request.data}')
+
     def get_pdf_name(pdf):
-        return pdf['name'].split('.')[0].split('_')[0].replace(' ', '')
+        pdf_name: list[str] = pdf['name'].split('.')[0].split('_')
+        type_name = pdf_name[0].replace(' ', '')
+        description = pdf_name[1]
+        part_number = pdf_name[2].replace(' ', '')
+        return [type_name, description, part_number]
 
     def get_folder_name(job_code, is_package, time):
         pdf_type = ['Stamped', 'Packaged'][int(is_package)]
@@ -118,16 +127,17 @@ def post_stamp():
         coversheet_offset = int(data['coverSheet'])
         page_number = coversheet_offset
         if data['coverSheet']:
-            cut_sheet.render_cover_sheet()
+            cut_sheet_item_document_details = get_pdf_name(pdf)
+            cut_sheet.render_cover_sheet(cut_sheet_item_document_details)
 
         for j in range(len(pdf['images'])):
             page_number += 1
             image = pdf['images'][j]
-            pdf_name = get_pdf_name(pdf)
+            pdf_name = get_pdf_name(pdf)[0]
             cut_sheet.render_page(image, pdf_name, page_number, pdf_page_count)
 
         pdf_data = cut_sheet.save_pdf()
-        type_label = get_pdf_name(pdf)
+        type_label = get_pdf_name(pdf)[0]
         file_name = f"{type_label}.pdf"
 
         folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, data['folderID'])
@@ -143,7 +153,7 @@ def post_stamp():
 
         for i in range(len(pdfs)):
             pdf = pdfs[i]
-            pdf_name = get_pdf_name(pdf)
+            pdf_name = get_pdf_name(pdf)[0]
             for j in range(len(pdf['images'])):
                 page_number += 1
                 image = pdf['images'][j]
@@ -158,7 +168,6 @@ def post_stamp():
     access_token = request.cookies.get('access')
     refresh_token = request.cookies.get('refresh')
 
-    data = request.get_json()
     logging.debug(f'Submitted data: {data}')
 
     box = get_box()

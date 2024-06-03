@@ -1,3 +1,5 @@
+import random
+
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -33,12 +35,9 @@ class CutSheet:
         pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-Light.ttf'))
 
     def _draw_cover_title(self):
-        company: int = self.stamp_data["preparedBy"]
-
+        company_name, company = self._get_company()
         horizontal_offset = [0.23, 0.15][company]
         stamp_cursor = A4[0] * horizontal_offset, A4[1] * 0.92
-
-        company_name = ["Eos Lightmedia", "Abernathy Lighting Design"][company]
         title_text = f"{company_name} Submittal Cover Sheet"
 
         self._draw_text(title_text, stamp_cursor, size=18, cap=False)
@@ -48,15 +47,90 @@ class CutSheet:
         stamp_size = (A4[0] * 0.75, A4[1] * 0.1)
         self._draw_rectangle(stamp_cursor, stamp_size)
 
-    def _draw_cover_items(self):
-        stamp_cursor = A4[0] * 0.125, A4[1] * 0.25
-        stamp_size = (A4[0] * 0.75, A4[1] * 0.5)
+        stamp_cursor = stamp_cursor[0] + 2, stamp_cursor[1] + 2
+        stamp_size = stamp_size[0] - 4, stamp_size[1] - 4 - 20
+        self._draw_rectangle(stamp_cursor, stamp_size, color='white')
+
+        company_name, company = self._get_company()
+        stamp_cursor = stamp_cursor[0] + 100, stamp_cursor[1] + 67
+        title_text = f"{company_name} Status"
+        self._draw_text(title_text, stamp_cursor, cap=False, color='white', bold=False)
+
+        box_cursor = stamp_cursor[0] - 65, stamp_cursor[1] - 26
+        box_size = 30, 15
+
+        x_cursor = box_cursor[0] + 8, box_cursor[1] + 2 + 18
+        x_offset = int(self.stamp_data["coverStatus"]) * -18
+        x_cursor = x_cursor[0], x_cursor[1] + x_offset
+
+        stamp_cursor = stamp_cursor[0], stamp_cursor[1] - 22
+        self._draw_text('For Information', stamp_cursor, cap=False, bold=False)
+        stamp_cursor = stamp_cursor[0], stamp_cursor[1] - 18
+        self._draw_text('For Approval', stamp_cursor, cap=False, bold=False)
+        stamp_cursor = stamp_cursor[0], stamp_cursor[1] - 18
+        self._draw_text('For Review & Comments', stamp_cursor, cap=False, bold=False)
+
+        self._draw_rectangle(box_cursor, box_size, color='whitesmoke')
+        box_cursor = box_cursor[0], box_cursor[1] - 18
+        self._draw_rectangle(box_cursor, box_size, color='whitesmoke')
+        box_cursor = box_cursor[0], box_cursor[1] - 18
+        self._draw_rectangle(box_cursor, box_size, color='whitesmoke')
+
+        self._draw_text('x', x_cursor, size=18)
+
+    def _get_company(self):
+        company: int = self.stamp_data["preparedBy"]
+        company_name = ["Eos Lightmedia", "Abernathy Lighting Design"][company]
+        return company_name, company
+
+    def _draw_cover_items(self, item_details):
+        stamp_cursor = A4[0] * 0.125, A4[1] * 0.65
+        stamp_size = (A4[0] * 0.75, A4[1] * 0.13)
         self._draw_rectangle(stamp_cursor, stamp_size)
+
+        stamp_cursor = stamp_cursor[0] + 2, stamp_cursor[1] + 2
+        stamp_size = stamp_size[0] - 4, stamp_size[1] - 4 - 20
+        self._draw_rectangle(stamp_cursor, stamp_size, color='white')
+
+        stamp_cursor = stamp_cursor[0] + 35, stamp_cursor[1] + 93
+        self._draw_text('Item', stamp_cursor, cap=False, bold=False, color='white')
+
+        stamp_cursor = stamp_cursor[0] + 63, stamp_cursor[1]
+        self._draw_text('Document Submitted', stamp_cursor, cap=False, bold=False, color='white')
+
+        stamp_cursor = stamp_cursor[0] - 55, stamp_cursor[1] - 25
+        self._draw_text('1', stamp_cursor, cap=False)
+
+        stamp_cursor = stamp_cursor[0] + 55, stamp_cursor[1]
+        item_details_text = ' - '.join(item_details)
+        self._draw_text(item_details_text, stamp_cursor, cap=False)
 
     def _draw_cover_details(self):
         stamp_cursor = A4[0] * 0.125, A4[1] * 0.1
         stamp_size = (A4[0] * 0.75, A4[1] * 0.1)
         self._draw_rectangle(stamp_cursor, stamp_size)
+
+        stamp_cursor = stamp_cursor[0] + 2, stamp_cursor[1] + 2
+        stamp_size = stamp_size[0] - 4, stamp_size[1] - 4
+        self._draw_rectangle(stamp_cursor, stamp_size, color='white')
+
+        stamp_cursor = stamp_cursor[0] + 10, stamp_cursor[1] + 20
+        self._draw_text('Reference #', stamp_cursor, cap=False)
+
+        stamp_cursor = stamp_cursor[0] + 0, stamp_cursor[1] + 20
+        self._draw_text('Date', stamp_cursor, cap=False)
+
+        stamp_cursor = stamp_cursor[0] + 0, stamp_cursor[1] + 20
+        self._draw_text('Issued By', stamp_cursor, cap=False)
+
+        stamp_cursor = stamp_cursor[0] + 80, stamp_cursor[1]
+        self._draw_text(self.stamp_data['coverIssueBy'], stamp_cursor, size=12, cap=False, bold=False)
+
+        stamp_cursor = stamp_cursor[0], stamp_cursor[1] - 20
+        self._draw_text(self.stamp_data['date'], stamp_cursor, size=12, bold=False)
+
+        stamp_cursor = stamp_cursor[0], stamp_cursor[1] - 20
+        self._draw_text(self.stamp_data['coverRefNum'], stamp_cursor, size=12, bold=False)
 
     def _draw_stamp(self, type_name: str, page_number: int, page_total: int):
 
@@ -122,9 +196,12 @@ class CutSheet:
         self._draw_text(self._get_disclaimer_text(), at_disclaimer, size=7)
         self.cursor = (self.cursor[0], self.cursor[1] + (A4[1] * 0.01))
 
-    def _draw_text(self, text: str, location: tuple[int, int], color: str = 'Black', size: int = 10, bold: bool = True, cap: bool = True):
-        if bold: self.pdf_canvas.setFont('Karla-Medium', size)
-        else: self.pdf_canvas.setFont('Karla-Light', size)
+    def _draw_text(self, text: str, location: tuple[int, int], color: str = 'Black', size: int = 10, bold: bool = True,
+                   cap: bool = True):
+        if bold:
+            self.pdf_canvas.setFont('Karla-Medium', size)
+        else:
+            self.pdf_canvas.setFont('Karla-Light', size)
         if cap: text = text.upper()
 
         self.pdf_canvas.setFillColor(color)
@@ -158,7 +235,8 @@ class CutSheet:
         date_type = f"{['ISSUED', 'REVISION'][int(self.stamp_data['isRevision'])]}"
         if self.stamp_data['isRevision']:
             revision_number = f" | REV: {self.stamp_data['revisionNumber']}"
-        else: revision_number = ''
+        else:
+            revision_number = ''
 
         date_text = f"{date_type}: {self.stamp_data['date']}{revision_number}"
 
@@ -197,10 +275,10 @@ class CutSheet:
 
         self.end_page()
 
-    def render_cover_sheet(self):
+    def render_cover_sheet(self, item_details):
         self._draw_image(self._get_coversheet_image(), (0, 0), A4)
         self._draw_cover_details()
-        self._draw_cover_items()
+        self._draw_cover_items(item_details)
         self._draw_cover_status()
         self._draw_cover_title()
 
@@ -220,7 +298,7 @@ if __name__ == '__main__':
         "folderID": 123,
         "projectName": "ProjectName",
         "projectNumber": "12345",
-        "preparedBy": 1,
+        "preparedBy": 0,
         "preparedFor": "Client",
         "isRevision": True,
         "showPageNumbers": True,
@@ -230,7 +308,7 @@ if __name__ == '__main__':
         "disclaimer": [True, True, True],
         "pageStart": 1,
         "isHeader": False,
-        "coverStatus": 2,
+        "coverStatus": 0,
         "coverIssueBy": "Jaylin",
         "coverRefNum": "0092999",
         "coverSheet": True
@@ -240,7 +318,7 @@ if __name__ == '__main__':
     with open("stamp-assets/eos-coversheet.png", 'rb') as image_file:
         image = BytesIO(image_file.read())
 
-    if _stamp_data['coverSheet']: cut_sheet.render_cover_sheet()
+    if _stamp_data['coverSheet']: cut_sheet.render_cover_sheet(['LX02A', 'Sound Bar Cut Sheet', 'FN44HT7900D'])
 
     cut_sheet.render_page(image, 'long_example', 69, 420)
 
