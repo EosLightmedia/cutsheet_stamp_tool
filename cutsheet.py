@@ -1,5 +1,4 @@
-https://raw.githubusercontent.com/EosLightmedia/cutsheet_stamp_tool/natgeo-staging/cutsheet.pyimport random
-
+import random
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
