@@ -139,7 +139,7 @@ def post_stamp():
             page_number += 1
             image = pdf['images'][j]
             pdf_name = get_pdf_name(pdf)[0]
-            cut_sheet.render_page(image, pdf_name, page_number, pdf_page_count)
+            cut_sheet.render_page(image, pdf_name, page_number, pdf_page_count + coversheet_offset)
 
         pdf_data = cut_sheet.save_pdf()
         type_label = get_pdf_name(pdf)[0]
@@ -154,7 +154,7 @@ def post_stamp():
         page_number = coversheet_offset
         page_count = total_page_count + page_number
         if data['coverSheet']:
-            cut_sheet.render_cover_sheet()
+            Exception(SyntaxError('Cannot coversheet and package'))
 
         for i in range(len(pdfs)):
             pdf = pdfs[i]
@@ -186,6 +186,8 @@ def post_stamp():
     folder_name = get_folder_name(job_code, is_package, current_time)
 
     saved_folder_id = None
+
+    if data.get('coverSheet'): is_package = False
 
     if is_package:
         saved_folder_id = process_pdf_package(pdfs, folder_name, job_code)
