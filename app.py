@@ -113,8 +113,13 @@ def post_stamp():
     def get_pdf_name(pdf):
         pdf_name: list[str] = pdf['name'].split('.')[0].split('_')
         type_name = pdf_name[0].replace(' ', '')
-        description = pdf_name[1]
-        part_number = pdf_name[2].replace(' ', '')
+
+        if len(pdf_name) > 1:
+            description = pdf_name[1]
+        else:
+            description = ''
+
+        part_number = pdf_name[-1].replace(' ', '')
         return [type_name, description, part_number]
 
     def get_folder_name(job_code, is_package, time):
