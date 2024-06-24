@@ -84,9 +84,10 @@ class eosBox:
 
         return folder_dict
 
-    def get_pdfs_in_folder(self, folder_id):
+    def get_flattened_pdfs_in_folder(self, folder_id):
+        logging.debug('')
         folder = self.client.folder(folder_id).get()
-        pdfs = []
+        flattened_pdfs = []
         page_count = 0
         for item in folder.get_items(sort='name'):
             if item.type == 'file' and item.name.endswith('.pdf'):
@@ -94,12 +95,27 @@ class eosBox:
                 png_files = _convert_pdf_to_png(pdf_file)
                 page_count += len(png_files)
 
-                pdfs.append({
+                flattened_pdfs.append({
                     'name': item.name,
                     'images': png_files
                 })
 
-        return pdfs, page_count
+        return flattened_pdfs, page_count
+
+    def get_pdfs_in_folder(self, folder_id):
+        logging.debug('')
+        folder = self.client.folder(folder_id).get()
+        pdfs = []
+        for item in folder.get_items(sort='name'):
+            if item.type == 'file' and item.name.endswith('.pdf'):
+                pdf_file = self.client.file(item.id).content()
+
+                pdfs.append({
+                    'name': item.name,
+                    'data': pdf_file
+                })
+
+        return pdfs
 
     def save_file_to_box(self, file: bytes, folder_name: str, file_name: str, folder_id: str):
         # Set folder name to be used
