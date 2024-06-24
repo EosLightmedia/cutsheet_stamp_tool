@@ -3,6 +3,7 @@ from io import StringIO
 from flask import Flask, make_response, send_from_directory, request, redirect, Response
 from box_module import eosBox
 from cutsheet import CutSheet
+from brand_stamp import BrandStamp
 from datetime import datetime
 import logging
 from logging.handlers import MemoryHandler
@@ -19,7 +20,7 @@ class ByteIOHandler(logging.StreamHandler):
         self.stream.seek(0)
         return self.stream.getvalue().encode()
 
-
+#
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(module)s:%(levelname)s] [%(funcName)s] %(message)s",
@@ -106,6 +107,7 @@ def check_folder_contents():
 
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
+    global saved_folder_id
     data: dict = request.get_json()
 
     logger.info(f'Stamping cut sheet with data:\n{request.data}')
@@ -170,35 +172,51 @@ def post_stamp():
         folder_id = box.save_file_to_box(pdf_data, folder_name, file_name, data['folderID'])
         return folder_id
 
-    access_token = request.cookies.get('access')
-    refresh_token = request.cookies.get('refresh')
-
-    logging.debug(f'Submitted data: {data}')
+    access_token, refresh_token = request.cookies.get('access'), request.cookies.get('refresh')
+    logging.debug(f'Received data: {data}')
 
     box = get_box()
     box.authenticate_client(access_token, refresh_token)
-
-    is_package = data.get('packageSet')
-    pdfs, total_page_count = box.get_pdfs_in_folder(data.get('folderID'))
-
-    job_code = data.get('projectNumber')
-    current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
-    folder_name = get_folder_name(job_code, is_package, current_time)
+    logging.info('Box Authenticated')
 
     saved_folder_id = None
 
-    if data.get('coverSheet'): is_package = False
+    if data.get('isBrandStamp'):
+        logging.info('Initiating brand stamping...')
 
-    if is_package:
-        saved_folder_id = process_pdf_package(pdfs, folder_name, job_code)
+        pdfs = box.get_pdfs_in_folder()
+        current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
+        for pdf in pdfs:
+            logging.debug(f'Brand stamping: {pdf}')
+            brand_stamp = BrandStamp(pdf)
+            branded_pdf = brand_stamp.lay_branding(data.get('preparedBy'))
+            file_name = f"{pdf.get('name')}.pdf"
+            folder_name = f"{pdf.get('name')} - Branded - {current_time}"
+
+            saved_folder_id = box.save_file_to_box(branded_pdf, folder_name, file_name, data['folderID'])
+
     else:
-        for i in range(len(pdfs)):
-            saved_folder_id = process_single_pdf(pdfs[i], folder_name, job_code)
+        flattened_pdfs, total_page_count = box.get_flattened_pdfs_in_folder(data.get('folderID'))
+        is_package = data.get('packageSet')
 
-    if data.get('note') == 'DEBUG':
-        log_memory.flush()
-        log_bytes = handler.read()
-        box.save_file_to_box(log_bytes, folder_name, 'debug.txt', data['folderID'])
+        job_code = data.get('projectNumber')
+        current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
+        folder_name = get_folder_name(job_code, is_package, current_time)
+
+
+
+        if data.get('coverSheet'): is_package = False
+
+        if is_package:
+            saved_folder_id = process_pdf_package(flattened_pdfs, folder_name, job_code)
+        else:
+            for flattened_pdf in flattened_pdfs:
+                saved_folder_id = process_single_pdf(flattened_pdf, folder_name, job_code)
+
+        if data.get('note') == 'DEBUG':
+            log_memory.flush()
+            log_bytes = handler.read()
+            box.save_file_to_box(log_bytes, folder_name, 'debug.txt', data['folderID'])
 
     return Response(saved_folder_id, status=HTTP_STATUS_SUCCESS)
 
