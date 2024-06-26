@@ -184,11 +184,11 @@ def post_stamp():
     if data.get('isBrandStamp'):
         logging.info('Initiating brand stamping...')
 
-        pdfs = box.get_pdfs_in_folder()
+        pdfs = box.get_pdfs_in_folder(data['folderID'])
         current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
         for pdf in pdfs:
-            logging.debug(f'Brand stamping: {pdf}')
-            brand_stamp = BrandStamp(pdf)
+            logging.debug(f"Brand stamping: {pdf.get('name')}")
+            brand_stamp = BrandStamp(pdf.get('data'))
             branded_pdf = brand_stamp.lay_branding(data.get('preparedBy'))
             file_name = f"{pdf.get('name')}.pdf"
             folder_name = f"{pdf.get('name')} - Branded - {current_time}"

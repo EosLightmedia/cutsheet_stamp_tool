@@ -31,3 +31,5 @@ tomlkit==0.12.3
 urllib3==2.1.0
 Werkzeug==1.0.1
 wheel==0.41.3
+
+PyPDF2~=3.0.1
