@@ -185,12 +185,12 @@ def post_stamp():
         logging.info('Initiating brand stamping...')
 
         pdfs = box.get_pdfs_in_folder(data['folderID'])
-        current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
+        current_time = datetime.now().strftime('%y.%m.%d - %H:%M')
         for pdf in pdfs:
             logging.debug(f"Brand stamping: {pdf.get('name')}")
             brand_stamp = BrandStamp(pdf.get('data'))
             branded_pdf = brand_stamp.lay_branding(data.get('preparedBy'))
-            file_name = f"{pdf.get('name')}.pdf"
+            file_name = f"{pdf.get('name')}"
             folder_name = f"{pdf.get('name')} - Branded - {current_time}"
 
             saved_folder_id = box.save_file_to_box(branded_pdf, folder_name, file_name, data['folderID'])
@@ -200,7 +200,7 @@ def post_stamp():
         is_package = data.get('packageSet')
 
         job_code = data.get('projectNumber')
-        current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
+        current_time = datetime.now().strftime('%y.%m.%d - %H:%M')
         folder_name = get_folder_name(job_code, is_package, current_time)
 
 
