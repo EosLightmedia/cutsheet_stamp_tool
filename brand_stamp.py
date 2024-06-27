@@ -40,7 +40,7 @@ class BrandStamp:
             scale_y_bottom = height_bottom * scale_x_bottom
             x_top = x_bottom = y_bottom = 0
             y_top = page_height - scale_y_top
-            pdf_canvas.drawImage(watermark_top_path, x_top, y_top, width=page_width, height=scale_y_top, mask='auto')
+            #pdf_canvas.drawImage(watermark_top_path, x_top, y_top, width=page_width, height=scale_y_top, mask='auto')
             pdf_canvas.drawImage(watermark_bottom_path, x_bottom, y_bottom, width=page_width, height=scale_y_bottom,
                                  mask='auto')
             # setColor to white and use the custom font
