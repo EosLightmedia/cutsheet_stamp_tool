@@ -156,11 +156,14 @@ class CutSheet:
         at_text = (at_text[0] + 80, at_text[1])
         self._draw_text(self.stamp_data['projectName'], at_text)
 
-        at_text = (at_text[0] - 80, at_text[1] - 15)
-        self._draw_text('Prepared For', at_text, bold=False)
+        if self.stamp_data['preparedFor'] != '':    # if there's an entry in preparedFor
+            at_text = (at_text[0] - 80, at_text[1] - 15)
+            self._draw_text('Prepared For', at_text, bold=False)
 
-        at_text = (at_text[0] + 80, at_text[1])
-        self._draw_text(self.stamp_data['preparedFor'], at_text)
+            at_text = (at_text[0] + 80, at_text[1])
+            self._draw_text(self.stamp_data['preparedFor'], at_text)
+        else:   # no entry
+            pass
 
         at_text = (at_text[0] + 200, at_text[1] + 15)
         self._draw_text('Job Code', at_text, bold=False)
