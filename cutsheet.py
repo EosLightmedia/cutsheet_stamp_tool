@@ -163,7 +163,10 @@ class CutSheet:
             at_text = (at_text[0] + 80, at_text[1])
             self._draw_text(self.stamp_data['preparedFor'], at_text)
         else:   # no entry
-            pass
+            # Mimic the cursor movements either-way
+            at_text = (at_text[0] + 80, at_text[1])
+            at_text = (at_text[0] - 80, at_text[1] - 15)
+
 
         at_text = (at_text[0] + 200, at_text[1] + 15)
         self._draw_text('Job Code', at_text, bold=False)

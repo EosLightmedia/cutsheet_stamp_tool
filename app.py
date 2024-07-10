@@ -190,7 +190,7 @@ def post_stamp():
             logging.debug(f"Brand stamping: {pdf.get('name')}")
             brand_stamp = BrandStamp(pdf.get('data'))
             branded_pdf = brand_stamp.lay_branding(data.get('preparedBy'))
-            file_name = f"{pdf.get('name')}.pdf"
+            file_name = f"{pdf.get('name')}"
             folder_name = f"{pdf.get('name')} - Branded - {current_time}"
 
             saved_folder_id = box.save_file_to_box(branded_pdf, folder_name, file_name, data['folderID'])
