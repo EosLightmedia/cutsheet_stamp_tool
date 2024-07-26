@@ -20,6 +20,7 @@ class ByteIOHandler(logging.StreamHandler):
         self.stream.seek(0)
         return self.stream.getvalue().encode()
 
+
 #
 logging.basicConfig(
     level=logging.DEBUG,
@@ -104,6 +105,17 @@ def check_folder_contents():
 
     return files, HTTP_STATUS_SUCCESS
 
+@app.route('/api/shared/', methods=["GET"])
+def get_shared_folder_id():
+    shared_folder_link = request.args.get('sharedLink')
+    access_token = request.cookies.get('access')
+    refresh_token = request.cookies.get('refresh')
+
+    box = get_box()
+    box.authenticate_client(access_token, refresh_token)
+    folder_id = box.get_folder_id_from_shared_link(shared_folder_link)
+
+    return folder_id, HTTP_STATUS_SUCCESS
 
 @app.route('/api/stamp/', methods=['POST'])
 def post_stamp():
@@ -202,8 +214,6 @@ def post_stamp():
         job_code = data.get('projectNumber')
         current_time = datetime.now().strftime('%y-%m-%d-%H-%M')
         folder_name = get_folder_name(job_code, is_package, current_time)
-
-
 
         if data.get('coverSheet'): is_package = False
 

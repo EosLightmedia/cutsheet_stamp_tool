@@ -1,0 +1,8 @@
+GET http://localhost/api/shared/
+Content-Type: application/json
+
+{
+  "sharedLink": "https://app.box.com/s/gjasdasjhasd",
+  "access": "XXX",
+  "refresh": "XXX"
+}
