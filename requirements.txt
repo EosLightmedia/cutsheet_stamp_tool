@@ -33,3 +33,4 @@ Werkzeug==1.0.1
 wheel==0.41.3
 
 PyPDF2~=3.0.1
+pdfrw~=0.4
