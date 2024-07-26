@@ -56,6 +56,10 @@ class eosBox:
         )
         self.client = Client(oauth2)
 
+    def get_folder_id_from_shared_link(self, shared_link):
+        folder_id = self.client.get_shared_item(shared_link)
+        return folder_id
+
     def get_files_in_folder(self, folder_id):
         folder = self.client.folder(folder_id).get()
 
