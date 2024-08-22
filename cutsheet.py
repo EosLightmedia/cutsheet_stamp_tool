@@ -168,7 +168,7 @@ class CutSheet:
             at_text = (at_text[0] - 80, at_text[1] - 15)
 
 
-        at_text = (at_text[0] + 200, at_text[1] + 15)
+        at_text = (at_text[0] + 225, at_text[1] + 15)
         self._draw_text('Job Code', at_text, bold=False)
 
         at_text = (at_text[0] + 50, at_text[1])
