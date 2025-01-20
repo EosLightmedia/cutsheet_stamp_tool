@@ -13,25 +13,18 @@ DISCLAIMERS = [
 ]
 
 
+def register_fonts():
+    pdfmetrics.registerFont(TTFont('Karla-Medium', 'stamp-assets/Karla-Medium.ttf'))
+    pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-Light.ttf'))
+
+
 class CutSheet:
-    """
-    Uses Reportlab's API to generate a specific cut sheet for Eos Lightmedia +
-
-    Args:
-        stamp_data (dict): The JSON data required for stamping the cut sheet.
-    """
-
     def __init__(self, stamp_data: dict):
-        self._register_fonts()
+        register_fonts()
         self.stamp_data: dict = stamp_data
         self.memory_allocation: BytesIO = BytesIO()
         self.pdf_canvas = canvas.Canvas(self.memory_allocation)
         self.cursor: tuple[int, int] = (0, 0)
-
-    @staticmethod
-    def _register_fonts():
-        pdfmetrics.registerFont(TTFont('Karla-Medium', 'stamp-assets/Karla-Medium.ttf'))
-        pdfmetrics.registerFont(TTFont('Karla-Light', 'stamp-assets/Karla-Light.ttf'))
 
     def _draw_cover_title(self):
         company_name, company = self._get_company()
