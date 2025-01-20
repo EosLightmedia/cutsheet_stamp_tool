@@ -29,7 +29,7 @@ def _convert_pdf_to_png(pdf_file: object) -> list:
     return images
 
 
-class eosBox:
+class EosBox:
     def __init__(self, client_id, client_secret, callback_url):
         self.auth_url = None
         self.client = None
@@ -100,7 +100,7 @@ class eosBox:
                     'images': png_files
                 })
 
-        return flattened_pdfs, page_count
+        return flattened_pdfs
 
     def get_pdfs_in_folder(self, folder_id):
         logging.debug('')
