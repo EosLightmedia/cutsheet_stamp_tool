@@ -1,15 +1,13 @@
-from pdfrw import PdfReader, PdfWriter, PageMerge
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
 import os
 from io import BytesIO
 
-# To use the Karla-Light.ttf font, load it first.
-pdfmetrics.registerFont(TTFont("Karla-Medium", "stamp-assets/Karla-Medium.ttf"))
+from pdfrw import PageMerge, PdfReader, PdfWriter
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 
+pdfmetrics.registerFont(TTFont("Karla-Medium", "stamp-assets/Karla-Medium.ttf"))
 
 class BrandStamp:
     BRAND_STYLE = ['eos', 'ald', 'white']
@@ -32,7 +30,11 @@ class BrandStamp:
 
         for page_number, page in enumerate(pdfreader_obj.pages, start=1):
             packet = BytesIO()
-            page_width, page_height = int(page.Parent.MediaBox[2]), int(page.Parent.MediaBox[3])
+            media_box = page.Parent.MediaBox
+            if media_box is None:
+                media_box = page.MediaBox
+                
+            page_width, page_height = int(float(media_box[2])), int(float(media_box[3]))
             pdf_canvas = canvas.Canvas(packet, pagesize=(page_width, page_height))
             scale_x_top = page_width / width_top
             scale_y_top = height_top * scale_x_top
