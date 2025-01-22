@@ -141,7 +141,7 @@ class CutSheet:
         self._draw_text('type', at_text, bold=False)
 
         at_text = (at_text[0], at_text[1] - 30)
-        self._draw_text(type_name, at_text, size=40)
+        self._draw_text(type_name, at_text, size=40, cap=False)
 
         at_text = (at_text[0], at_text[1] - 15)
         self._draw_text('Job Name', at_text, bold=False)
@@ -216,7 +216,7 @@ class CutSheet:
         theme_choice_int = self.stamp_data['preparedBy']
         is_gradient_int = int(self.stamp_data['isGradient'])
 
-        theme_choice = ['eos', 'ald'][theme_choice_int]
+        theme_choice = ['eos', 'ald', 'blank'][theme_choice_int]
         gradient_choice = ['white', 'gradient'][is_gradient_int]
 
         file_path = f'stamp-assets/{theme_choice}-{gradient_choice}.png'
