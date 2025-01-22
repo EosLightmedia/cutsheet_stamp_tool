@@ -30,12 +30,15 @@ logger.setLevel(logging.INFO)
 
 dotenv.load_dotenv()
 
+
 class CutSheetStamper:
     CALLBACK_URL = 'https://pdfstamper.eoslightmedia.com'
+
     def __init__(self):
-        self.client_id, self.client_secret = os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"); assert self.client_id and self.client_secret, "Missing client_id or secret, check your environment variables"
+        self.client_id, self.client_secret = os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET");
+        assert self.client_id and self.client_secret, "Missing client_id or secret, check your environment variables"
         self.callback_url = self.CALLBACK_URL if __name__ != '__main__' else 'http://localhost:8000'
-        self.eos_box = EosBox(self.client_id, self.client_secret, self.callback_url)
+        self.box_auth = EosBox(self.client_id, self.client_secret, self.callback_url)
 
         self.webapp = flask.Flask(__name__, static_folder='frontend', static_url_path='')
         self.webapp.route('/')(self.login)
@@ -48,7 +51,7 @@ class CutSheetStamper:
     def login(self) -> Response:
         session_code = flask.request.args.get('code')
         try:
-            access_token, refresh_token = self.eos_box.request_tokens(session_code)
+            access_token, refresh_token = self.box_auth.request_tokens(session_code)
             logger.info('Login successful')
             logger.info('Setting cookies...')
             static_render = flask.make_response(flask.send_from_directory(self.webapp.static_folder, 'index.html'))
@@ -58,26 +61,31 @@ class CutSheetStamper:
 
         except Exception as e:
             logger.warning(f'Login failed: {type(e).__name__}')
-            logger.info(f'Redirecting to authentication url: {self.eos_box.auth_url}')
-            return flask.redirect(self.eos_box.auth_url)
+            logger.info(f'Redirecting to authentication url: {self.box_auth.auth_url}')
+            return flask.redirect(self.box_auth.auth_url)
 
     def query_folder_contents(self) -> Response:
         logger.info('Querying folder contents...')
+
         try:
-            folder_id = flask.request.args['folderID']
+            folder_id: str = flask.request.args['folderID']
         except KeyError:
-            folder_id = flask.request.args['folder_id']
+            folder_id: str = flask.request.args['folder_id']
             logger.warning('Please use folderID instead of folder_id')
 
         access_token, refresh_token = flask.request.cookies.get('access'), flask.request.cookies.get('refresh')
-        session = self.eos_box.log_into_session(access_token, refresh_token)
+        session = self.box_auth.log_into_session(access_token, refresh_token)
+
+        if not folder_id.isdigit():
+            folder_id = eos_box.get_shared_folder_id(folder_id, session)
+
         files: dict = eos_box.get_files_in_folder(folder_id, session)
         logger.info(f'Found {len(files)} files: {str(files.values())}')
         return flask.make_response(files)
 
     def do_brand(self) -> Response:
         data = flask.request.get_json()
-        session = self.eos_box.log_into_session(flask.request.cookies.get('access'), flask.request.cookies.get('refresh'))
+        session = self.box_auth.log_into_session(flask.request.cookies.get('access'), flask.request.cookies.get('refresh'))
 
         pdfs = eos_box.get_pdfs_in_folder(data['folderID'], session)
         current_time = datetime.now().strftime('%y.%m.%d - %H:%M')
@@ -96,7 +104,7 @@ class CutSheetStamper:
         folder_id = None
         data = flask.request.get_json()
 
-        session = self.eos_box.log_into_session(flask.request.cookies.get('access'), flask.request.cookies.get('refresh'))
+        session = self.box_auth.log_into_session(flask.request.cookies.get('access'), flask.request.cookies.get('refresh'))
 
         if data.get('isBrandStamp'):
             logger.warning('Use api/brand/ endpoint instead of api/stamp/ endpoint for brand stamping.')
@@ -145,7 +153,7 @@ class CutSheetStamper:
             folder_id = eos_box.save_file_to_box(pdf_data, folder_name, f"{job_code.upper()} - Cut Sheet Package.pdf", data['folderID'], session)
             logger.info(f'Packaged cut sheet saved to folder: {folder_id}')
 
-        else:   # Not package
+        else:  # Not package
             logger.info(f'Saving cut sheets to folder: {folder_name}...')
             for name, images in flattened_pdfs.items():
                 logging.info(f"Processing cut sheet: {name}")
@@ -172,6 +180,7 @@ class CutSheetStamper:
 
         return flask.make_response(folder_id, 200)
 
+
 def convert_pdf_to_png(pdf_file: bytes) -> list:
     doc = fitz.Document(stream=pdf_file, filetype='pdf')
     images = []
@@ -186,6 +195,7 @@ def convert_pdf_to_png(pdf_file: bytes) -> list:
         pil_img.save(output, 'png')
         images.append(output)
     return images
+
 
 def express_name_details(elements: str):
     """
@@ -211,13 +221,29 @@ def express_name_details(elements: str):
     part_number = elements[-1].replace(' ', '')
     return type_name, description, part_number
 
+
 class StampRequest:
     def __init__(self, data: dict):
-        ...
+        self.is_gradient: bool = data['isGradient']
+        self.is_revision: bool = data['isRevision']
+        self.is_show_page_numbers: bool = data['showPageNumbers']
+        self.is_header: bool = data['isHeader']
+        self.is_cover_sheet: bool = data['coverSheet']
+        self.prepared_by: int = data['preparedBy']  # 0 = eos, 1 = abn, 2 = none
+        self.folder_id: str = data['folderID']
+        self.project_name: str = data['projectName']
+        self.project_number: str = data['projectNumber']
+        self.prepared_for: str = data['preparedFor']
+        self.revision_number = data['revisionNumber']
+        self.date = data['date']
+        self.note = data['note']
+        self.disclaimer: list[bool] = data['disclaimer']
+        self.cover_status = data['coverStatus']
+        self.cover_issue_by = data['coverIssueBy']
+        self.cover_refnum = data['coverRefNum']
+
 
 cutsheet_stamper = CutSheetStamper()
-        
+
 if __name__ == "__main__":
     cutsheet_stamper.webapp.run(port=8000)
-
-

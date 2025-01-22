@@ -28,6 +28,9 @@ class EosBox:
         ))
 
 
+def get_shared_folder_id(shared_folder: str, session: Client, password=None):
+    return session.get_shared_item(shared_folder, password=password)
+
 def get_files_in_folder(folder_id, session: Client):
     folder = session.folder(folder_id).get()
 
