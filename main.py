@@ -71,8 +71,8 @@ class CutSheetStamper:
         try:
             folder_id: str = flask.request.args['folderID']
         except KeyError:
+            logger.warning('Key \"folderID\" not found. Using fallback key \"folder_id\"')
             folder_id: str = flask.request.args['folder_id']
-            logger.warning('Please use folderID instead of folder_id')
 
         access_token, refresh_token = flask.request.cookies.get('access'), flask.request.cookies.get('refresh')
         session = self.box_auth.log_into_session(access_token, refresh_token)
@@ -93,7 +93,7 @@ class CutSheetStamper:
         current_time = datetime.now().strftime('%y.%m.%d - %H:%M')
 
         for name, pdf in pdfs.items():
-            logging.info(f"Brand stamping: {name}")
+            logger.info(f"Brand stamping: {name}")
             brand_stamp = BrandStamp(pdf)
             branded_pdf = brand_stamp.lay_branding(data.get('preparedBy'))
             file_name = f"{name}"
@@ -105,7 +105,7 @@ class CutSheetStamper:
     def do_stamp(self) -> Response:
         folder_id = None
         data = flask.request.get_json()
-
+        logger.info(f'Form data {json.dumps(data, indent=4)}')
         session = self.box_auth.log_into_session(flask.request.cookies.get('access'), flask.request.cookies.get('refresh'))
 
         if data.get('isBrandStamp'):
@@ -120,17 +120,17 @@ class CutSheetStamper:
 
         logger.info('Loading pdfs from folder...')
         pdfs = eos_box.get_pdfs_in_folder(data.get('folderID'), session)
-        logger.info('Flattening pdfs...')
+        logger.info(f'Found {len(pdfs)} pdfs: {str(pdfs.keys())}')
         flattened_pdfs = {}
         page_count = 0
         for pdf_name, pdf in pdfs.items():
+            logger.info(f'Flattening: {pdf_name}')
             images = convert_pdf_to_png(pdf)
             flattened_pdfs[pdf_name] = images
-            logging.info(f'Flattened: {pdf_name}')
             page_count += len(images)
 
         if data.get('coverSheet') and is_package == True:
-            logging.warning('Cannot select coversheet and package. Forcing package to false')
+            logger.warning('Cannot select coversheet and package. Forcing package to false')
             is_package = False
 
         logger.info('Rendering stamps...')
@@ -158,7 +158,7 @@ class CutSheetStamper:
         else:  # Not package
             logger.info(f'Saving cut sheets to folder: {folder_name}...')
             for name, images in flattened_pdfs.items():
-                logging.info(f"Processing cut sheet: {name}")
+                logger.info(f"Processing cut sheet: {name}")
                 cut_sheet = CutSheet(data)
                 coversheet_offset = int(data['coverSheet'])
                 page_number = coversheet_offset
