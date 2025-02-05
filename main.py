@@ -224,27 +224,6 @@ def express_name_details(elements: str):
     return type_name, description, part_number
 
 
-class StampRequest:
-    def __init__(self, data: dict):
-        self.is_gradient: bool = data['isGradient']
-        self.is_revision: bool = data['isRevision']
-        self.is_show_page_numbers: bool = data['showPageNumbers']
-        self.is_header: bool = data['isHeader']
-        self.is_cover_sheet: bool = data['coverSheet']
-        self.prepared_by: int = data['preparedBy']  # 0 = eos, 1 = abn, 2 = none
-        self.folder_id: str = data['folderID']
-        self.project_name: str = data['projectName']
-        self.project_number: str = data['projectNumber']
-        self.prepared_for: str = data['preparedFor']
-        self.revision_number = data['revisionNumber']
-        self.date = data['date']
-        self.note = data['note']
-        self.disclaimer: list[bool] = data['disclaimer']
-        self.cover_status = data['coverStatus']
-        self.cover_issue_by = data['coverIssueBy']
-        self.cover_refnum = data['coverRefNum']
-
-
 cutsheet_stamper = CutSheetStamper()
 
 if __name__ == "__main__":
