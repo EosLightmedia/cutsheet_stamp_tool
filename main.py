@@ -86,6 +86,7 @@ class CutSheetStamper:
 
     def do_brand(self) -> Response:
         data = flask.request.get_json()
+        logger.info(f'Form data {json.dumps(data, indent=4)}')
         session = self.box_auth.log_into_session(flask.request.cookies.get('access'), flask.request.cookies.get('refresh'))
 
         pdfs = eos_box.get_pdfs_in_folder(data['folderID'], session)
