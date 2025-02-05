@@ -225,6 +225,7 @@ def express_name_details(elements: str):
 
 
 cutsheet_stamper = CutSheetStamper()
+app = cutsheet_stamper.webapp  # Expose the Flask app for Gunicorn
 
 if __name__ == "__main__":
     cutsheet_stamper.webapp.run(port=8000)
