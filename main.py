@@ -176,7 +176,7 @@ class CutSheetStamper:
                 pdf_data = cut_sheet.save_pdf()
 
                 logger.info(f"Saving {name}")
-                folder_id = eos_box.save_file_to_box(pdf_data, folder_name, name + '.pdf', data['folderID'], session)
+                folder_id = eos_box.save_file_to_box(pdf_data, folder_name, type_name + '.pdf', data['folderID'], session)
 
             logger.info(f'Cut sheets saved to folder: {folder_id}')
 
