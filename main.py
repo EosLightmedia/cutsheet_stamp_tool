@@ -212,7 +212,7 @@ def express_name_details(elements: str):
         'T01.pdf' -> ('T01', '', 'T01')
         'T02_LiteLabbus_13.pdf' -> ('T02', 'LiteLabbus', '13')
     """
-    elements: list[str] = elements.split('.')[0].split('_')
+    elements: list[str] = elements.rsplit('.', 1)[0].split('_')
     type_name = elements[0].replace(' ', '')
 
     if len(elements) > 1:
