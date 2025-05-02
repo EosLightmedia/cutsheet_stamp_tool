@@ -63,7 +63,7 @@ def get_pdfs_in_folder(folder_id, session: Client) -> dict[str, bytes]:
     pdfs = {}
 
     for item in folder.get_items(sort='name'):
-        if item.type == 'file' and item.name.endswith('.pdf'):
+        if item.type == 'file' and item.name.lower().endswith('.pdf'):
             pdf_file = session.file(item.id).content()
             pdfs[item.name] = pdf_file        
     
