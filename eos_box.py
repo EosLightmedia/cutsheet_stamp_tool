@@ -40,7 +40,7 @@ def get_files_in_folder(folder_id, session: Client):
     items = []
     for item in folder.get_items():
         item_type = item.type
-        if item.name.endswith('.pdf'):
+        if item.name.lower().endswith('.pdf'):  # Case-insensitive check
             item_type = 'pdf'
 
         item_dict = {
