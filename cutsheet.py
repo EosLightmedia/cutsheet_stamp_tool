@@ -9,7 +9,8 @@ from io import BytesIO
 DISCLAIMERS = [
     'For Coordination Only',
     'Issued for Tender',
-    'Submitted for Review, Comment & Approval'
+    'Submitted for Review, Comment & Approval',
+    'Refer to LX Equipment Schedule for Specifications'
 ]
 
 

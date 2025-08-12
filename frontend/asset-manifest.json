@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.7a21bf21.css",
-    "main.js": "/static/js/main.4842628e.js",
+    "main.css": "/static/css/main.85e7a24e.css",
+    "main.js": "/static/js/main.2c9955a4.js",
     "static/media/purple-gradient.png": "/static/media/purple-gradient.f476431279d633df3b9b.png",
     "static/media/orange-gradient.png": "/static/media/orange-gradient.87ba17620aab1dbf602c.png",
     "static/media/stamp-logo.png": "/static/media/stamp-logo.c6d9ecf041c1fc0d6a35.png",
@@ -14,11 +14,11 @@
     "static/media/eos-logo-horizontal.png": "/static/media/eos-logo-horizontal.873d2ac513d2cd277f60.png",
     "index.html": "/index.html",
     "static/media/recheck-icon.svg": "/static/media/recheck-icon.47f7f1c1059cdc9fc60d86ac238ed003.svg",
-    "main.7a21bf21.css.map": "/static/css/main.7a21bf21.css.map",
-    "main.4842628e.js.map": "/static/js/main.4842628e.js.map"
+    "main.85e7a24e.css.map": "/static/css/main.85e7a24e.css.map",
+    "main.2c9955a4.js.map": "/static/js/main.2c9955a4.js.map"
   },
   "entrypoints": [
-    "static/css/main.7a21bf21.css",
-    "static/js/main.4842628e.js"
+    "static/css/main.85e7a24e.css",
+    "static/js/main.2c9955a4.js"
   ]
 }
