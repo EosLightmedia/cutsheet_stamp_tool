@@ -1,7 +1,7 @@
 import random
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from io import BytesIO
@@ -24,20 +24,20 @@ class CutSheet:
         register_fonts()
         self.stamp_data: dict = stamp_data
         self.memory_allocation: BytesIO = BytesIO()
-        self.pdf_canvas = canvas.Canvas(self.memory_allocation)
+        self.pdf_canvas = canvas.Canvas(self.memory_allocation, pagesize=LETTER)
         self.cursor: tuple[int, int] = (0, 0)
 
     def _draw_cover_title(self):
         company_name, company = self._get_company()
         horizontal_offset = [0.23, 0.15][company]
-        stamp_cursor = A4[0] * horizontal_offset, A4[1] * 0.92
+        stamp_cursor = LETTER[0] * horizontal_offset, LETTER[1] * 0.92
         title_text = f"{company_name} Submittal Cover Sheet"
 
         self._draw_text(title_text, stamp_cursor, size=18, cap=False)
 
     def _draw_cover_status(self):
-        stamp_cursor = A4[0] * 0.125, A4[1] * 0.8
-        stamp_size = (A4[0] * 0.75, A4[1] * 0.1)
+        stamp_cursor = LETTER[0] * 0.125, LETTER[1] * 0.8
+        stamp_size = (LETTER[0] * 0.75, LETTER[1] * 0.1)
         self._draw_rectangle(stamp_cursor, stamp_size)
 
         stamp_cursor = stamp_cursor[0] + 2, stamp_cursor[1] + 2
@@ -77,8 +77,8 @@ class CutSheet:
         return company_name, company
 
     def _draw_cover_items(self, item_details):
-        stamp_cursor = A4[0] * 0.125, A4[1] * 0.65
-        stamp_size = (A4[0] * 0.75, A4[1] * 0.13)
+        stamp_cursor = LETTER[0] * 0.125, LETTER[1] * 0.65
+        stamp_size = (LETTER[0] * 0.75, LETTER[1] * 0.13)
         self._draw_rectangle(stamp_cursor, stamp_size)
 
         stamp_cursor = stamp_cursor[0] + 2, stamp_cursor[1] + 2
@@ -99,8 +99,8 @@ class CutSheet:
         self._draw_text(item_details_text, stamp_cursor, cap=False)
 
     def _draw_cover_details(self):
-        stamp_cursor = A4[0] * 0.125, A4[1] * 0.1
-        stamp_size = (A4[0] * 0.75, A4[1] * 0.1)
+        stamp_cursor = LETTER[0] * 0.125, LETTER[1] * 0.1
+        stamp_size = (LETTER[0] * 0.75, LETTER[1] * 0.1)
         self._draw_rectangle(stamp_cursor, stamp_size)
 
         stamp_cursor = stamp_cursor[0] + 2, stamp_cursor[1] + 2
@@ -128,7 +128,7 @@ class CutSheet:
     def _draw_stamp(self, type_name: str, page_number: int, page_total: int):
 
         stamp_cursor = self.cursor
-        stamp_size = (A4[0] * 0.88, A4[1] * 0.12)
+        stamp_size = (LETTER[0] * 0.88, LETTER[1] * 0.12)
         self._draw_rectangle(stamp_cursor, stamp_size)
 
         gradient_size = (stamp_size[0] - 4, stamp_size[1] - 15)
@@ -184,7 +184,7 @@ class CutSheet:
     def _draw_document_image(self, document_image):
         at_cursor = self.cursor
         scale = 0.88
-        document_size = (A4[0] * scale, A4[1] * scale)
+        document_size = (LETTER[0] * scale, LETTER[1] * scale)
 
         self._draw_image(document_image, at_cursor, document_size)
         self.cursor = (self.cursor[0], self.cursor[1] + document_size[1])
@@ -193,7 +193,7 @@ class CutSheet:
         at_cursor = self.cursor
         at_disclaimer = (at_cursor[0] + 7, at_cursor[1] + 2)
         self._draw_text(self._get_disclaimer_text(), at_disclaimer, size=7)
-        self.cursor = (self.cursor[0], self.cursor[1] + (A4[1] * 0.01))
+        self.cursor = (self.cursor[0], self.cursor[1] + (LETTER[1] * 0.01))
 
     def _draw_text(self, text: str, location: tuple[int, int], color: str = 'Black', size: int = 10, bold: bool = True,
                    cap: bool = True):
@@ -260,7 +260,7 @@ class CutSheet:
         self.pdf_canvas.showPage()
 
     def render_page(self, document_image: BytesIO, type_name: str, page_number: int, page_total: int):
-        cursor_start = A4[0] * 0.06, 0
+        cursor_start = LETTER[0] * 0.06, 0
         self.cursor = cursor_start
 
         if self.stamp_data['isHeader']:
@@ -275,7 +275,7 @@ class CutSheet:
         self.end_page()
 
     def render_cover_sheet(self, item_details):
-        self._draw_image(self._get_coversheet_image(), (0, 0), A4)
+        self._draw_image(self._get_coversheet_image(), (0, 0), LETTER)
         self._draw_cover_details()
         self._draw_cover_items(item_details)
         self._draw_cover_status()
@@ -322,6 +322,6 @@ if __name__ == '__main__':
     cut_sheet.render_page(image, 'long_example', 69, 420)
 
     pdf_bytes = cut_sheet.save_pdf()
-    pdf_file = open("output.pdf", 'wb')
+    pdf_file = open("output_LETTER.pdf", 'wb')
     pdf_file.write(pdf_bytes)
     pdf_file.close()
